@@ -2,6 +2,7 @@
 DAPP Game on ethereum blockchain
 
 **What is the game?**
+
 It is a two player game(X, Y) where each player is asked to bet some amount(B(x), B(y)) on the table to play the game.
 Both the player know the amount each one of them has bet.
 
@@ -14,7 +15,7 @@ This is the Reward Matrix.
 X(down)/Y(right) | SPLIT | STEAL
 :---: | :---: | :---:
 SPLIT | *R/2* / *R/2* | *-B(x)* / *B(x)* 
-STEAL | *B(y)* / *-B(y)* | *-B(x)* / *B(y)* 
+STEAL | *B(y)* / *-B(y)* | *-B(x)* / *-B(y)* 
 
 
 **What is Reward Matrix?**
