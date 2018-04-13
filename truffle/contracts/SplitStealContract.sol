@@ -123,11 +123,11 @@ contract SplitStealContract is owned, priced {
         emit PlayStopped();
     }
 
-    function getPlayerCount(Game _game) private pure returns(uint256 count) {
+    function getPlayerCount(Game _game) private pure returns(uint count) {
         return _game.players.length;
     }
 
-    function getFinalPlayerCount(Game _game) private pure returns(uint256 count) {
+    function getFinalPlayerCount(Game _game) private pure returns(uint count) {
         return _game.finalPlayers.length;
     }
 
@@ -137,7 +137,7 @@ contract SplitStealContract is owned, priced {
         return (_x + _y / 2);
     }
 
-    function ethTransfer(address _to, uint256 _amount) public onlyOwner {
+    function ethTransfer(address _to, uint256 _amount) private onlyOwner {
         require(_amount > 0);
         require(owner.balance > _amount);
         require(_to != address(0));
@@ -173,7 +173,6 @@ contract SplitStealContract is owned, priced {
             } else {
                 address playerAddress = currentGame.finalPlayers[index];
                 //ODD Player reward him since player incurred gas to play.
-                //TODO : Understand how to send ether from owner
                 ethTransfer(currentGame.finalPlayers[index], REGISTRATION_COST + currentGame.bets[playerAddress].betAmount);
             }  
         }
@@ -182,7 +181,6 @@ contract SplitStealContract is owned, priced {
             if ( bets[0][index] == SPLIT && bets[1][index] == SPLIT ) {
                 //GameOwner has to give back betAmounts along with reward to both players
                 //Both players won
-                //TODO : Implement
                 uint256 reward = calculateReward(currentGame.bets[matches[0][index]].betAmount, currentGame.bets[matches[1][index]].betAmount);
                 uint256 playerReward = reward / 2;
                 ethTransfer(matches[0][index], playerReward);
@@ -191,7 +189,6 @@ contract SplitStealContract is owned, priced {
             }
             if( bets[0][index] == SPLIT && bets[1][index] == STEAL ) {
                 //matches[1][index] won and will get it's betAmount along with matches[0][index]'s betAmount
-                //TODO : Implement
                 uint256 loosersBetAmount = currentGame.bets[matches[0][index]].betAmount;
                 uint256 winnersBetAmount = currentGame.bets[matches[1][index]].betAmount;
                 ethTransfer(matches[1][index], loosersBetAmount + winnersBetAmount);
@@ -199,7 +196,6 @@ contract SplitStealContract is owned, priced {
             }
             if( bets[0][index] == STEAL && bets[1][index] == SPLIT ) {
                 //matches[0][index] won and will get it's betAmount along with matches[1][index]'s betAmount
-                //TODO : Implement
                 loosersBetAmount = currentGame.bets[matches[1][index]].betAmount;
                 winnersBetAmount = currentGame.bets[matches[0][index]].betAmount;
                 ethTransfer(matches[0][index], loosersBetAmount + winnersBetAmount);

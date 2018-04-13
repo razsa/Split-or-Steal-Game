@@ -9,7 +9,7 @@ SplitStealContract.deployed().then(function(instance) {
       fromBlock: 0,
       toBlock: 'latest',
       address: '0x345ca3e014aaf5dca488057592ee47305d9b3e10',
-      topics: [web3.sha3('Registered(address _player)')]
+      topics: [web3.sha3('Played(msg.sender, _choice, _betAmount)')]
     })
     
     filter.watch((error, result) => {
@@ -21,7 +21,7 @@ SplitStealContract.deployed().then(function(instance) {
           console.log(result);
        }
     })
-    return instance.register({from: web3.eth.accounts[4], gas: 3000000, value: web3.toWei(0.05, "ether")});
+    return instance.bet(1, web3.toWei(1, "ether"), {from: web3.eth.accounts[4], gas: 3000000, value: web3.toWei(1, "ether")});
   }).then(function(result) {
     // If this callback is called, the transaction was successfully processed.
     console.log("Transaction successful!");
