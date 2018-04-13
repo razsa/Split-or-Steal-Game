@@ -14,8 +14,8 @@ As of now Parameterised Reward Matrix function is as follows,
 
 (X/Y)|Split|Steal
 :---: | :---: | :---:
-Split|X + (n1\*Y/d1) **/** Y + (n1\*X/d1)|(n1\*X/d1) **/** Y + (n2\*X/d1)
-Steal|X +(n2\*Y/d1) **/** (n1\*Y/d1)|X/d2 **/** Y/d2
+Split|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n1}{d1}*Y)&space;/&space;Y&space;&plus;&space;(\frac{n1}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n1}{d1}*Y)&space;/&space;Y&space;&plus;&space;(\frac{n1}{d1}*X)" title="X + (\frac{n1}{d1}*Y) / Y + (\frac{n1}{d1}*X)" /></a>|<a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d1}*X)&space;/&space;Y&space;&plus;&space;(\frac{n2}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d1}*X)&space;/&space;Y&space;&plus;&space;(\frac{n2}{d1}*X)" title="(\frac{n1}{d1}*X) / Y + (\frac{n2}{d1}*X)" /></a>
+Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n2}{d1}*Y)&space;/&space;(\frac{n1}{d1}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n2}{d1}*Y)&space;/&space;(\frac{n1}{d1}*Y)" title="X + (\frac{n2}{d1}*Y) / (\frac{n1}{d1}*Y)" /></a>|<a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{1}{d2}*X)&space;/&space;(\frac{1}{d2}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{1}{d2}*X)&space;/&space;(\frac{1}{d2}*Y)" title="(\frac{1}{d2}*X) / (\frac{1}{d2}*Y)" /></a>
 
 where, 
  - X & Y are bet amounts by PlayerX and PlayerY respectively.
@@ -26,10 +26,10 @@ where,
 
 
 **What is Reward Matrix?**
-1. If X chooses to SPLIT and Y also chooses to SPLIT, then they win X + (n1\*Y/d1) and Y + (n1\*X/d1) amount respectively.
-2. If X chooses to SPLIT and Y chooses to STEAL, then they win (n1\*X/d1) and Y + (n2\*X/d1) amount respectively.
-3. If X chooses to STEAL and Y chooses to SPLIT, then they win X +(n2\*Y/d1) and (n1\*Y/d1) amount respectively.
-4. If X chooses to STEAL and Y also chooses to STEAL, then they win X/d2 and Y/d2 amount respectively.
+1. If X chooses to SPLIT and Y also chooses to SPLIT, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n1}{d1}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n1}{d1}*Y)" title="X + (\frac{n1}{d1}*Y)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=Y&space;&plus;&space;(\frac{n1}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?Y&space;&plus;&space;(\frac{n1}{d1}*X)" title="Y + (\frac{n1}{d1}*X)" /></a> amount respectively.
+2. If X chooses to SPLIT and Y chooses to STEAL, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d1}*X)" title="(\frac{n1}{d1}*X)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=Y&space;&plus;&space;(\frac{n2}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?Y&space;&plus;&space;(\frac{n2}{d1}*X)" title="Y + (\frac{n2}{d1}*X)" /></a> amount respectively.
+3. If X chooses to STEAL and Y chooses to SPLIT, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n2}{d1}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n2}{d1}*Y)" title="X + (\frac{n2}{d1}*Y)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d1}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d1}*Y)" title="(\frac{n1}{d1}*Y)" /></a> amount respectively.
+4. If X chooses to STEAL and Y also chooses to STEAL, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{1}{d2}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{1}{d2}*X)" title="(\frac{1}{d2}*X)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{1}{d2}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{1}{d2}*Y)" title="(\frac{1}{d2}*Y)" /></a> amount respectively.
 
 **NOTE:**
 Needless to say, when a player wins, player gets back his bet amount along with the win amount mentioned in Matrix
