@@ -3,7 +3,7 @@ DAPP Game on ethereum blockchain
 
 **What is the game?**
 
-It is a two player game(X, Y) where each player is asked to bet some amount(X, Y) on the table to play the game.
+It is a two player game(X, Y) where each player is asked to bet some amount(X, Y) to play the game.
 Both the player know the amount each one of them has bet.
 
 Based on X and Y, Smart contract would generate a Reward Matrix based on which game will be played.
@@ -19,7 +19,7 @@ Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(
 
 **where**, 
  - X & Y are bet amounts by PlayerX and PlayerY respectively.
- - n1,n2,n3,dare +ve integers
+ - n1,n2,n3,d are +ve integers
  - n1<n3<n2
  - n1 + n2 = d
  - n1,n2,n3 < d
@@ -62,9 +62,9 @@ Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(
   - **Reveal Reward Matrix (DAPP ROUND)**
 
     - This phase is not actually opened by contract owner.
-    - As soos as DApp receives the event of Grouping and Reward Calculation being over, Dapp woudl read Reward Matrix from Contract.  **(THIS WOULD NOT COST GAS)**
+    - As soos as DApp receives the event of Grouping and Reward Calculation being over, Dapp would read Reward Matrix from Contract and display to the user.  **(THIS WOULD *NOT* COST GAS)**
 
-  - **Submit ecrypted steal or split choice (PLAYER ROUND)**
+  - **Submit encrypted *steal* or *split* choice (PLAYER ROUND)**
 
     - Players will be given fixed amount of time to analyse Reward matrix. (Say 20 confirmations of Grouping and Reward Matrix Calulation)
     - This phase would be opened by contract owner for a fixed amount of time. (START)(EVENT) 
