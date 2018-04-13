@@ -35,10 +35,10 @@ Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(
 
 **How does contract earn?**
 
-1. In case 1 contract losses <a href="http://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d})(X&plus;Y)" target="_blank"><img src="http://latex.codecogs.com/png.latex?(\frac{n1}{d})(X&plus;Y)" title="(\frac{n1}{d})(X+Y)" /></a>
+1. In case 1 contract losses <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d})(X&plus;Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d})(X&plus;Y)" title="(\frac{n1}{d})(X+Y)" /></a>
 2. In case 2 contract neither wins nor looses.
 3. In case 3 contract neither wins nor looses.
-4. In case 3 contract wins <a href="http://www.codecogs.com/eqnedit.php?latex=(\frac{d-n3}{d})(X&plus;Y)" target="_blank"><img src="http://latex.codecogs.com/png.latex?(\frac{d-n3}{d})(X&plus;Y)" title="(\frac{d-n3}{d})(X+Y)" /></a>
+4. In case 3 contract wins <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{d-n3}{d})(X&plus;Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{d-n3}{d})(X&plus;Y)" title="(\frac{d-n3}{d})(X+Y)" /></a>
 
 **GAME PLAY**
 
