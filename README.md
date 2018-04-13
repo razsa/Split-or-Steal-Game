@@ -3,26 +3,33 @@ DAPP Game on ethereum blockchain
 
 **What is the game?**
 
-It is a two player game(X, Y) where each player is asked to bet some amount(B(x), B(y)) on the table to play the game.
+It is a two player game(X, Y) where each player is asked to bet some amount(X, Y) on the table to play the game.
 Both the player know the amount each one of them has bet.
 
-Based on S(x) and S(y) Smart contract would generate a Reward Amount based on Reward Function R(B(x),B(y)) ( Lets simply call it R ).
+Based on X and Y, Smart contract would generate a Reward Matrix based on which game will be played.
 
-As of now Reward Function is *B(x) + B(y) / 2*.
+As of now Parameterised Reward Matrix function is as follows,
 
-This is the Reward Matrix.
+**R(X,Y,n1,n2,d1, d2)** =>
 
-X(down)/Y(right) | SPLIT | STEAL
+(X/Y)|Split|Steal
 :---: | :---: | :---:
-SPLIT | *R/2* / *R/2* | *-B(x)* / *B(x)* 
-STEAL | *B(y)* / *-B(y)* | *-B(x)* / *-B(y)* 
+Split|X + (n1\*Y/d1) **/** Y + (n1\*X/d1)|(n1\*X/d1) **/** Y + (n2\*X/d1)
+Steal|X +(n2\*Y/d1) **/** (n1\*Y/d1)|X/d2 **/** Y/d2
+
+where, 
+ - X & Y are bet amounts by PlayerX and PlayerY respectively.
+ - n1,n2,d1,d2 are +ve integers
+ - n1<n2
+ - n1 + n2 = d1
+ - d1>d2
 
 
 **What is Reward Matrix?**
-1. If X chooses to SPLIT and Y also chooses to SPLIT, then Both Win *R/2* Amount.
-2. If X chooses to SPLIT and Y chooses to STEAL, then X looses Bet amount *B(x)* and it goes to Y. Reward(*R*) is not used.
-3. If X chooses to STEAL and Y chooses to SPLIT, then Y looses Bet amount *B(y)* and it goes to X. Reward(*R*) is not used.
-4. If X chooses to STEAL and Y also chooses to STEAL, then Both Loose their bet amounts *B(x)* and *B(y)* respectively.
+1. If X chooses to SPLIT and Y also chooses to SPLIT, then they win X + (n1\*Y/d1) and Y + (n1\*X/d1) amount respectively.
+2. If X chooses to SPLIT and Y chooses to STEAL, then they win (n1\*X/d1) and Y + (n2\*X/d1) amount respectively.
+3. If X chooses to STEAL and Y chooses to SPLIT, then they win X +(n2\*Y/d1) and (n1\*Y/d1) amount respectively.
+4. If X chooses to STEAL and Y also chooses to STEAL, then they win X/d2 and Y/d2 amount respectively.
 
 **NOTE:**
 Needless to say, when a player wins, player gets back his bet amount along with the win amount mentioned in Matrix
