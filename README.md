@@ -10,29 +10,35 @@ Based on X and Y, Smart contract would generate a Reward Matrix based on which g
 
 As of now Parameterised Reward Matrix function is as follows,
 
-**R(X,Y,n1,n2,d1, d2)** =>
+**R(X,Y,n1,n2,n3,d)** =>
 
 (X/Y)|Split|Steal
 :---: | :---: | :---:
-Split|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n1}{d1}*Y)&space;/&space;Y&space;&plus;&space;(\frac{n1}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n1}{d1}*Y)&space;/&space;Y&space;&plus;&space;(\frac{n1}{d1}*X)" title="X + (\frac{n1}{d1}*Y) / Y + (\frac{n1}{d1}*X)" /></a>|<a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d1}*X)&space;/&space;Y&space;&plus;&space;(\frac{n2}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d1}*X)&space;/&space;Y&space;&plus;&space;(\frac{n2}{d1}*X)" title="(\frac{n1}{d1}*X) / Y + (\frac{n2}{d1}*X)" /></a>
-Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n2}{d1}*Y)&space;/&space;(\frac{n1}{d1}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n2}{d1}*Y)&space;/&space;(\frac{n1}{d1}*Y)" title="X + (\frac{n2}{d1}*Y) / (\frac{n1}{d1}*Y)" /></a>|<a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{1}{d2}*X)&space;/&space;(\frac{1}{d2}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{1}{d2}*X)&space;/&space;(\frac{1}{d2}*Y)" title="(\frac{1}{d2}*X) / (\frac{1}{d2}*Y)" /></a>
+Split|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n1}{d}*Y)&space;/&space;Y&space;&plus;&space;(\frac{n1}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n1}{d}*Y)&space;/&space;Y&space;&plus;&space;(\frac{n1}{d}*X)" title="X + (\frac{n1}{d}*Y) / Y + (\frac{n1}{d}*X)" /></a>|<a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d}*X)&space;/&space;Y&space;&plus;&space;(\frac{n2}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d}*X)&space;/&space;Y&space;&plus;&space;(\frac{n2}{d}*X)" title="(\frac{n1}{d}*X) / Y + (\frac{n2}{d}*X)" /></a>
+Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n2}{d}*Y)&space;/&space;(\frac{n1}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n2}{d}*Y)&space;/&space;(\frac{n1}{d}*Y)" title="X + (\frac{n2}{d}*Y) / (\frac{n1}{d}*Y)" /></a>|<a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n3}{d}*X)&space;/&space;(\frac{n3}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n3}{d}*X)&space;/&space;(\frac{n3}{d}*Y)" title="(\frac{n3}{d}*X) / (\frac{n3}{d}*Y)" /></a>
 
-where, 
+**where**, 
  - X & Y are bet amounts by PlayerX and PlayerY respectively.
- - n1,n2,d1,d2 are +ve integers
- - n1<n2
- - n1 + n2 = d1
- - d1>d2
+ - n1,n2,n3,dare +ve integers
+ - n1<n3<n2
+ - n1 + n2 = d
+ - n1,n2,n3 < d
 
 
-**What is Reward Matrix?**
+**How to read Reward Matrix case by case?**
 
-1. If X chooses to SPLIT and Y also chooses to SPLIT, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n1}{d1}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n1}{d1}*Y)" title="X + (\frac{n1}{d1}*Y)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=Y&space;&plus;&space;(\frac{n1}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?Y&space;&plus;&space;(\frac{n1}{d1}*X)" title="Y + (\frac{n1}{d1}*X)" /></a> amount respectively.
-2. If X chooses to SPLIT and Y chooses to STEAL, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d1}*X)" title="(\frac{n1}{d1}*X)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=Y&space;&plus;&space;(\frac{n2}{d1}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?Y&space;&plus;&space;(\frac{n2}{d1}*X)" title="Y + (\frac{n2}{d1}*X)" /></a> amount respectively.
-3. If X chooses to STEAL and Y chooses to SPLIT, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n2}{d1}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n2}{d1}*Y)" title="X + (\frac{n2}{d1}*Y)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d1}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d1}*Y)" title="(\frac{n1}{d1}*Y)" /></a> amount respectively.
-4. If X chooses to STEAL and Y also chooses to STEAL, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{1}{d2}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{1}{d2}*X)" title="(\frac{1}{d2}*X)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{1}{d2}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{1}{d2}*Y)" title="(\frac{1}{d2}*Y)" /></a> amount respectively.
+1. If X chooses to SPLIT and Y also chooses to SPLIT, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n1}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n1}{d}*Y)" title="X + (\frac{n1}{d}*Y)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=Y&space;&plus;&space;(\frac{n1}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?Y&space;&plus;&space;(\frac{n1}{d}*X)" title="Y + (\frac{n1}{d}*X)" /></a> amount respectively.
+2. If X chooses to SPLIT and Y chooses to STEAL, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d}*X)" title="(\frac{n1}{d}*X)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=Y&space;&plus;&space;(\frac{n2}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?Y&space;&plus;&space;(\frac{n2}{d}*X)" title="Y + (\frac{n2}{d}*X)" /></a> amount respectively.
+3. If X chooses to STEAL and Y chooses to SPLIT, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n2}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n2}{d}*Y)" title="X + (\frac{n2}{d}*Y)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d}*Y)" title="(\frac{n1}{d}*Y)" /></a> amount respectively.
+4. If X chooses to STEAL and Y also chooses to STEAL, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n3}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n3}{d}*X)" title="(\frac{n3}{d}*X)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n3}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n3}{d}*Y)" title="(\frac{n3}{d}*Y)" /></a> amount respectively.
 
 
+**How does contract earn?**
+
+1. In case 1 contract losses <a href="http://www.codecogs.com/eqnedit.php?latex=\frac{n1}{d1}(X&plus;Y)" target="_blank"><img src="http://latex.codecogs.com/gif.latex?\frac{n1}{d1}(X&plus;Y)" title="\frac{n1}{d1}(X+Y)" /></a>
+2. In case 2 contract neither wins nor looses.
+3. In case 3 contract neither wins nor looses.
+4. In case 3 contract wins <a href="http://www.codecogs.com/eqnedit.php?latex=(\frac{d-n3}{d})(X&plus;Y)" target="_blank"><img src="http://latex.codecogs.com/gif.latex?(\frac{d-n3}{d})(X&plus;Y)" title="(\frac{d-n3}{d})(X+Y)" /></a>
 
 **GAME PLAY**
 
