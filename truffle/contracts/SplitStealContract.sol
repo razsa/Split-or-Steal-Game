@@ -159,7 +159,7 @@ contract SplitStealContract is owned, priced {
                 currentGame.notPlayedPlayers.push(currentGame.players[index]);
             }
         }
-
+    
         address[2][] memory matches;
         uint[2][] memory bets;
 
@@ -181,27 +181,27 @@ contract SplitStealContract is owned, priced {
             if ( bets[0][index] == SPLIT && bets[1][index] == SPLIT ) {
                 //GameOwner has to give back betAmounts along with reward to both players
                 //Both players won
-                uint256 reward = calculateReward(currentGame.bets[matches[0][index]].betAmount, currentGame.bets[matches[1][index]].betAmount);
+                uint256 reward = calculateReward(currentGame.bets[matches[index][0]].betAmount, currentGame.bets[matches[index][1]].betAmount);
                 uint256 playerReward = reward / 2;
-                ethTransfer(matches[0][index], playerReward);
-                ethTransfer(matches[1][index], playerReward);
+                ethTransfer(matches[index][0], playerReward);
+                ethTransfer(matches[index][1], playerReward);
                 continue;
             }
-            if( bets[0][index] == SPLIT && bets[1][index] == STEAL ) {
-                //matches[1][index] won and will get it's betAmount along with matches[0][index]'s betAmount
-                uint256 loosersBetAmount = currentGame.bets[matches[0][index]].betAmount;
-                uint256 winnersBetAmount = currentGame.bets[matches[1][index]].betAmount;
-                ethTransfer(matches[1][index], loosersBetAmount + winnersBetAmount);
+            if( bets[index][0] == SPLIT && bets[index][1] == STEAL ) {
+                //matches[index][1] won and will get it's betAmount along with matches[index][0]'s betAmount
+                uint256 loosersBetAmount = currentGame.bets[matches[index][0]].betAmount;
+                uint256 winnersBetAmount = currentGame.bets[matches[index][1]].betAmount;
+                ethTransfer(matches[index][1], loosersBetAmount + winnersBetAmount);
                 continue;
             }
-            if( bets[0][index] == STEAL && bets[1][index] == SPLIT ) {
-                //matches[0][index] won and will get it's betAmount along with matches[1][index]'s betAmount
-                loosersBetAmount = currentGame.bets[matches[1][index]].betAmount;
-                winnersBetAmount = currentGame.bets[matches[0][index]].betAmount;
-                ethTransfer(matches[0][index], loosersBetAmount + winnersBetAmount);
+            if( bets[index][0] == STEAL && bets[index][1] == SPLIT ) {
+                //matches[index][0] won and will get it's betAmount along with matches[index][1]'s betAmount
+                loosersBetAmount = currentGame.bets[matches[index][1]].betAmount;
+                winnersBetAmount = currentGame.bets[matches[index][0]].betAmount;
+                ethTransfer(matches[index][0], loosersBetAmount + winnersBetAmount);
                 continue;
             }
-            if( bets[0][index] == STEAL && bets[1][index] == STEAL ) {
+            if( bets[index][0] == STEAL && bets[index][1] == STEAL ) {
                 //GameOwner has alrady collected there betAmounts
                 //Both player loose
                 continue;
