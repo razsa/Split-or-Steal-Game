@@ -16,4 +16,5 @@ filter.watch((err, res) => {
     console.log(web3.toUtf8(res.args._player));
     //...
 }
-//Keep in mind you also need to change your Solidity code so that the _player variable contains the indexed keyword if you want to also be able to listen to a specific variable being emitted with the event.
+//Keep in mind you also need to change your Solidity code so that the _player variable contains the indexed keyword
+// if you want to also be able to listen to a specific variable being emitted with the event

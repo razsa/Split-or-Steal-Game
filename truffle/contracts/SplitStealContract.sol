@@ -37,7 +37,7 @@ contract SplitStealContract is owned, priced {
     event PlayStarted(uint256 _time_open_for);
     event Played(address _player, uint choice, uint256 _betAmount);
     event PlayStopped();
-    event GameFished(address[2][] _matches, uint256[2][] _bets);
+    event GameFinished(address[2][] _matches, uint256[2][] _bets);
     event Transferred(address _from, address _to, uint256 _amount);
     
     //BET Struct
@@ -54,6 +54,9 @@ contract SplitStealContract is owned, priced {
         mapping(address=>bool) registered;
         mapping(address=>bool) played;
         mapping(address=>Bet) bets;
+        address[2][] matches;
+        uint[2][] pairedBets;
+
     }
 
     Game currentGame;
@@ -82,7 +85,7 @@ contract SplitStealContract is owned, priced {
         require(lastGameFinished);
         lastGameFinished = false;
         registerationOpen = true;
-        currentGame = Game(new address[](0), new address[](0), new address[](0));
+        currentGame = Game(new address[](0), new address[](0), new address[](0), new address[2][](0), new uint[2][](0));
         emit RegisterationOpened(30);
     }
 
@@ -114,6 +117,7 @@ contract SplitStealContract is owned, priced {
         owner.transfer(msg.value);
         currentGame.played[msg.sender] = true;
         currentGame.bets[msg.sender] = Bet(_choice, _betAmount);
+        currentGame.finalPlayers.push(msg.sender);
         emit Played(msg.sender, _choice, _betAmount);
     }
 
@@ -152,56 +156,49 @@ contract SplitStealContract is owned, priced {
         require(!revealing);
         revealing = true;
 
-        for ( uint index = 0; index < getPlayerCount(currentGame); index++ ) {
-            if (currentGame.played[currentGame.players[index]]) {
-                currentGame.finalPlayers.push(currentGame.players[index]);
-            } else {
-                currentGame.notPlayedPlayers.push(currentGame.players[index]);
-            }
-        }
-    
-        address[2][] memory matches;
-        uint[2][] memory bets;
-
-        for ( index = 0; index < getFinalPlayerCount(currentGame); index = index + 2) {
+        for ( uint index = 0; index < currentGame.finalPlayers.length; index = index + 2) {
             
-            if(index + 1 < getFinalPlayerCount(currentGame)) {
-                matches[0][index/2] = currentGame.finalPlayers[index];
-                matches[1][index/2] = currentGame.finalPlayers[index+1];
-                bets[0][index/2] = currentGame.bets[currentGame.finalPlayers[index]].choice;
-                bets[1][index/2] = currentGame.bets[currentGame.finalPlayers[index+1]].choice;
+            if( (index + 1) < currentGame.finalPlayers.length) {
+                address player1 = currentGame.finalPlayers[index];
+                address player2 = currentGame.finalPlayers[index + 1];
+                currentGame.matches.push([player1, player2]);
+                currentGame.pairedBets.push([currentGame.bets[player1].choice, currentGame.bets[player2].choice]);
             } else {
                 address playerAddress = currentGame.finalPlayers[index];
                 //ODD Player reward him since player incurred gas to play.
                 ethTransfer(currentGame.finalPlayers[index], REGISTRATION_COST + currentGame.bets[playerAddress].betAmount);
             }  
         }
+        
+        for ( index = 0 ; index < currentGame.pairedBets.length; index++ ) {
 
-        for ( index = 0 ; index < bets.length; index++ ) {
-            if ( bets[0][index] == SPLIT && bets[1][index] == SPLIT ) {
+            player1 = currentGame.matches[index][0];
+            player2 = currentGame.matches[index][1];
+
+            if ( currentGame.pairedBets[0][index] == SPLIT && currentGame.pairedBets[1][index] == SPLIT ) {
                 //GameOwner has to give back betAmounts along with reward to both players
                 //Both players won
-                uint256 reward = calculateReward(currentGame.bets[matches[index][0]].betAmount, currentGame.bets[matches[index][1]].betAmount);
+                uint256 reward = calculateReward(currentGame.bets[player1].betAmount, currentGame.bets[player2].betAmount);
                 uint256 playerReward = reward / 2;
-                ethTransfer(matches[index][0], playerReward);
-                ethTransfer(matches[index][1], playerReward);
+                ethTransfer(player1, playerReward);
+                ethTransfer(player2, playerReward);
                 continue;
             }
-            if( bets[index][0] == SPLIT && bets[index][1] == STEAL ) {
+            if( currentGame.pairedBets[index][0] == SPLIT && currentGame.pairedBets[index][1] == STEAL ) {
                 //matches[index][1] won and will get it's betAmount along with matches[index][0]'s betAmount
-                uint256 loosersBetAmount = currentGame.bets[matches[index][0]].betAmount;
-                uint256 winnersBetAmount = currentGame.bets[matches[index][1]].betAmount;
-                ethTransfer(matches[index][1], loosersBetAmount + winnersBetAmount);
+                uint256 loosersBetAmount = currentGame.bets[player1].betAmount;
+                uint256 winnersBetAmount = currentGame.bets[player2].betAmount;
+                ethTransfer(player2, loosersBetAmount + winnersBetAmount);
                 continue;
             }
-            if( bets[index][0] == STEAL && bets[index][1] == SPLIT ) {
+            if( currentGame.pairedBets[index][0] == STEAL && currentGame.pairedBets[index][1] == SPLIT ) {
                 //matches[index][0] won and will get it's betAmount along with matches[index][1]'s betAmount
-                loosersBetAmount = currentGame.bets[matches[index][1]].betAmount;
-                winnersBetAmount = currentGame.bets[matches[index][0]].betAmount;
-                ethTransfer(matches[index][0], loosersBetAmount + winnersBetAmount);
+                loosersBetAmount = currentGame.bets[player2].betAmount;
+                winnersBetAmount = currentGame.bets[player1].betAmount;
+                ethTransfer(player1, loosersBetAmount + winnersBetAmount);
                 continue;
             }
-            if( bets[index][0] == STEAL && bets[index][1] == STEAL ) {
+            if( currentGame.pairedBets[index][0] == STEAL && currentGame.pairedBets[index][1] == STEAL ) {
                 //GameOwner has alrady collected there betAmounts
                 //Both player loose
                 continue;
@@ -210,8 +207,7 @@ contract SplitStealContract is owned, priced {
 
         lastGameFinished = true;
         revealing = false;
-        emit GameFished(matches, bets);
-
+        emit GameFinished(currentGame.matches, currentGame.pairedBets);
     }
 
 }

@@ -16,7 +16,7 @@ SplitStealContract.deployed().then(function(instance) {
           console.log("event callback ends")
        }
     });
-    return instance.bet(1, web3.toWei(1, "ether"), {from: web3.eth.accounts[5], gas: 3000000, value: web3.toWei(1, "ether")});
+    return instance.bet(1, web3.toWei(1, "ether"), {from: web3.eth.accounts[2], gas: 3000000, value: web3.toWei(1, "ether")});
   }).then(function(result) {
     // If this callback is called, the transaction was successfully processed.
     console.log("Transaction successful!");
