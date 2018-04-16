@@ -86,3 +86,27 @@ Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(
     - If choices do not match, It would be considered that the player has cheated and player will be disqualified.
     - If the opponent is also disqualified both will loose their bet amount, else if oppponent's choice matches, irrespective of choice, opponent takes player's Bet amount. Reward Amount(*R*) is not used.
     - Contract would distribute amount according to above rules and Reward matrix to winners.
+    
+
+**How to run tests**
+
+ - Go to truffle folder
+ ```shell
+ cd truffle
+ ```
+ - Compile
+```shell
+truffle compile
+```
+ - Migrate
+```shell
+truffle migrate --reset
+```
+ - Open truffle console
+```shell
+truffle console
+```
+ - Run Tests
+```shell
+>exec <PATH TO TEST>/TestStartRegistration.js
+```
