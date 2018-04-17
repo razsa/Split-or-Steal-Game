@@ -42,7 +42,7 @@ Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(
 
 **GAME PLAY**
 
-- Game has 6 Phases
+- Game has 5 Phases
 
   - **Registeration & Commit Bets (PLAYER ROUND)**
 
