@@ -1,11 +1,12 @@
-const artifacts = require('../build/contracts/SplitStealContract.json')
+const artifacts = require('../../build/contracts/SplitStealContract.json')
 const contract = require('truffle-contract')
 const SplitStealContract = contract(artifacts);
 SplitStealContract.setProvider(web3.currentProvider);
 
 
 SplitStealContract.deployed().then(function(instance) {
-      const filter = instance.PlayStopped({
+
+    const filter = instance.RegisterationClosed({
       fromBlock: 0, 
       toBlock: 'latest'
     });
@@ -21,7 +22,7 @@ SplitStealContract.deployed().then(function(instance) {
 
     //TODO : MODIFY THE FOLLOWING ADDRESS ACCORDING TO YOUR SETUP
     var owner = "0x627306090abaB3A6e1400e9345bC60c78a8BEf57";
-    return instance.stopPlay({from: owner});
+    return instance.stopRegisteration({from: owner, gas: 3000000});
   }).then(function(result) {
     // If this callback is called, the transaction was successfully processed.
     console.log("Transaction successful!");

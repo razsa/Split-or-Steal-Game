@@ -1,23 +1,25 @@
-const artifacts = require('../build/contracts/SplitStealContract.json')
+const artifacts = require('../../build/contracts/SplitStealContract.json')
 const contract = require('truffle-contract')
 const SplitStealContract = contract(artifacts);
 SplitStealContract.setProvider(web3.currentProvider);
 
+
 SplitStealContract.deployed().then(function(instance) {
-    const filter = instance.Registered({
+    const filter = instance.Disqualified({
         fromBlock: 0, 
         toBlock: 'latest'
     });
     filter.watch((error, result) => {
-       if(error) {
+      if(error) {
           console.log("Failed watching event")
-       } else {
+      } else {
           console.log("event callback starts")
           console.log(result.args);
           console.log("event callback ends")
-       }
+      }
     });
-    return instance.register({from: web3.eth.accounts[2], gas: 3000000, value: web3.toWei(0.05, "ether")});
+    var gameNumber = 1; //1 based index not 0 based
+    return instance.claimReward(gameNumber, {from: web3.eth.accounts[3], gas: 3000000});
   }).then(function(result) {
     // If this callback is called, the transaction was successfully processed.
     console.log("Transaction successful!");
