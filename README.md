@@ -87,6 +87,29 @@ Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(
 
 **How to run tests**
 
+*Prerequisite*
+
+Download and run [Ganache](http://truffleframework.com/ganache/)
+
+
+**USING REMIX**
+
+
+ - Open [remix(v0.4.21)](http://remix.ethereum.org/#optimize=false&version=soljson-v0.4.21+commit.dfe3193c.js)
+ - Copy Paste [contract](https://github.fkinternal.com/raw/Flipkart/Split-or-Steal-Game/master/truffle/contracts/SplitStealContract.sol?token=AAAIJnbD-c_quCN6andhH_HoMyXFXoYUks5a30O3wA%3D%3D) in remix IDE
+ - Go to *Run* tab and in *Environment* select *Web3 Provider*
+ - Provide endpoint as http://localhost:7545 (That's where Ganache is running)
+ - In *Run* tab under *Accounts* you should see a lot of accounts with some ether.
+ - Select any account and hit **Create** at bottom.
+ - Now you should see all the methods listed.
+ - Just go ahead and play the game by hitting appropriate method in game play.
+ - Do not forget to mention *Value* in wei/ether while hitting a payble contract method.
+ 
+
+
+**USING Truffle**
+
+
  - Go to truffle folder
  ```shell
  cd truffle
