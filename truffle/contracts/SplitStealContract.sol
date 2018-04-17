@@ -3,6 +3,7 @@ pragma solidity ^0.4.21;
 //TODO : Max Amount Bet.
 //TODO : Handle suspended users for all methods.
 //TODO : Store Games in a Map instead of array. See if that has any advantages.
+//TODO : Upgrade syntax to 0.4.22 for constructor warning
 
 contract owned {
     
