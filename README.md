@@ -1,6 +1,8 @@
 # Split-or-Steal-Game
 DAPP Game on ethereum blockchain
 
+![DAPP Game on ethereum blockchain](https://i.imgur.com/4PGAx0o.jpg)
+
 **What is the game?**
 
 It is a two player game(X, Y) where each player is asked to bet some amount(X, Y) to play the game.
