@@ -12,6 +12,15 @@ function leftpad (str, len, ch) {
   return str;
 }
 
+function hash(arg) {
+  if (typeof arg === 'number') {
+    if (arg < 0) {
+      return leftPad((arg >>> 0).toString(16), 64, 'F');
+    }
+    return leftPad((arg).toString(16), 64, 0);
+  }
+}
+
 //Let choice be 9
 var choice = 0;
 
