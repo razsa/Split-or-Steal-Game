@@ -1,7 +1,7 @@
 # Split-or-Steal-Game
 DAPP Game on ethereum blockchain
 
-![DAPP Game on ethereum blockchain](https://i.imgur.com/4PGAx0o.jpg)
+![DAPP Game on ethereum blockchain](https://imgur.com/LM0iDsb.jpg)
 
 **What is the game?**
 
