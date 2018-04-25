@@ -93,24 +93,26 @@ contract SplitStealContract is owned, priced {
     }   
 
     // UTILITY METHODS STARTS
-
-    function getContractBalance() public view returns(uint256 _balance) {
-        return address(this).balance;
-    }
-
-    function changeOwner(address _to) public onlyOwner {
-        owner = _to;
-    }
-
     function isEven(uint num) private pure returns(bool _isEven) {
         uint halfNum = num / 2;
         return (halfNum * 2) == num;
     }
+    // UTILITY METHODS END
 
-    function getTotalGames() public view returns(uint _size) {
-        return games.length;
+    // ADMIN METHODS START
+    function changeOwner(address _to) public onlyOwner {
+        owner = _to;
+    }
+
+    function transferBalanceToOwner() public onlyOwner {
+        transferToOwner(address(this).balance);
     }
     
+    function transferToOwner(uint256 amountInWei) public onlyOwner {
+        require(address(this).balance >= amountInWei);
+        owner.transfer(amountInWei);
+    }
+
     function suspend(address _player) public onlyOwner returns(bool _suspended){
         require(!suspended[_player]);
         suspended[_player] = true;
@@ -125,34 +127,10 @@ contract SplitStealContract is owned, priced {
         return true;
     }
 
-    function getOpponent(uint gameNumber) public view returns(address _opponent) {
-        return games[gameNumber-1].pairs[msg.sender];
-    }
-
-    function getOddPlayerBonusPercent() public view returns(uint256 _oddPlayerBonusPercentage) {
-        return ODD_PLAYER_BONUS_PERCENT;
-    }
-
     function setOddPlayerBonusPercent(uint256 _percentage) public onlyOwner {
         uint256 oldPercentage = ODD_PLAYER_BONUS_PERCENT;
         ODD_PLAYER_BONUS_PERCENT = _percentage;
         emit NewOddPlayerBonus(oldPercentage, _percentage);
-    }
-
-    function getN1() public view returns(uint _n1){
-        return N1;
-    }
-
-    function getN2() public view returns(uint _n2){
-        return N2;
-    }
-
-    function getN3() public view returns(uint _n3){
-        return N3;
-    }
-
-    function getD() public view returns(uint _d){
-        return D;
     }
 
     function setRewardMatrix(uint _n1, uint _n2, uint _n3, uint _d) public onlyOwner {
@@ -162,11 +140,45 @@ contract SplitStealContract is owned, priced {
         D = _d;
         emit NewRewardMatrix(N1, N2, N3, D);
     }
+    //ADMIN METHODS STOP
 
-    // UTILITY METHODS STOPS
+    //VIEW APIs STARTS
+
+    function getOwner() public view returns(address _owner) {
+        return owner;
+    }
+
+    function getContractBalance() public view returns(uint256 _balance) {
+        return address(this).balance;
+    }
+
+    function getRewardMatrix() public view returns(uint _n1, uint _n2, uint _n3, uint _d, uint _oddPlayerBonusPercentage) {
+        return (N1, N2, N3, D, ODD_PLAYER_BONUS_PERCENT);
+    }
+
+    function getGameState() public view returns(uint256 _gameNumber, bool _registerationOpen, bool _playStarted, bool _revealing, bool _lastGameFinished, uint256 _totalPlayers) {
+        uint totalPlayers = 0;
+        if (games.length > 0) {
+            totalPlayers = games[games.length-1].players.length;
+        }
+        return (games.length, registerationOpen, playStarted, revealing, lastGameFinished, totalPlayers);
+    }
+
+    function getPlayerState(uint gameNumber) public view returns(bool _suspended, bool _registered, bool _played, bool _revealed, bool _disqualified, bool _claimedReward,  address _opponent, uint256 _betAmount, uint256 _opponentBetAmount) {
+        require(games.length >= gameNumber);
+        uint index = gameNumber - 1;
+        address player = msg.sender;
+        address opponent = games[index].pairs[player];
+        uint256 betAmount = games[index].bets[player].betAmount;
+        uint256 opponentBetAmount = 0;
+        if (opponent != address(0)) {
+            opponentBetAmount = games[index].bets[opponent].betAmount;
+        }
+        return (suspended[player], games[index].registered[player], games[index].played[player], games[index].revealed[player], games[index].disqualified[player], games[index].claimedReward[player], opponent, betAmount, opponentBetAmount );
+    }
+    //VIEW APIs ENDS
 
     //GAME PLAY STARTS
-
     function startRegistration() public onlyOwner {
         require(!playStarted);
         require(!registerationOpen);
@@ -260,7 +272,6 @@ contract SplitStealContract is owned, priced {
 
 
     //REWARD WITHDRAW STARTS
-
     function ethTransfer(uint gameNumber, address _to, uint256 _amount) private {
         require(!suspended[_to]);
         require(_amount > 0);

@@ -1,7 +1,7 @@
-const artifacts = require("../build/contracts/SplitStealContract.json");
+const artifacts = require("../build/contracts/HashContract.json");
 const contract = require("truffle-contract");
-const SplitStealContract = contract(artifacts);
-SplitStealContract.setProvider(web3.currentProvider);
+const HashContract = contract(artifacts);
+HashContract.setProvider(web3.currentProvider);
 //You will have to pad zeroes on the left until it is 256 bits, so 16 hex values
 //Works for +ve numbers
 function leftpad(str, len, ch) {
@@ -24,23 +24,21 @@ function hash(arg) {
   }
 }
 
-SplitStealContract.deployed()
+HashContract.deployed()
   .then(function(instance) {
     var choice = 10;
-
     //That's how you calculate web3.sha3 from DApp and send to Smart contract
     console.log(
       web3.sha3(leftpad(choice.toString().toString(16), 64, 0), {
         encoding: "hex"
       })
     );
-
-    return instance.getGameState.call();
+    return instance.hash(10);
   })
   .then(function(result) {
     // If this callback is called, the transaction was successfully processed.
     console.log("Transaction successful!");
-    console.log(result[0].toNumber());
+    console.log(result);
   })
   .catch(function(e) {
     // There was an error! Handle it.
