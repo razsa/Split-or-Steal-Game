@@ -4,7 +4,7 @@ module.exports = {
   networks: {
     development: {
       host: "127.0.0.1",
-      port: 7545, // GANACHE default port. Download link : http://truffleframework.com/ganache/
+      port: 8545, // GANACHE default port. Download link : http://truffleframework.com/ganache/
       network_id: "*" // Match any network id
     }
   }

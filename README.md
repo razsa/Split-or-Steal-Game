@@ -6,41 +6,37 @@ DAPP Game on ethereum blockchain
 **What is the game?**
 
 It is a two player game(X, Y) where each player is asked to bet some amount(X, Y) to play the game.
-Both the player know the amount each one of them has bet.
 
 Based on X and Y, Smart contract would generate a Reward Matrix based on which game will be played.
 
 As of now Parameterised Reward Matrix function is as follows,
 
-**R(X,Y,n1,n2,n3,d)** =>
+**R(X,Y,k)** =>
 
 (X/Y)|Split|Steal
 :---: | :---: | :---:
-Split|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n1}{d}*Y)&space;/&space;Y&space;&plus;&space;(\frac{n1}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n1}{d}*Y)&space;/&space;Y&space;&plus;&space;(\frac{n1}{d}*X)" title="X + (\frac{n1}{d}*Y) / Y + (\frac{n1}{d}*X)" /></a>|<a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d}*X)&space;/&space;Y&space;&plus;&space;(\frac{n2}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d}*X)&space;/&space;Y&space;&plus;&space;(\frac{n2}{d}*X)" title="(\frac{n1}{d}*X) / Y + (\frac{n2}{d}*X)" /></a>
-Steal|<a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n2}{d}*Y)&space;/&space;(\frac{n1}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n2}{d}*Y)&space;/&space;(\frac{n1}{d}*Y)" title="X + (\frac{n2}{d}*Y) / (\frac{n1}{d}*Y)" /></a>|<a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n3}{d}*X)&space;/&space;(\frac{n3}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n3}{d}*X)&space;/&space;(\frac{n3}{d}*Y)" title="(\frac{n3}{d}*X) / (\frac{n3}{d}*Y)" /></a>
+Split|(X+Y)/2|0 \ ((100+K)*Y)/100
+Steal|((100+K)*X)/100 \ 0|Max(0, X-Y)
 
 **where**, 
  - X & Y are bet amounts by PlayerX and PlayerY respectively.
- - n1,n2,n3,d are +ve integers
- - n1<n3<n2
- - n1 + n2 = d
- - n1,n2,n3 < d
+ - K > 0
+
 
 
 **How to read Reward Matrix case by case?**
 
-1. If X chooses to SPLIT and Y also chooses to SPLIT, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n1}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n1}{d}*Y)" title="X + (\frac{n1}{d}*Y)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=Y&space;&plus;&space;(\frac{n1}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?Y&space;&plus;&space;(\frac{n1}{d}*X)" title="Y + (\frac{n1}{d}*X)" /></a> amount respectively.
-2. If X chooses to SPLIT and Y chooses to STEAL, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d}*X)" title="(\frac{n1}{d}*X)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=Y&space;&plus;&space;(\frac{n2}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?Y&space;&plus;&space;(\frac{n2}{d}*X)" title="Y + (\frac{n2}{d}*X)" /></a> amount respectively.
-3. If X chooses to STEAL and Y chooses to SPLIT, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=X&space;&plus;&space;(\frac{n2}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?X&space;&plus;&space;(\frac{n2}{d}*Y)" title="X + (\frac{n2}{d}*Y)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d}*Y)" title="(\frac{n1}{d}*Y)" /></a> amount respectively.
-4. If X chooses to STEAL and Y also chooses to STEAL, then they win <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n3}{d}*X)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n3}{d}*X)" title="(\frac{n3}{d}*X)" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n3}{d}*Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n3}{d}*Y)" title="(\frac{n3}{d}*Y)" /></a> amount respectively.
+1. If X chooses to SPLIT and Y also chooses to SPLIT, then they win (X+Y)/ 2 each, thus player betting lower wins.
+2. If X chooses to SPLIT and Y chooses to STEAL, then Y gains K % of Y and X gets 0, thus the higher you bet higher you win.
+3. If X chooses to STEAL and Y chooses to SPLIT, then X gains K % of X and Y gets 0, thus the higher you bet higher you win.
+4. If X chooses to STEAL and Y also chooses to STEAL, then they win Max(0, X-Y), thus player betting higher gets some part back.
 
 
 **How does contract earn?**
 
-1. In case 1 contract losses <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{n1}{d})(X&plus;Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{n1}{d})(X&plus;Y)" title="(\frac{n1}{d})(X+Y)" /></a>
-2. In case 2 contract neither wins nor looses.
-3. In case 3 contract neither wins nor looses.
-4. In case 3 contract wins <a href="https://www.codecogs.com/eqnedit.php?latex=(\frac{d-n3}{d})(X&plus;Y)" target="_blank"><img src="https://latex.codecogs.com/png.latex?(\frac{d-n3}{d})(X&plus;Y)" title="(\frac{d-n3}{d})(X+Y)" /></a>
+1. In case 1 contract neither wins nor looses.
+2. In case 2 & 3 contract wins based on who won the game and how much did the winner bet in comparision to looser.
+4. In case 4 contract wins 2 time Y where Y is the lower bet.
 
 **GAME PLAY**
 
