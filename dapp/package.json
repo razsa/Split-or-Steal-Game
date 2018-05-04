@@ -21,5 +21,5 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://github.fkinternal.com/pages/Flipkart/Split-or-Steal-Game/"
+  "homepage": "https://showmeyourcode.github.io/Split-or-Steal-Game/"
 }
