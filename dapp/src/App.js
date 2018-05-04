@@ -1279,7 +1279,7 @@ class App extends Component {
 }
 
 const FinalApp = () => (
-  <Router basename="Split-or-Steal-Game">
+  <Router>
     <div>
       <Route exact path={process.env.PUBLIC_URL + "/"} component={App} />
       <Route exact path={process.env.PUBLIC_URL + "/about"} component={About} />
