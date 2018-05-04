@@ -4,10 +4,312 @@ import "./App.css";
 import Web3 from "web3";
 import abi from "./ContractABI.json";
 import AutosizeInput from "react-input-autosize";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 //TODO : ETHEREUM_CLIENT usage , can be scoped to file instead of App
 //TODO : NO SHOW WHO You are paired other wise people can exploit it
 //TODO : CssTransitionGroup Animation
+
+class About extends Component {
+  render() {
+    return (
+      <p>
+        <div class="App-about">
+          <p>
+            <br />
+            <b>What is the game?</b>
+            <br />
+            <br /> It is a two player game(X, Y) where each player is asked to
+            bet some amount(X, Y) to play the game. <br /> Based on X and Y,
+            Smart contract would generate a Reward Matrix, on which game will be
+            played.
+          </p>
+        </div>
+        <div class="App-about">
+          <br />
+          <b>What is the Reward Matrix?</b>
+          <br />
+          <br />
+          <b>R(X,Y,K,B)</b> => <br />
+          <table class="App-table">
+            <tr>
+              <th>(X\Y)</th>
+              <th>Split</th>
+              <th>Steal</th>
+              <th>Disqualified</th>
+              <th>No Opponent</th>
+            </tr>
+            <tr>
+              <td>
+                <b>Split</b>
+              </td>
+              <td>(X+Y)/2</td>
+              <td>0 \ ((100+K)*Y)/100 </td>
+              <td>((100+K)*X)/100 \ 0</td>
+              <td>((100+B)*X)/100 \ 0</td>
+            </tr>
+            <tr>
+              <td>
+                <b>Steal</b>
+              </td>
+              <td>((100+K)*X)/100 \ 0</td>
+              <td>Max(0,X-Y)</td>
+              <td>((100+K)*X)/100 \ 0</td>
+              <td>((100+B)*X)/100 \ 0</td>
+            </tr>
+            <tr>
+              <td>
+                <b>Disqualified</b>
+              </td>
+              <td>0 \ ((100+K)*Y)/100 </td>
+              <td>0 \ ((100+K)*Y)/100 </td>
+              <td>0 \ 0</td>
+              <td>0 \ 0</td>
+            </tr>
+            <tr>
+              <td>
+                <b>No Opponent</b>
+              </td>
+              <td>0 \ ((100+B)*Y)/100 </td>
+              <td>0 \ ((100+B)*Y)/100 </td>
+              <td>0 \ 0</td>
+              <td>0 \ 0</td>
+            </tr>
+          </table>
+          <br />
+          <b>where</b>,
+          <ul class="App-list">
+            <li> X & Y are bet amounts by PlayerX and PlayerY respectively</li>
+            <li>K > 0</li>
+            <li>B > 0</li>
+          </ul>
+        </div>
+        <div class="App-about">
+          <p>
+            <br />
+            <b>How to read Reward Matrix case by case?</b>
+            <br />
+            <br />
+            <div class="Center">
+              <ol class="App-list">
+                <li>
+                  If X chooses to SPLIT and Y also chooses to SPLIT, then they
+                  win (X+Y)/ 2 each, thus player betting lower wins.
+                </li>
+                <li>
+                  {" "}
+                  If X chooses to SPLIT and Y chooses to STEAL, then Y gains K %
+                  of Y and X gets 0, thus the higher you bet higher you win.
+                </li>
+                <li>
+                  {" "}
+                  If X chooses to STEAL and Y chooses to SPLIT, then X gains K %
+                  of X and Y gets 0, thus the higher you bet higher you win.
+                </li>
+                <li>
+                  If X chooses to STEAL and Y also chooses to STEAL, then they
+                  win Max(0, X-Y), thus player betting higher gets some part
+                  back.
+                </li>
+
+                <li>
+                  If a player's opponent gets disqualified and the player not,
+                  then player gains K % of player's bet.
+                </li>
+
+                <li>
+                  If both players get disqualified, both loose complete bet.
+                </li>
+
+                <li>
+                  If a player remains odd one out, i.e. is not paired with any
+                  one, that player gains B % of player's bet.
+                  <ul>
+                    <li>This can happen if total players who bet are odd.</li>
+                  </ul>
+                </li>
+              </ol>
+            </div>
+            <br />
+          </p>
+        </div>
+        <div class="App-about">
+          <br />
+          <b>How does contract earn?</b>
+          <br />
+          <br />
+          <div class="Center">
+            <ol class="App-list">
+              <li>
+                If both players choose to split, contract neither wins nor
+                looses.
+              </li>
+              <li>
+                {" "}
+                If one player chooses split and other steal, contract
+                wins/looses based on how much did the winner bet in comparision
+                to looser.
+              </li>
+              <li>
+                {" "}
+                If both players choose to steal, contract wins 2 times Y where Y
+                is the lower bet.
+              </li>
+            </ol>
+          </div>
+          <br />
+        </div>
+        <div class="App-about">
+          <br />
+          <b>GAME PLAY</b>
+          <br />
+          <br />
+          Game has 4 Phases
+          <ol class="App-list">
+            <li>
+              <b>Registeration & Commit Bets</b>
+              <ul class="App-list">
+                <li>
+                  This phase would be opened by contract owner for a fixed
+                  amount of time. (START){" "}
+                </li>
+                <li>
+                  {" "}
+                  An event will be fired when Registration starts.(EVENT){" "}
+                </li>
+                <li>
+                  {" "}
+                  Players will submit their bet amounts in the given time.
+                  **(THIS WOULD COST GAS)**{" "}
+                </li>
+                <li>
+                  {" "}
+                  Player will be also be dynamically grouped in a pair of 2 as
+                  they are submitting the bets.{" "}
+                </li>
+                <li>
+                  {" "}
+                  An event will be fired when two players are paired with each
+                  other.
+                </li>
+                <li>
+                  {" "}
+                  Only player who could successfully submit bets in the given
+                  time, will be eligible to play the game.{" "}
+                </li>
+                <li>
+                  {" "}
+                  Once this phase is marked over by contract owner no more bets
+                  will be accepted. (STOP){" "}
+                </li>
+                <li>
+                  {" "}
+                  An event will be fired when registration closes. (EVENT)
+                </li>
+              </ul>
+            </li>
+            <br />
+            <li>
+              <b>Submit encrypted *steal* or *split* choice</b>
+              <ul class="App-list">
+                <li>
+                  {" "}
+                  This phase would be opened by contract owner for a fixed
+                  amount of time. (START){" "}
+                </li>
+                <li>
+                  {" "}
+                  An event will be fired when Registration starts.(EVENT){" "}
+                </li>
+                <li>
+                  Player will submit encrypted choices. **(THIS WOULD COST
+                  GAS)**{" "}
+                </li>
+                <ul>
+                  <li>Encryption is done by DApp.</li>
+                  <li>
+                    Players simply need to choose any <b>ODD</b> number for{" "}
+                    <b>SPLIT</b> or any <b>EVEN</b> number for <b>STEAL</b>
+                  </li>
+                </ul>
+                <li>
+                  {" "}
+                  Once this phase is marked over by contract owner no more
+                  encrypted choice submissions will be accepted. (STOP){" "}
+                </li>
+                <li>
+                  {" "}
+                  An event will be fired when encrypted choice submission ends.
+                  (EVENT)
+                </li>
+              </ul>
+            </li>
+            <br />
+            <li>
+              <b>Reveal choice </b>
+              <ul class="App-list">
+                <li>
+                  This phase would be opened by contract owner for fixed amount
+                  of time. (START)(EVENT){" "}
+                </li>
+                <li>
+                  {" "}
+                  Player will submit unencrypted choice
+                  <ul>
+                    <li>
+                      i.e. the number (even or odd) they actually chose in
+                      previous round. **(THIS WOULD COST GAS)**
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  {" "}
+                  Contract would evaluate the encryption of the choice and
+                  compare with previously submitted choice.{" "}
+                </li>
+                <li>
+                  {" "}
+                  If Both do not match, player will be marked disqualified for
+                  that game and an event will be fired.(EVENT){" "}
+                </li>
+                <li>
+                  {" "}
+                  Once this phase is marked over by contract owner no more
+                  unencrypted choice submissions will be accepted. (STOP){" "}
+                </li>
+                <li>
+                  {" "}
+                  An event will be fired when Reveal Choice Submission ends.
+                  (EVENT)
+                </li>
+              </ul>
+            </li>
+            <br />
+            <li>
+              <b>Claim Reward Winners </b>
+              <ol>
+                <li>
+                  This phase would be opened by contract owner. (START)(EVENT)
+                </li>
+                <li>
+                  {" "}
+                  Contract would check player claiming reward for certain
+                  conditions including disqualified.{" "}
+                </li>
+                <li>
+                  {" "}
+                  Only if player passes all the conditions, player will receive
+                  his reward as per reward matrix.
+                </li>
+              </ol>
+            </li>
+          </ol>
+        </div>
+      </p>
+    );
+  }
+}
+
 class MyHeader extends Component {
   render() {
     let {
@@ -62,7 +364,8 @@ class MyHeader extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/master/README.md"
+                href="/about"
+                // href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/master/README.md"
               >
                 <b>How to play this game ?</b>
               </a>
@@ -72,6 +375,10 @@ class MyHeader extends Component {
               {"                      "}
               <b>{warning}</b>
             </div>
+            <div style={{ paddingTop: "10px" }}>
+              {/* <b>Reward Factor(K) is {K}</b> */}
+              {/* <b>Odd Player Bonus Percentage is {oddPlayerBonusPercentage}</b> */}
+            </div>
           </div>
         )}
       </header>
@@ -79,7 +386,7 @@ class MyHeader extends Component {
   }
 }
 
-export default class App extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -970,3 +1277,14 @@ export default class App extends Component {
     );
   };
 }
+
+const FinalApp = () => (
+  <Router>
+    <div>
+      <Route exact path="/" component={App} />
+      <Route path="/about" component={About} />
+    </div>
+  </Router>
+);
+
+export default FinalApp;

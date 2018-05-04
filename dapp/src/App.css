@@ -20,11 +20,49 @@
 .App-info {
   border-radius: 25px;
   background-color: rgba(6, 236, 186, 0.363);
-  height: 30px;
+  height: fit-content;
   padding: 20px;
   font-family: Georgia, "Times New Roman", Times, serif;
   font-style: bold;
   float: center;
+}
+
+.App-about {
+  height: fit-content;
+  width: fit-content;
+  border-radius: 25px;
+  background-color: rgba(175, 174, 238, 0.397);
+  height: fit-content;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: bold;
+  margin-top: 10px;
+  float: center;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.App-table {
+  background-color: rgba(236, 6, 75, 0.363);
+  height: fit-content;
+  width: fit-content;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: bold;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  float: center;
+  text-align: center;
+}
+
+.Center {
+  align-items: center;
+}
+
+.App-list {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
 }
 
 .App-title {
@@ -175,4 +213,18 @@
 
 .bottomMargin {
   margin-bottom: 10px;
+}
+table {
+  border-collapse: collapse;
+  border: solid black 1px;
+}
+
+td,
+th {
+  border-left: solid black 1px;
+  border-top: solid black 1px;
+}
+
+th {
+  border-top: none;
 }
