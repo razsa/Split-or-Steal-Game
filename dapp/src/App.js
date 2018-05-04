@@ -364,7 +364,7 @@ class MyHeader extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="/about"
+                href="/Split-or-Steal-Game/about"
                 // href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/master/README.md"
               >
                 <b>How to play this game ?</b>
