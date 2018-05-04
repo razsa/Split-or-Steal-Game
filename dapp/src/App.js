@@ -1281,8 +1281,8 @@ class App extends Component {
 const FinalApp = () => (
   <Router>
     <div>
-      <Route exact path="/" component={App} />
-      <Route path="/about" component={About} />
+      <Route exact path={process.env.PUBLIC_URL + "/"} component={App} />
+      <Route exact path={process.env.PUBLIC_URL + "/about"} component={About} />
     </div>
   </Router>
 );
