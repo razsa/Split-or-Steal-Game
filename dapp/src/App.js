@@ -56,22 +56,24 @@ class MyHeader extends Component {
 
         {coins}
 
-        <div class="App-info">
-          <div style={{ paddingTop: "0px" }}>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/master/README.md"
-            >
-              <b>How to play this game ?</b>
-            </a>
+        {!metamaskInstalled || noAccountsInMetamask ? null : (
+          <div class="App-info">
+            <div style={{ paddingTop: "0px" }}>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/master/README.md"
+              >
+                <b>How to play this game ?</b>
+              </a>
+            </div>
+            <div style={{ paddingTop: "10px" }}>
+              <b>Contract Balance is {contractBalance}</b>
+              {"                      "}
+              <b>{warning}</b>
+            </div>
           </div>
-          <div style={{ paddingTop: "10px" }}>
-            <b>Contract Balance is {contractBalance}</b>
-            {"                      "}
-            <b>{warning}</b>
-          </div>
-        </div>
+        )}
       </header>
     );
   }
