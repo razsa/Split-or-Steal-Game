@@ -13,20 +13,20 @@ As of now Parameterised Reward Matrix function is as follows,
 
 (X/Y)|Split|Steal
 :---: | :---: | :---:
-Split|(X+Y)/2|0 \ (K*Y)/100
-Steal|(K*X)/100 \ 0|Max(0, X-Y)
+Split|(X+Y)/2|0 \ ((100+K)*Y)/100
+Steal|((100+K)*X)/100 \ 0|Max(0, X-Y)
 
 **where**, 
  - X & Y are bet amounts by PlayerX and PlayerY respectively.
- - K > 100
+ - K > 0
 
 
 
 **How to read Reward Matrix case by case?**
 
 1. If X chooses to SPLIT and Y also chooses to SPLIT, then they win (X+Y)/ 2 each, thus player betting lower wins.
-2. If X chooses to SPLIT and Y chooses to STEAL, then Y wins K % of Y and X gets 0, thus the higher you bet higher you win.
-3. If X chooses to STEAL and Y chooses to SPLIT, then X wins K % of X and Y gets 0, thus the higher you bet higher you win.
+2. If X chooses to SPLIT and Y chooses to STEAL, then Y gains K % of Y and X gets 0, thus the higher you bet higher you win.
+3. If X chooses to STEAL and Y chooses to SPLIT, then X gains K % of X and Y gets 0, thus the higher you bet higher you win.
 4. If X chooses to STEAL and Y also chooses to STEAL, then they win Max(0, X-Y), thus player betting higher gets some part back.
 
 
