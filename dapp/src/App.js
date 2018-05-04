@@ -61,7 +61,7 @@ class MyHeader extends Component {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/development/README.md"
+              href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/master/README.md"
             >
               <b>How to play this game ?</b>
             </a>
