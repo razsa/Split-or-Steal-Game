@@ -4,7 +4,6 @@ DAPP Game on ethereum blockchain
 **What is the game?**
 
 It is a two player game(X, Y) where each player is asked to bet some amount(X, Y) to play the game.
-Both the player know the amount each one of them has bet.
 
 Based on X and Y, Smart contract would generate a Reward Matrix based on which game will be played.
 
