@@ -7,9 +7,15 @@ import AutosizeInput from "react-input-autosize";
 
 //TODO : ETHEREUM_CLIENT usage , can be scoped to file instead of App
 //TODO : NO SHOW WHO You are paired other wise people can exploit it
+//TODO : CssTransitionGroup Animation
 class MyHeader extends Component {
   render() {
-    let { metamaskInstalled, noAccountsInMetamask } = this.props;
+    let {
+      metamaskInstalled,
+      noAccountsInMetamask,
+      contractBalance,
+      warning
+    } = this.props;
     let numberOfCoins = 5;
     let warningMessage = !metamaskInstalled
       ? "Please install"
@@ -49,6 +55,23 @@ class MyHeader extends Component {
         )}
 
         {coins}
+
+        <div class="App-info">
+          <div style={{ paddingTop: "0px" }}>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/development/README.md"
+            >
+              <b>How to play this game ?</b>
+            </a>
+          </div>
+          <div style={{ paddingTop: "10px" }}>
+            <b>Contract Balance is {contractBalance}</b>
+            {"                      "}
+            <b>{warning}</b>
+          </div>
+        </div>
       </header>
     );
   }
@@ -59,6 +82,8 @@ export default class App extends Component {
     super(props);
     this.state = {
       //Global State
+      contractBalance: "being calculated",
+      warning: "",
       contractOwner: null,
       metamaskAccount: null,
       metamaskInstalled: false,
@@ -66,7 +91,11 @@ export default class App extends Component {
       contract: null,
       //Game State Variables
       currentGame: 0,
-      gameState: "No game is live currently.",
+      gameState: "Fetching the latest game state... Please wait",
+      registerationOpen: false,
+      playStarted: false,
+      revealing: false,
+      lastGameFinished: false,
       //Player Variables
       canRegister: false,
       canPlay: false,
@@ -84,19 +113,14 @@ export default class App extends Component {
   componentWillMount = () => {
     if (typeof window.web3 !== "undefined") {
       let client = new Web3(window.web3.currentProvider);
-      let newClient = new Web3(window.web3.currentProvider);
-      console.log(
-        new newClient.eth.Contract(
-          abi,
-          "0xe7f457d41ad107faf0a3622306b0224dd6f97a0e"
-        )
-      );
       this.setState({
         contract: new client.eth.Contract(
-          abi,
-          "0xe7f457d41ad107faf0a3622306b0224dd6f97a0e"
-        )
+          abi["abi"],
+          "0xcf21469f3a96751452c94ab30dfad9b879b58259"
+        ),
+        contractAddress: "0xcf21469f3a96751452c94ab30dfad9b879b58259"
       });
+      //Check if metamask is installed/enabled
       if (
         new Web3(window.web3.currentProvider).currentProvider.isMetaMask ===
         true
@@ -136,18 +160,6 @@ export default class App extends Component {
     }
   };
 
-  //TODO : Use Web Method instead of this one
-  leftpad = (str, len, ch) => {
-    str = String(str);
-    var i = -1;
-    if (!ch && ch !== 0) ch = " ";
-    len = len - str.length;
-    while (++i < len) {
-      str = ch + str;
-    }
-    return str;
-  };
-
   setContractOwner = () => {
     this.state.contract.methods
       .getOwner()
@@ -159,7 +171,7 @@ export default class App extends Component {
         this.setState({
           contractOwner: result
         });
-
+        console.log("Contract Owner : " + result);
         this.registerMetamaskAddressChangeListner();
         this.registerStateListener();
       });
@@ -179,16 +191,21 @@ export default class App extends Component {
         }
         if (this.state.metamaskAccount !== accounts[0]) {
           this.setState({
-            metamaskAccount: accounts[0]
+            metamaskAccount: accounts[0],
+            gameState: "Fetching the latest game state... Please wait",
+            warning: ""
           });
-          window.location.reload();
+          console.log("Metaask Account Changed");
         }
       });
     }, 2000);
   };
 
-  setPlayerState = (stateChange, currentGameState) => {
-    if (this.state.currentGame <= 0) {
+  setPlayerState = currentGameState => {
+    if (currentGameState._gameNumber <= 0) {
+      this.setState({
+        gameState: "No Games have been played yet."
+      });
       return;
     }
     this.state.contract.methods
@@ -200,16 +217,32 @@ export default class App extends Component {
       .then(result => {
         // console.log("PLAYER STATE RESULT");
         // console.log(result);
+
+        // Player State
         let suspended = result._suspended;
         let registered = result._registered;
         let played = result._played;
         let revealed = result._revealed;
         let disqualified = result._disqualified;
         let claimedReward = result._claimedReward;
-        let opponent = result._opponent;
-        let betAmount = result._betAmount;
-        //TODO : REMOVE THIS
-        let opponentBetAmount = result._opponentBetAmount;
+        // let opponent = result._opponent;
+
+        let betAmount =
+          new Web3(window.web3.currentProvider).utils
+            .fromWei(result._betAmount, "ether")
+            .toString() + " ether";
+        let reward =
+          new Web3(window.web3.currentProvider).utils
+            .fromWei(result._reward, "ether")
+            .toString() + " ether";
+
+        // Game State
+        let registerationOpen = currentGameState._registerationOpen;
+        let playStarted = currentGameState._playStarted;
+        let revealing = currentGameState._revealing;
+        let lastGameFinished = currentGameState._lastGameFinished;
+        let gameNumber = parseInt(currentGameState._gameNumber, 10);
+        let totalPlayers = currentGameState._totalPlayers;
 
         if (suspended) {
           this.setState({
@@ -223,7 +256,7 @@ export default class App extends Component {
             gameState: "You are not allowed to play as you are suspended."
           });
         } else if (claimedReward) {
-          console.log("Claimed Reward");
+          console.log("CLAIMED REWARD");
           this.setState({
             canRegister: false,
             canPlay: false,
@@ -233,9 +266,12 @@ export default class App extends Component {
             inputPlaceholder: "Not accepting any bets",
             postInputText: "",
             gameState:
-              stateChange["gameState"] +
               " You have already claimed reward for Game " +
-              this.state.currentGame
+              this.state.currentGame +
+              ". You had bet " +
+              betAmount +
+              " and you won " +
+              reward
           });
         } else if (disqualified) {
           this.setState({
@@ -246,187 +282,139 @@ export default class App extends Component {
             preInputText: "Wait for next game to bet.",
             inputPlaceholder: "Not accepting any bets",
             postInputText: "",
-            gameState: currentGameState._revealing
-              ? " You have been disqualified for Game " +
-                this.state.currentGame +
-                " You had bet " +
-                parseInt(betAmount, 10) +
-                " wei"
-              : stateChange["gameState"] +
-                " You have been disqualified for Game " +
-                this.state.currentGame +
-                " You had bet " +
-                parseInt(betAmount, 10) +
-                " wei"
+            gameState:
+              " You have been disqualified for Game " +
+              this.state.currentGame +
+              ". You had bet " +
+              betAmount
           });
         } else if (revealed) {
           this.setState({
             canRegister: false,
             canPlay: false,
             canReveal: false,
-            canClaimReward: currentGameState._revealing ? false : true,
+            canClaimReward: revealing ? false : true,
             preInputText: "Wait for next game to bet.",
             inputPlaceholder: "Not accepting any bets",
             postInputText: "",
-            gameState: currentGameState._revealing
+            gameState: revealing
               ? "Wait for Game " +
                 this.state.currentGame +
                 " to be finished to claim reward" +
                 " You had bet " +
-                parseInt(betAmount, 10)
+                betAmount
               : "Claim your reward for Game " +
                 this.state.currentGame +
                 " You had bet " +
-                parseInt(betAmount, 10)
+                betAmount
           });
         } else if (played) {
           this.setState({
             canRegister: false,
             canPlay: false,
-            canReveal: currentGameState._playStarted
-              ? false
-              : currentGameState._revealing
-                ? true
-                : false,
+            canReveal: playStarted ? false : revealing ? true : false,
             canClaimReward: false,
-            preInputText:
-              currentGameState._playStarted || currentGameState._revealing
-                ? stateChange["preInputText"]
-                : "Wait for next game to bet.",
-            inputPlaceholder:
-              currentGameState._playStarted || currentGameState._revealing
-                ? stateChange["inputPlaceholder"]
+            preInputText: playStarted
+              ? "Wait for next round."
+              : revealing
+                ? "Enter your previously selected choice.(Split[ODD] or Steal[EVEN]) for Game " +
+                  this.state.currentGame
+                : "Wait for next game to bet",
+            inputPlaceholder: playStarted
+              ? "Not accepting any bets"
+              : revealing
+                ? "Enter Same Choice Again"
                 : "Not accepting any bets",
             postInputText: "",
-            gameState:
-              "Wait for Reveal mode to start for Game " +
-              this.state.currentGame +
-              " to confirm your choice again." +
-              " You had bet " +
-              parseInt(betAmount, 10)
+            gameState: playStarted
+              ? "Wait for Reveal mode to start for Game " +
+                this.state.currentGame +
+                " to confirm your choice again." +
+                " You had bet " +
+                betAmount
+              : revealing
+                ? "Reveal your choice for Game Number " + gameNumber
+                : "You are not eligible to play as you didn't reveal your choice for game " +
+                  this.state.currentGame +
+                  " You had bet " +
+                  betAmount
           });
         } else if (registered) {
           this.setState({
             canRegister: false,
-            canPlay: currentGameState._registerationOpen
-              ? false
-              : !currentGameState._playStarted
-                ? false
-                : true,
+            canPlay: registerationOpen ? false : !playStarted ? false : true,
             canReveal: false,
             canClaimReward: false,
-            preInputText:
-              currentGameState._registerationOpen ||
-              currentGameState._playStarted
-                ? stateChange["preInputText"]
+            preInputText: registerationOpen
+              ? "Wait for next round."
+              : playStarted
+                ? "Enter your choice.(Split[ODD] or Steal[EVEN]) for Game " +
+                  this.state.currentGame
                 : "Wait for next game to bet.",
-            inputPlaceholder:
-              currentGameState._registerationOpen ||
-              currentGameState._playStarted
-                ? stateChange["inputPlaceholder"]
+            inputPlaceholder: registerationOpen
+              ? "Not accepting any bets"
+              : playStarted
+                ? "Enter your choice"
                 : "Not accepting any bets",
             postInputText: "",
-            gameState: currentGameState._registerationOpen
-              ? opponentBetAmount !== "0"
-                ? "Wait for Submit Encrypted Choice to start for Game " +
+            gameState: registerationOpen
+              ? "Wait for Submit Encrypted Choice Round to start for Game " +
+                this.state.currentGame +
+                " You had bet " +
+                betAmount
+              : playStarted
+                ? "Enter your choice(Split[ODD] or Steal[EVEN]) for Game" +
+                  this.state.currentGame
+                : "You are not eligible to play as you didn't enter your choice for game " +
                   this.state.currentGame +
                   " You had bet " +
-                  parseInt(betAmount, 10) +
-                  " You have been paired with " +
-                  opponent
-                : "Wait for Submit Encrypted Choice to start for Game " +
-                  this.state.currentGame +
-                  " You had bet " +
-                  parseInt(betAmount, 10)
-              : currentGameState._playStarted
-                ? opponentBetAmount !== "0"
-                  ? stateChange["gameState"] +
-                    " You have been paired with " +
-                    opponent
-                  : "Wait for game to pair you up with some one !" +
-                    " You had bet " +
-                    parseInt(betAmount, 10)
-                : stateChange["gameState"]
+                  betAmount
           });
         } else {
-          let registerationOpen = currentGameState._registerationOpen;
-          let playStarted = currentGameState._playStarted;
-          let revealing = currentGameState._revealing;
-          let lastGameFinished = currentGameState._lastGameFinished;
-          let gameNumber = parseInt(currentGameState._gameNumber, 10);
-          let totalPlayers = currentGameState._totalPlayers;
           if (registerationOpen) {
             this.setState({
               canRegister: true,
               preInputText: "Place your bet here.",
               inputPlaceholder: "Enter amount to bet.",
               postInputText: "(in ether)",
-              gameState: "Place your Bets for Game Number " + gameNumber,
-              canClaimReward: false //TODO : For now claim reward only just after the game finsihes and befor enext game starts
-            });
-            if (totalPlayers > 0) {
-              this.setState({
-                gameState:
-                  "Place you Bets for Game Number " +
-                  gameNumber +
-                  ". A total of " +
-                  totalPlayers +
-                  " have registered."
-              });
-            }
-          } else if (playStarted) {
-            this.setState({
-              canPlay: true,
-              preInputText: "Enter your choice. (Steal[EVEN], Split[ODD])",
-              inputPlaceholder: "Enter Choice",
-              postInputText: "",
-              gameState: "Enter your choice for Game Number " + gameNumber
-            });
-          } else if (revealing) {
-            this.setState({
-              canReveal: true,
-              preInputText:
-                "Enter your previously selected choice.(Split[ODD] or Steal[EVEN]) for Game " +
-                this.state.currentGame,
-              inputPlaceholder: "Enter Same Choice Again",
-              postInputText: "",
               gameState:
-                "Verify your choice for Game Number " +
+                "Place you Bets for Game Number " +
                 gameNumber +
-                " (Even for STEAL, Odd for SPLIT)"
+                ". A total of " +
+                totalPlayers +
+                " have registered.",
+              canClaimReward: false //TODO : For now claim reward only just after the game finsihes and before next game starts
             });
-          } else if (lastGameFinished) {
+          } else {
             this.setState({
-              canClaimReward: gameNumber === 0 ? false : true,
-              preInputText: "Wait for next game to bet",
+              canRegister: false,
+              canPlay: false,
+              canReveal: false,
+              canClaimReward: false,
+              preInputText: "",
+              inputPlaceholder: "Not accepting any bets",
               postInputText: "",
-              gameState:
-                "No game is live currently. Last Game Number " + gameNumber
+              gameState: "You are late for the game  " + gameNumber
             });
-            if (gameNumber === 0) {
-              this.setState({
-                gameState: "No games have been played yet. Be Ready !"
-              });
-            }
           }
         }
-
-        let registerationOpen = currentGameState._registerationOpen;
-        let playStarted = currentGameState._playStarted;
-        let revealing = currentGameState._revealing;
-        let lastGameFinished = currentGameState._lastGameFinished;
-        let gameNumber = parseInt(currentGameState._gameNumber, 10);
-        let totalPlayers = currentGameState._totalPlayers;
-
         if (lastGameFinished) {
           this.setState({
             canClaimReward:
-              gameNumber === 0 ? false : claimedReward ? false : true,
-            preInputText: "Wait for next game to bet",
-            postInputText: "",
-            gameState:
-              "No game is live currently. Last Game Number " + gameNumber
+              gameNumber === 0
+                ? false
+                : claimedReward
+                  ? false
+                  : revealed
+                    ? true
+                    : false
           });
+          if (!claimedReward) {
+            this.setState({
+              gameState:
+                "No game is live currently. Last Game Number " + gameNumber
+            });
+          }
           if (gameNumber === 0) {
             this.setState({
               gameState: "No games have been played yet. Be Ready !"
@@ -444,75 +432,40 @@ export default class App extends Component {
         gas: Math.floor(Math.random() * 10000000) + 1
       })
       .then(result => {
-        // console.log("GAME STATE RESULT");
-        // console.log(result);
-        let stateChange = {};
-        let currentGameState = result;
-        let registerationOpen = result._registerationOpen;
-        let playStarted = result._playStarted;
-        let revealing = result._revealing;
-        let lastGameFinished = result._lastGameFinished;
-        let gameNumber = parseInt(result._gameNumber, 10);
-        let totalPlayers = result._totalPlayers;
-        //TODO add total player to state and use in UI
+        console.log("GAME STATE RESULT");
+        console.log(result);
 
+        //Set curent Game Number
+        let gameNumber = parseInt(result._gameNumber, 10);
         this.setState({
           currentGame: gameNumber
         });
 
-        if (registerationOpen) {
-          stateChange = {
-            canRegister: true,
-            preInputText: "Place your bet here.",
-            inputPlaceholder: "Enter amount to bet.",
-            postInputText: "(in ether)",
-            gameState: "Place your Bets for Game Number " + gameNumber,
-            canClaimReward: false //TODO : For now claim reward only just after the game finsihes and befor enext game starts
-          };
-          if (totalPlayers > 0) {
-            stateChange["gameState"] =
-              "Place you Bets for Game Number " +
-              gameNumber +
-              ". A total of " +
-              totalPlayers +
-              " have registered.";
-          }
-        } else if (playStarted) {
-          stateChange = {
-            canPlay: true,
-            preInputText: "Enter your choice. (Steal[EVEN], Split[ODD])",
-            inputPlaceholder: "Enter Choice",
-            postInputText: "",
-            gameState: "Enter your choice for Game Number " + gameNumber
-          };
-        } else if (revealing) {
-          stateChange = {
-            canReveal: true,
-            preInputText:
-              "Enter your previously selected choice.(Split[ODD] or Steal[EVEN]) for Game " +
-              this.state.currentGame,
-            inputPlaceholder: "Enter Same Choice Again",
-            postInputText: "",
-            gameState:
-              "Verify your choice for Game Number " +
-              gameNumber +
-              " (Even for STEAL, Odd for SPLIT)"
-          };
-        } else if (lastGameFinished) {
-          stateChange = {
-            canClaimReward: gameNumber === 0 ? false : true,
-            preInputText: "Wait for next game to bet",
-            postInputText: "",
-            gameState:
-              "No game is live currently. Last Game Number " + gameNumber
-          };
-          if (gameNumber === 0) {
-            stateChange["gameState"] =
-              "No games have been played yet. Be Ready !";
-          }
-        }
+        console.log("Setting Game State .....");
+        this.setState({
+          registerationOpen: result._registerationOpen,
+          playStarted: result._playStarted,
+          revealing: result._revealing,
+          lastGameFinished: result._lastGameFinished
+        });
 
-        this.setPlayerState(stateChange, currentGameState);
+        //Set Player State
+        this.setPlayerState(result);
+      });
+
+    this.state.contract.methods
+      .getContractBalance()
+      .call({
+        from: this.state.metamaskAccount,
+        gas: Math.floor(Math.random() * 10000000) + 1
+      })
+      .then(result => {
+        this.setState({
+          contractBalance:
+            new Web3(window.web3.currentProvider).utils
+              .fromWei(result, "ether")
+              .toString() + " ether"
+        });
       });
   };
 
@@ -552,12 +505,16 @@ export default class App extends Component {
 
   bet = () => {
     let transactionGas;
-    console.log(new Web3(window.web3.currentProvider).extend);
-    let betInWei = new Web3(window.web3.currentProvider).extend.utils.toWei(
-      new Web3(window.web3.currentProvider).extend.utils.toBN(
-        parseInt(this.state.inputValue, 10)
+    console.log(
+      new Web3(window.web3.currentProvider).utils.toBN(
+        parseFloat(this.state.inputValue) * 1e18
+      )
+    );
+    let betInWei = new Web3(window.web3.currentProvider).utils.toWei(
+      new Web3(window.web3.currentProvider).utils.toBN(
+        parseFloat(this.state.inputValue) * 1e18
       ),
-      "ether"
+      "wei"
     );
     console.log(" Bet amount in Wei " + betInWei);
     let transaction = this.state.contract.methods.bet(betInWei);
@@ -583,33 +540,6 @@ export default class App extends Component {
       .on("receipt", function(receipt) {
         console.log(receipt);
       });
-    // });
-  };
-
-  stopRegistration = () => {
-    let transactionGas;
-    let transaction = this.state.contract.methods.stopRegisteration();
-    // transaction
-    //   .estimateGas()
-    //   .then(gasAmount => {
-    //     console.log("Gas Estimate " + gasAmount);
-    //     transactionGas = gasAmount;
-    transaction
-      .send({ from: this.state.metamaskAccount, gas: transactionGas * 2 })
-      .on("transactionHash", function(hash) {
-        console.log("Your request for stop registration has been submitted");
-      })
-      .on("confirmation", function(confirmationNumber, receipt) {
-        console.log(
-          "You request has got " + confirmationNumber + " confirmations"
-        );
-      })
-      .on("receipt", function(receipt) {
-        console.log(receipt);
-      });
-    // })
-    // .catch(function(error) {
-    //   console.error(error);
     // });
   };
 
@@ -671,33 +601,6 @@ export default class App extends Component {
       .on("receipt", function(receipt) {
         console.log(receipt);
       });
-    // });
-  };
-
-  stopPlay = () => {
-    let transactionGas;
-    let transaction = this.state.contract.methods.stopPlay();
-    // transaction
-    //   .estimateGas()
-    //   .then(gasAmount => {
-    //     console.log("Gas Estimate " + gasAmount);
-    //     transactionGas = gasAmount;
-    transaction
-      .send({ from: this.state.metamaskAccount, gas: transactionGas * 2 })
-      .on("transactionHash", function(hash) {
-        console.log("Your request for stop play has been submitted");
-      })
-      .on("confirmation", function(confirmationNumber, receipt) {
-        console.log(
-          "You request has got " + confirmationNumber + " confirmations"
-        );
-      })
-      .on("receipt", function(receipt) {
-        console.log(receipt);
-      });
-    // })
-    // .catch(function(error) {
-    //   console.error(error);
     // });
   };
 
@@ -785,10 +688,38 @@ export default class App extends Component {
     // });
   };
 
+  fundContract = () => {
+    let fundInWei = new Web3(window.web3.currentProvider).utils.toWei(
+      new Web3(window.web3.currentProvider).utils.toBN(
+        parseFloat(this.state.inputValue) * 1e18
+      ),
+      "wei"
+    );
+    let transaction = this.state.contract.methods.fund();
+    console.log(fundInWei);
+    transaction
+      .send({
+        from: this.state.metamaskAccount,
+        value: fundInWei
+      })
+      .on("confirmation", function(confirmationNumber, receipt) {
+        console.log(
+          "You request has got " + confirmationNumber + " confirmations"
+        );
+      })
+      .on("receipt", function(receipt) {
+        console.log(receipt);
+      });
+    // })
+    // .catch(function(error) {
+    //   console.error(error);
+    // });
+  };
+
   claimReward = () => {
     let transactionGas;
 
-    let transaction = this.state.contract.methods.claimReward(
+    let transaction = this.state.contract.methods.claimRewardK(
       this.state.currentGame
     );
     //TODO : Check Why estimateGas  not working here
@@ -811,32 +742,66 @@ export default class App extends Component {
             " confirmations"
         );
         console.log(receipt);
-        let event = receipt.events.RegisterationOpened;
-        if (confirmationNumber === 20) {
-          this.setState({
-            gameState:
-              "Game Number " + event.returnValues._gameNumber + " has started",
-
-            canClaimReward: false //TODO : For now claim reward only just after the game finsihes and befor enext game starts
-          });
-        }
+        // let event = receipt.events.RegisterationOpened;
       })
       .on("receipt", function(receipt) {
         console.log(receipt);
+      })
+      .on("error", () => {
+        this.setState({
+          warning: "Contract has insufficient balance. Try again later"
+        });
       });
     // });
   };
 
   updateInputValue = event => {
     const val = event.target.value;
+
     console.log(val);
     this.setState({
-      inputValue: parseInt(val, 10)
+      inputValue: val
     });
   };
 
   AdminSection = (metamaskAccount, contractOwner) => {
     if (metamaskAccount === contractOwner) {
+      const enableRegistertation =
+        this.state.lastGameFinished &&
+        !this.state.playStarted &&
+        !this.state.revealing &&
+        !this.state.registerationOpen;
+
+      const enablePlay =
+        !this.state.lastGameFinished &&
+        !this.state.playStarted &&
+        !this.state.revealing &&
+        this.state.registerationOpen;
+
+      const enableRevealStart =
+        !this.state.lastGameFinished &&
+        this.state.playStarted &&
+        !this.state.revealing &&
+        !this.state.registerationOpen;
+
+      const enableRevealStop =
+        !this.state.lastGameFinished &&
+        !this.state.playStarted &&
+        this.state.revealing &&
+        !this.state.registerationOpen;
+
+      const btnAdminRegisterationOpenClassNames = enableRegistertation
+        ? "button-admin-enabled"
+        : "button-admin";
+      const btnAdminPlayStartedClassNames = enablePlay
+        ? "button-admin-enabled"
+        : "button-admin";
+      const btnAdminStartRevealClassNames = enableRevealStart
+        ? "button-admin-enabled"
+        : "button-admin";
+      const btnAdminStopRevealClassNames = enableRevealStop
+        ? "button-admin-enabled"
+        : "button-admin";
       return (
         <div className="Admin">
           <div style={{ paddingBottom: "10px" }}>
@@ -844,28 +809,43 @@ export default class App extends Component {
           </div>
           <div>
             {"         "}
-            <button className="button-admin" onClick={this.startRegistration}>
+            <button
+              className={btnAdminRegisterationOpenClassNames}
+              onClick={this.startRegistration}
+              disabled={!enableRegistertation}
+            >
               Start Registration
             </button>
             {"         "}
-            <button className="button-admin" onClick={this.stopRegistration}>
-              Stop Registration
-            </button>
-            {"         "}
-            <button className="button-admin" onClick={this.startPlay}>
+            <button
+              className={btnAdminPlayStartedClassNames}
+              onClick={this.startPlay}
+              disabled={!enablePlay}
+            >
               Start Play
             </button>
             {"         "}
-            <button className="button-admin" onClick={this.stopPlay}>
-              Stop Play
-            </button>
-            {"         "}
-            <button className="button-admin" onClick={this.startReveal}>
+            <button
+              className={btnAdminStartRevealClassNames}
+              onClick={this.startReveal}
+              disabled={!enableRevealStart}
+            >
               Start Reveal
             </button>
             {"         "}
-            <button className="button-admin" onClick={this.stopReveal}>
+            <button
+              className={btnAdminStopRevealClassNames}
+              onClick={this.stopReveal}
+              disabled={!enableRevealStop}
+            >
               Stop Reveal
+            </button>
+            {"         "}
+            <button
+              className="button-admin-enabled"
+              onClick={this.fundContract}
+            >
+              Fund Contract
             </button>
           </div>
         </div>
@@ -894,21 +874,34 @@ export default class App extends Component {
         </div>
         <div>
           {"         "}
-          <button className={btnPlayerBetClassNames} onClick={this.bet}>
+          <button
+            className={btnPlayerBetClassNames}
+            onClick={this.bet}
+            disabled={!this.state.canRegister}
+          >
             Bet
           </button>
           {"         "}
-          <button className={btnPlayerPlayClassNames} onClick={this.submit}>
+          <button
+            className={btnPlayerPlayClassNames}
+            onClick={this.submit}
+            disabled={!this.state.canPlay}
+          >
             Submit Encrypted Choice
           </button>
           {"         "}
-          <button className={btnPlayerRevealClassNames} onClick={this.reveal}>
+          <button
+            className={btnPlayerRevealClassNames}
+            onClick={this.reveal}
+            disabled={!this.state.canReveal}
+          >
             Reveal Actual Choice
           </button>
           {"         "}
           <button
             className={btnPlayerClaimClassNames}
             onClick={this.claimReward}
+            disabled={!this.state.canClaimReward}
           >
             Claim Reward
           </button>
@@ -944,7 +937,6 @@ export default class App extends Component {
                 inputClassName="input"
                 onChange={this.updateInputValue}
                 value={this.state.inputValue}
-                min="1"
               />
             </div>
             <div className="bottomMargin">{this.state.postInputText}</div>
@@ -965,6 +957,8 @@ export default class App extends Component {
         <MyHeader
           metamaskInstalled={this.state.metamaskInstalled}
           noAccountsInMetamask={this.state.noAccountsInMetamask}
+          contractBalance={this.state.contractBalance}
+          warning={this.state.warning}
         />
         {this.GameSection(
           this.state.metamaskInstalled,

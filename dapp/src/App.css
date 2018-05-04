@@ -1,21 +1,30 @@
 .App {
   text-align: center;
-  background-image:url("roulette.jpg");
+  background-image: url("roulette.jpg");
 }
 
 .App-logo {
   animation: App-logo-spin infinite 10s linear;
   height: 80px;
-  margin-left: 10px
+  margin-left: 10px;
 }
 
 .App-header {
   background-color: rgba(6, 236, 186, 0.363);
   height: 200px;
   padding: 20px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  font-style: bold
-  
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: bold;
+}
+
+.App-info {
+  border-radius: 25px;
+  background-color: rgba(6, 236, 186, 0.363);
+  height: 30px;
+  padding: 20px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: bold;
+  float: center;
 }
 
 .App-title {
@@ -23,16 +32,15 @@
   font-size: 40px;
   text-align: center;
   margin-top: 20px;
-  font-family: monospace
+  font-family: monospace;
 }
-
 
 .App-title-metamask {
   color: rgba(0, 0, 0);
   font-size: 20px;
   text-align: center;
   margin-top: 20px;
-  font-family: monospace
+  font-family: monospace;
 }
 
 .App-intro {
@@ -40,14 +48,28 @@
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
 
 .button-admin {
   border-radius: 25px;
   background-color: grey;
+  border: none;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button-admin-enabled {
+  border-radius: 25px;
+  background-color: rgba(11, 202, 11, 0.849);
   border: none;
   color: white;
   padding: 15px 25px;
@@ -88,10 +110,10 @@
   text-align: center;
   font-size: 22px;
   cursor: pointer;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  align-self: center
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  align-self: center;
 }
-
 
 .Player {
   border-radius: 25px;
@@ -103,7 +125,8 @@
   text-align: center;
   font-size: 22px;
   cursor: pointer;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }
 .GameState {
   border-radius: 25px;
@@ -115,7 +138,8 @@
   text-align: center;
   font-size: 22px;
   cursor: pointer;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }
 
 .PlayerInput {
@@ -129,24 +153,26 @@
   text-align: center;
   font-size: 22px;
   cursor: pointer;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }
 
 .input {
   border-radius: 18px;
   background: rgb(0, 153, 107);
-  padding: 20px; 
+  padding: 20px;
   width: 250px;
-  height: 15px; 
+  height: 15px;
   text-align: center;
   font-size: 22px;
-  color: gold
+  color: gold;
 }
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: gold;
   opacity: 1; /* Firefox */
 }
 
 .bottomMargin {
-  margin-bottom: 10px
+  margin-bottom: 10px;
 }
