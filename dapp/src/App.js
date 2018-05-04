@@ -4,7 +4,6 @@ import "./App.css";
 import Web3 from "web3";
 import abi from "./ContractABI.json";
 import AutosizeInput from "react-input-autosize";
-import { BrowserRouter as Router, Route } from "react-router-dom";
 
 //TODO : ETHEREUM_CLIENT usage , can be scoped to file instead of App
 //TODO : NO SHOW WHO You are paired other wise people can exploit it
@@ -13,7 +12,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 class About extends Component {
   render() {
     return (
-      <p>
+      <p id="about" class="App-header">
         <div class="App-about">
           <p>
             <br />
@@ -312,12 +311,7 @@ class About extends Component {
 
 class MyHeader extends Component {
   render() {
-    let {
-      metamaskInstalled,
-      noAccountsInMetamask,
-      contractBalance,
-      warning
-    } = this.props;
+    let { metamaskInstalled, noAccountsInMetamask } = this.props;
     let numberOfCoins = 5;
     let warningMessage = !metamaskInstalled
       ? "Please install"
@@ -357,27 +351,15 @@ class MyHeader extends Component {
         )}
 
         {coins}
-
         {!metamaskInstalled || noAccountsInMetamask ? null : (
           <div class="App-info">
             <div style={{ paddingTop: "0px" }}>
               <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="/Split-or-Steal-Game/about"
+                href="#about"
                 // href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/master/README.md"
               >
                 <b>How to play this game ?</b>
               </a>
-            </div>
-            <div style={{ paddingTop: "10px" }}>
-              <b>Contract Balance is {contractBalance}</b>
-              {"                      "}
-              <b>{warning}</b>
-            </div>
-            <div style={{ paddingTop: "10px" }}>
-              {/* <b>Reward Factor(K) is {K}</b> */}
-              {/* <b>Odd Player Bonus Percentage is {oddPlayerBonusPercentage}</b> */}
             </div>
           </div>
         )}
@@ -400,6 +382,8 @@ class App extends Component {
       contract: null,
       //Game State Variables
       currentGame: 0,
+      k: "being calculated", //Reward %
+      b: "being calculated", //Odd player Bonus Percentage
       gameState: "Fetching the latest game state... Please wait",
       registerationOpen: false,
       playStarted: false,
@@ -513,7 +497,7 @@ class App extends Component {
   setPlayerState = currentGameState => {
     if (currentGameState._gameNumber <= 0) {
       this.setState({
-        gameState: "No Games have been played yet."
+        gameState: "No Games have been played yet. Wait for game to start."
       });
       return;
     }
@@ -774,6 +758,18 @@ class App extends Component {
             new Web3(window.web3.currentProvider).utils
               .fromWei(result, "ether")
               .toString() + " ether"
+        });
+      });
+    this.state.contract.methods
+      .getRewardMatrix()
+      .call({
+        from: this.state.metamaskAccount,
+        gas: Math.floor(Math.random() * 10000000) + 1
+      })
+      .then(result => {
+        this.setState({
+          k: result._k.toString(),
+          b: result._oddPlayerBonusPercentage.toString()
         });
       });
   };
@@ -1114,7 +1110,7 @@ class App extends Component {
       return (
         <div className="Admin">
           <div style={{ paddingBottom: "10px" }}>
-            <b>Game Admin Functions</b>
+            <b>Game Admin Controls</b>
           </div>
           <div>
             {"         "}
@@ -1179,7 +1175,7 @@ class App extends Component {
     return (
       <div className="Player">
         <div style={{ paddingBottom: "10px" }}>
-          <b>Player Functions</b>
+          <b>Player Controls</b>
         </div>
         <div>
           {"         "}
@@ -1219,36 +1215,57 @@ class App extends Component {
     );
   };
 
-  GameSection = (metamaskInstalled, noAccountsInMetamask) => {
+  GameSection = (
+    metamaskInstalled,
+    noAccountsInMetamask,
+    contractBalance,
+    warning,
+    k,
+    b
+  ) => {
     if (metamaskInstalled && !noAccountsInMetamask) {
       return (
         <div>
-          {this.AdminSection(
-            this.state.metamaskAccount,
-            this.state.contractOwner
-          )}
-          {this.PlayerSection()}
-          <div className="GameState">
-            {/* TODO : how to make game state bold/italic */}
-            <b>{this.state.gameState}</b>
-          </div>
-          <div className="PlayerInput">
-            Your address{" "}
-            <b>
-              <font color="blue">{this.state.metamaskAccount}</font>
-            </b>
-            <div className="bottomMargin">{this.state.preInputText}</div>
-            <div className="bottomMargin">
-              <AutosizeInput
-                placeholder={this.state.inputPlaceholder}
-                placeholderIsMinWidth
-                autoComplete="off"
-                inputClassName="input"
-                onChange={this.updateInputValue}
-                value={this.state.inputValue}
-              />
+          <div class="Game-section">
+            <div class="Reward-matrix">
+              <div style={{ paddingTop: "10px" }}>
+                <b>Game Balance is {contractBalance}</b>
+                {"                      "}
+                <b>{warning}</b>
+              </div>
+              <div style={{ paddingTop: "10px" }}>
+                <b>Reward Factor(K) is {k}</b>
+              </div>
+              <div style={{ paddingTop: "10px" }}>
+                <b>Odd Player Bonus Percentage(B) is {b}</b>
+              </div>
             </div>
-            <div className="bottomMargin">{this.state.postInputText}</div>
+            {this.AdminSection(
+              this.state.metamaskAccount,
+              this.state.contractOwner
+            )}
+            <div className="GameState">
+              <b>{this.state.gameState}</b>
+            </div>
+            {this.PlayerSection()}
+            <div className="PlayerInput">
+              Your address{" "}
+              <b>
+                <font color="blue">{this.state.metamaskAccount}</font>
+              </b>
+              <div className="bottomMargin">{this.state.preInputText}</div>
+              <div className="bottomMargin">
+                <AutosizeInput
+                  placeholder={this.state.inputPlaceholder}
+                  placeholderIsMinWidth
+                  autoComplete="off"
+                  inputClassName="input"
+                  onChange={this.updateInputValue}
+                  value={this.state.inputValue}
+                />
+              </div>
+              <div className="bottomMargin">{this.state.postInputText}</div>
+            </div>
           </div>
         </div>
       );
@@ -1266,25 +1283,21 @@ class App extends Component {
         <MyHeader
           metamaskInstalled={this.state.metamaskInstalled}
           noAccountsInMetamask={this.state.noAccountsInMetamask}
-          contractBalance={this.state.contractBalance}
-          warning={this.state.warning}
         />
+        <hr />
         {this.GameSection(
           this.state.metamaskInstalled,
-          this.state.noAccountsInMetamask
+          this.state.noAccountsInMetamask,
+          this.state.contractBalance,
+          this.state.warning,
+          this.state.k,
+          this.state.b
         )}
+        <hr />
+        <About />
       </div>
     );
   };
 }
 
-const FinalApp = () => (
-  <Router>
-    <div>
-      <Route exact path={process.env.PUBLIC_URL + "/"} component={App} />
-      <Route exact path={process.env.PUBLIC_URL + "/about"} component={About} />
-    </div>
-  </Router>
-);
-
-export default FinalApp;
+export default App;

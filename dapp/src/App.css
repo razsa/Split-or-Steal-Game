@@ -1,6 +1,7 @@
 .App {
   text-align: center;
-  background-image: url("roulette.jpg");
+  /* background-image: url("roulette.png"); */
+  /* background-color: olive; */
 }
 
 .App-logo {
@@ -10,17 +11,51 @@
 }
 
 .App-header {
-  background-color: rgba(6, 236, 186, 0.363);
-  height: 200px;
+  border-radius: 25px;
+  background-color: rgba(255, 255, 255);
+  height: fit-content;
   padding: 20px;
   font-family: Georgia, "Times New Roman", Times, serif;
   font-style: bold;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+}
+
+.Game-section {
+  border-radius: 25px;
+  background-color: rgba(255, 255, 255);
+  height: fit-content;
+  padding: 20px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: bold;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
 }
 
 .App-info {
   border-radius: 25px;
-  background-color: rgba(6, 236, 186, 0.363);
+  background-color: rgba(174, 194, 59, 0.712);
   height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  padding: 20px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: bold;
+  float: center;
+}
+
+.Reward-matrix {
+  border-radius: 25px;
+  background-color: rgba(45, 199, 166, 0.712);
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
   padding: 20px;
   font-family: Georgia, "Times New Roman", Times, serif;
   font-style: bold;
@@ -31,7 +66,7 @@
   height: fit-content;
   width: fit-content;
   border-radius: 25px;
-  background-color: rgba(175, 174, 238, 0.397);
+  background-color: rgba(35, 76, 163, 0.356);
   height: fit-content;
   font-family: Georgia, "Times New Roman", Times, serif;
   font-style: bold;
@@ -139,10 +174,13 @@
 }
 
 .Admin {
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 25px;
   background-color: rgba(221, 18, 18, 0.856);
   border: 10px;
-  margin-top: 10px;
   color: white;
   padding: 30px 50px;
   text-align: center;
@@ -154,6 +192,10 @@
 }
 
 .Player {
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 25px;
   background-color: rgba(79, 18, 221, 0.856);
   border: 10px;
@@ -167,6 +209,10 @@
     "Lucida Sans", Arial, sans-serif;
 }
 .GameState {
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 25px;
   background-color: rgba(18, 82, 221, 0.856);
   border: 10px;
@@ -181,6 +227,10 @@
 }
 
 .PlayerInput {
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 25px;
   background-color: rgba(160, 221, 18, 0.856);
   border: 10px;
