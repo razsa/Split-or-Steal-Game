@@ -115,10 +115,10 @@ export default class App extends Component {
       let client = new Web3(window.web3.currentProvider);
       this.setState({
         contract: new client.eth.Contract(
-          abi["abi"],
-          "0xcf21469f3a96751452c94ab30dfad9b879b58259"
+          abi,
+          "0x40a89BD8eF82f1a0500887Ca17c9ab56BFDd8A9F"
         ),
-        contractAddress: "0xcf21469f3a96751452c94ab30dfad9b879b58259"
+        contractAddress: "0x40a89BD8eF82f1a0500887Ca17c9ab56BFDd8A9F"
       });
       //Check if metamask is installed/enabled
       if (
