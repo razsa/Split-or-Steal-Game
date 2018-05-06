@@ -549,7 +549,6 @@ class App extends Component {
             gameState: "You are not allowed to play as you are suspended."
           });
         } else if (claimedReward) {
-          console.log("CLAIMED REWARD");
           this.setState({
             canRegister: false,
             canPlay: false,
@@ -725,8 +724,8 @@ class App extends Component {
         gas: Math.floor(Math.random() * 10000000) + 1
       })
       .then(result => {
-        console.log("GAME STATE RESULT");
-        console.log(result);
+        // console.log("GAME STATE RESULT");
+        // console.log(result);
 
         //Set curent Game Number
         let gameNumber = parseInt(result._gameNumber, 10);
@@ -734,7 +733,6 @@ class App extends Component {
           currentGame: gameNumber
         });
 
-        console.log("Setting Game State .....");
         this.setState({
           registerationOpen: result._registerationOpen,
           playStarted: result._playStarted,
@@ -810,15 +808,8 @@ class App extends Component {
 
   bet = () => {
     let transactionGas;
-    console.log(
-      new Web3(window.web3.currentProvider).utils.toBN(
-        parseFloat(this.state.inputValue) * 1e18
-      )
-    );
     let betInWei = new Web3(window.web3.currentProvider).utils.toWei(
-      new Web3(window.web3.currentProvider).utils.toBN(
-        parseFloat(this.state.inputValue) * 1e18
-      ),
+      (parseFloat(this.state.inputValue) * 1e18).toString(),
       "wei"
     );
     console.log(" Bet amount in Wei " + betInWei);
@@ -994,14 +985,12 @@ class App extends Component {
   };
 
   fundContract = () => {
+    //TODO Check why not working on production
     let fundInWei = new Web3(window.web3.currentProvider).utils.toWei(
-      new Web3(window.web3.currentProvider).utils.toBN(
-        parseFloat(this.state.inputValue) * 1e18
-      ),
+      (parseFloat(this.state.inputValue) * 1e18).toString(),
       "wei"
     );
     let transaction = this.state.contract.methods.fund();
-    console.log(fundInWei);
     transaction
       .send({
         from: this.state.metamaskAccount,
@@ -1062,8 +1051,6 @@ class App extends Component {
 
   updateInputValue = event => {
     const val = event.target.value;
-
-    console.log(val);
     this.setState({
       inputValue: val
     });
