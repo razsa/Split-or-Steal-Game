@@ -11,134 +11,134 @@ import AutosizeInput from "react-input-autosize";
 
 class About extends Component {
   render() {
+    //TODO : Add Fees etc.. game rules
     return (
-      <p id="about" class="App-header">
-        <div class="App-about">
-          <p>
-            <br />
-            <b>What is the game?</b>
-            <br />
-            <br /> It is a two player game(X, Y) where each player is asked to
-            bet some amount(X, Y) to play the game. <br /> Based on X and Y,
-            Smart contract would generate a Reward Matrix, on which game will be
-            played.
-          </p>
+      <div id="about" className="App-header">
+        <div className="App-about">
+          <br />
+          <b>What is the game?</b>
+          <br />
+          <br /> It is a two player game(X, Y) where each player is asked to bet
+          some amount(X, Y) to play the game. <br /> Based on X and Y, Smart
+          contract would generate a Reward Matrix, on which game will be played.
         </div>
-        <div class="App-about">
+        <div className="App-about">
           <br />
           <b>What is the Reward Matrix?</b>
           <br />
           <br />
           <b>R(X,Y,K,B)</b> => <br />
-          <table class="App-table">
-            <tr>
-              <th>(X\Y)</th>
-              <th>Split</th>
-              <th>Steal</th>
-              <th>Disqualified</th>
-              <th>No Opponent</th>
-            </tr>
-            <tr>
-              <td>
-                <b>Split</b>
-              </td>
-              <td>(X+Y)/2</td>
-              <td>0 \ ((100+K)*Y)/100 </td>
-              <td>((100+K)*X)/100 \ 0</td>
-              <td>((100+B)*X)/100 \ 0</td>
-            </tr>
-            <tr>
-              <td>
-                <b>Steal</b>
-              </td>
-              <td>((100+K)*X)/100 \ 0</td>
-              <td>Max(0,X-Y)</td>
-              <td>((100+K)*X)/100 \ 0</td>
-              <td>((100+B)*X)/100 \ 0</td>
-            </tr>
-            <tr>
-              <td>
-                <b>Disqualified</b>
-              </td>
-              <td>0 \ ((100+K)*Y)/100 </td>
-              <td>0 \ ((100+K)*Y)/100 </td>
-              <td>0 \ 0</td>
-              <td>0 \ 0</td>
-            </tr>
-            <tr>
-              <td>
-                <b>No Opponent</b>
-              </td>
-              <td>0 \ ((100+B)*Y)/100 </td>
-              <td>0 \ ((100+B)*Y)/100 </td>
-              <td>0 \ 0</td>
-              <td>0 \ 0</td>
-            </tr>
+          <table className="App-table">
+            <tbody>
+              <tr>
+                <th>(X\Y)</th>
+                <th>Split</th>
+                <th>Steal</th>
+                <th>Disqualified</th>
+                <th>No Opponent</th>
+              </tr>
+              <tr>
+                <td>
+                  <b>Split</b>
+                </td>
+                <td>(X+Y)/2</td>
+                <td>0 \ Min(X+Y, ((100+K)*Y)/100) </td>
+                <td>Min(X+Y, ((100+K)*X)/100) \ 0</td>
+                <td>Min(X+Y, ((100+B)*X)/100) \ 0</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>Steal</b>
+                </td>
+                <td>Min(X+Y, ((100+K)*X)/100) \ 0</td>
+                <td>Min(X+Y, ((100+K)*Max(0,X-Y)/100))</td>
+                <td>Min(X+Y, ((100+K)*X)/100) \ 0</td>
+                <td>Min(X+Y, ((100+B)*X)/100) \ 0</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>Disqualified</b>
+                </td>
+                <td>0 \ Min(X+Y, ((100+K)*Y)/100) </td>
+                <td>0 \ Min(X+Y, ((100+K)*Y)/100) </td>
+                <td>0 \ 0</td>
+                <td>0 \ 0</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>No Opponent</b>
+                </td>
+                <td>0 \ Min(X+Y, ((100+B)*Y)/100) </td>
+                <td>0 \ Min(X+Y, ((100+B)*Y)/100) </td>
+                <td>0 \ 0</td>
+                <td>0 \ 0</td>
+              </tr>
+            </tbody>
           </table>
           <br />
           <b>where</b>,
-          <ul class="App-list">
+          <ul className="App-list">
             <li> X & Y are bet amounts by PlayerX and PlayerY respectively</li>
             <li>K > 0</li>
             <li>B > 0</li>
           </ul>
         </div>
-        <div class="App-about">
-          <p>
-            <br />
-            <b>How to read Reward Matrix case by case?</b>
-            <br />
-            <br />
-            <div class="Center">
-              <ol class="App-list">
-                <li>
-                  If X chooses to SPLIT and Y also chooses to SPLIT, then they
-                  win (X+Y)/ 2 each, thus player betting lower wins.
-                </li>
-                <li>
-                  {" "}
-                  If X chooses to SPLIT and Y chooses to STEAL, then Y gains K %
-                  of Y and X gets 0, thus the higher you bet higher you win.
-                </li>
-                <li>
-                  {" "}
-                  If X chooses to STEAL and Y chooses to SPLIT, then X gains K %
-                  of X and Y gets 0, thus the higher you bet higher you win.
-                </li>
-                <li>
-                  If X chooses to STEAL and Y also chooses to STEAL, then they
-                  win Max(0, X-Y), thus player betting higher gets some part
-                  back.
-                </li>
+        <div className="App-about">
+          <br />
+          <b>How to read Reward Matrix case by case?</b>
+          <br />
+          <br />
+          <div className="Center">
+            <ol className="App-list">
+              <li>
+                If X chooses to SPLIT and Y also chooses to SPLIT, then they win
+                (X+Y)/ 2 each, thus player betting lower wins.
+              </li>
+              <li>
+                {" "}
+                If X chooses to SPLIT and Y chooses to STEAL, then Y gains K %
+                of Y (Capped by X+Y) and X gets 0, thus the higher you bet
+                higher you win.
+              </li>
+              <li>
+                {" "}
+                If X chooses to STEAL and Y chooses to SPLIT, then X gains K %
+                of X (Capped by X+Y) and Y gets 0, thus the higher you bet
+                higher you win.
+              </li>
+              <li>
+                If X chooses to STEAL and Y also chooses to STEAL, then they win
+                K % of Max(0, X-Y) (Capped by X+Y), thus player betting higher
+                gets some part back.
+              </li>
 
-                <li>
-                  If a player's opponent gets disqualified and the player not,
-                  then player gains K % of player's bet.
-                </li>
+              <li>
+                If a player's opponent gets disqualified and the player not,
+                then player gains K % of player's bet (Capped by X+Y).
+              </li>
 
-                <li>
-                  If both players get disqualified, both loose complete bet.
-                </li>
+              <li>
+                If both players get disqualified, both loose complete bet.
+              </li>
 
-                <li>
-                  If a player remains odd one out, i.e. is not paired with any
-                  one, that player gains B % of player's bet.
-                  <ul>
-                    <li>This can happen if total players who bet are odd.</li>
-                  </ul>
-                </li>
-              </ol>
-            </div>
-            <br />
-          </p>
+              <li>
+                If a player remains odd one out, i.e. is not paired with any
+                one, that player gains B % of player's bet.
+                <ul>
+                  <li>This can happen if total players who bet are odd.</li>
+                </ul>
+              </li>
+            </ol>
+          </div>
+          <br />
         </div>
-        <div class="App-about">
+        <div className="App-about">
           <br />
           <b>How does contract earn?</b>
           <br />
           <br />
-          <div class="Center">
-            <ol class="App-list">
+          <div className="Center">
+            <ol className="App-list">
               <li>
                 If both players choose to split, contract neither wins nor
                 looses.
@@ -158,16 +158,16 @@ class About extends Component {
           </div>
           <br />
         </div>
-        <div class="App-about">
+        <div className="App-about">
           <br />
           <b>GAME PLAY</b>
           <br />
           <br />
           Game has 4 Phases
-          <ol class="App-list">
+          <ol className="App-list">
             <li>
               <b>Registeration & Commit Bets</b>
-              <ul class="App-list">
+              <ul className="App-list">
                 <li>
                   This phase would be opened by contract owner for a fixed
                   amount of time. (START){" "}
@@ -210,7 +210,7 @@ class About extends Component {
             <br />
             <li>
               <b>Submit encrypted *steal* or *split* choice</b>
-              <ul class="App-list">
+              <ul className="App-list">
                 <li>
                   {" "}
                   This phase would be opened by contract owner for a fixed
@@ -246,7 +246,7 @@ class About extends Component {
             <br />
             <li>
               <b>Reveal choice </b>
-              <ul class="App-list">
+              <ul className="App-list">
                 <li>
                   This phase would be opened by contract owner for fixed amount
                   of time. (START)(EVENT){" "}
@@ -304,7 +304,7 @@ class About extends Component {
             </li>
           </ol>
         </div>
-      </p>
+      </div>
     );
   }
 }
@@ -352,7 +352,7 @@ class MyHeader extends Component {
 
         {coins}
         {!metamaskInstalled || noAccountsInMetamask ? null : (
-          <div class="App-info">
+          <div className="App-info">
             <div style={{ paddingTop: "0px" }}>
               <a
                 href="#about"
@@ -365,6 +365,17 @@ class MyHeader extends Component {
         )}
       </header>
     );
+  }
+}
+
+class Loading extends Component {
+  render() {
+    let { loading } = this.props;
+    if (loading) {
+      return <img src={logo} className="App-logo" alt="logo" />;
+    } else {
+      return null;
+    }
   }
 }
 
@@ -390,6 +401,15 @@ class App extends Component {
       revealing: false,
       lastGameFinished: false,
       //Player Variables
+      stateLocalOverride: false,
+      //Temp Local Variables Start
+      suspended: false,
+      registered: false,
+      played: false,
+      revealed: false,
+      disqualified: false,
+      claimedReward: false,
+      //Temp Local Variables End
       canRegister: false,
       canPlay: false,
       canReveal: false,
@@ -409,9 +429,9 @@ class App extends Component {
       this.setState({
         contract: new client.eth.Contract(
           abi,
-          "0x40a89BD8eF82f1a0500887Ca17c9ab56BFDd8A9F"
+          "0x9B5f424c2705EBaF35bd730011b7CAeFCc7776f5"
         ),
-        contractAddress: "0x40a89BD8eF82f1a0500887Ca17c9ab56BFDd8A9F"
+        contractAddress: "0x9B5f424c2705EBaF35bd730011b7CAeFCc7776f5"
       });
       //Check if metamask is installed/enabled
       if (
@@ -488,7 +508,7 @@ class App extends Component {
             gameState: "Fetching the latest game state... Please wait",
             warning: ""
           });
-          console.log("Metaask Account Changed");
+          console.log("Metamask Account Changed");
         }
       });
     }, 2000);
@@ -518,12 +538,38 @@ class App extends Component {
         let revealed = result._revealed;
         let disqualified = result._disqualified;
         let claimedReward = result._claimedReward;
-        // let opponent = result._opponent;
+
+        if (this.state.stateLocalOverride) {
+          if (
+            suspended ||
+            (registered === this.state.registered &&
+              played === this.state.played &&
+              revealed === this.state.revealed &&
+              claimedReward === this.state.claimedReward)
+          ) {
+            this.setState({
+              stateLocalOverride: false
+            });
+          } else {
+            return;
+          }
+        }
+
+        //Dummy to check when to turn off State Local Override
+        this.setState({
+          suspended: suspended,
+          registered: registered,
+          played: played,
+          revealed: revealed,
+          disqualified: disqualified,
+          claimedReward: claimedReward
+        });
 
         let betAmount =
           new Web3(window.web3.currentProvider).utils
             .fromWei(result._betAmount, "ether")
             .toString() + " ether";
+
         let reward =
           new Web3(window.web3.currentProvider).utils
             .fromWei(result._reward, "ether")
@@ -562,7 +608,7 @@ class App extends Component {
               this.state.currentGame +
               ". You had bet " +
               betAmount +
-              " and you won " +
+              " and you got back " +
               reward
           });
         } else if (disqualified) {
@@ -670,7 +716,7 @@ class App extends Component {
               inputPlaceholder: "Enter amount to bet.",
               postInputText: "(in ether)",
               gameState:
-                "Place you Bets for Game Number " +
+                "Place your Bets for Game Number " +
                 gameNumber +
                 ". A total of " +
                 totalPlayers +
@@ -780,94 +826,72 @@ class App extends Component {
 
   //User interaction Methods
   startRegistration = () => {
-    let transactionGas;
     let transaction = this.state.contract.methods.startRegistration();
-    // transaction
-    //   .estimateGas()
-    //   .then(gasAmount => {
-    //     console.log("Gas Estimate " + gasAmount);
-    //     transactionGas = gasAmount;
     transaction
-      .send({ from: this.state.metamaskAccount, gas: transactionGas * 2 })
-      .on("transactionHash", function(hash) {
+      .send({ from: this.state.metamaskAccount })
+      .on("transactionHash", hash => {
         console.log("Your request for start registration has been submitted");
       })
-      .on("confirmation", function(confirmationNumber, receipt) {
+      .on("confirmation", (confirmationNumber, receipt) => {
         console.log(
           "You request has got " + confirmationNumber + " confirmations"
         );
       })
-      .on("receipt", function(receipt) {
+      .on("receipt", receipt => {
         console.log(receipt);
       });
-    // })
-    // .catch(function(error) {
-    //   console.error(error);
-    // });
   };
 
   bet = () => {
-    let transactionGas;
     let betInWei = new Web3(window.web3.currentProvider).utils.toWei(
       (parseFloat(this.state.inputValue) * 1e18).toString(),
       "wei"
     );
     console.log(" Bet amount in Wei " + betInWei);
     let transaction = this.state.contract.methods.bet(betInWei);
-    //TODO : Check Why estimateGas  not working here
-    // console.log(transaction);
-    // transaction.estimateGas().then(gasAmount => {
-    //   console.log("gas Estimate " + gasAmount);
-    //   transactionGas = 300000;
     transaction
       .send({
         from: this.state.metamaskAccount,
-        gas: transactionGas * 2,
         value: betInWei
       })
-      .on("transactionHash", function(hash) {
-        console.log("You Bet has been submitted " + hash);
+      .on("transactionHash", hash => {
+        console.log("Your Bet has been submitted " + hash);
+        this.setState({
+          canRegister: false,
+          registered: true,
+          stateLocalOverride: true,
+          gameState:
+            "Your Bet has been submitted. Please wait for it to be confirmed..."
+        });
       })
-      .on("confirmation", function(confirmationNumber, receipt) {
+      .on("confirmation", (confirmationNumber, receipt) => {
         //Upto 24 confirmations
         console.log("You bet has got " + confirmationNumber + " confirmations");
         console.log(receipt);
       })
-      .on("receipt", function(receipt) {
+      .on("receipt", receipt => {
         console.log(receipt);
       });
-    // });
   };
 
   startPlay = () => {
-    let transactionGas;
     let transaction = this.state.contract.methods.startPlay();
-    // transaction
-    //   .estimateGas()
-    //   .then(gasAmount => {
-    //     console.log("Gas Estimate " + gasAmount);
-    //     transactionGas = gasAmount;
     transaction
-      .send({ from: this.state.metamaskAccount, gas: transactionGas * 2 })
-      .on("transactionHash", function(hash) {
+      .send({ from: this.state.metamaskAccount })
+      .on("transactionHash", hash => {
         console.log("Your request for start play has been submitted");
       })
-      .on("confirmation", function(confirmationNumber, receipt) {
+      .on("confirmation", (confirmationNumber, receipt) => {
         console.log(
           "You request has got " + confirmationNumber + " confirmations"
         );
       })
-      .on("receipt", function(receipt) {
+      .on("receipt", receipt => {
         console.log(receipt);
       });
-    // })
-    // .catch(function(error) {
-    //   console.error(error);
-    // });
   };
 
   submit = () => {
-    let transactionGas;
     var choice = parseInt(this.state.inputValue, 10);
     //That's how you calculate keccak256 from DApp and send to Smart contract
     let encryptedChoice = new Web3(
@@ -875,117 +899,96 @@ class App extends Component {
     ).utils.soliditySha3(choice);
 
     let transaction = this.state.contract.methods.submit(encryptedChoice);
-    //TODO : Check Why estimateGas  not working here
-    // transaction.estimateGas().then(gasAmount => {
-    //   console.log("gas Estimate " + gasAmount);
-    //   transactionGas = 300000;
     transaction
       .send({
-        from: this.state.metamaskAccount,
-        gas: transactionGas * 2
+        from: this.state.metamaskAccount
       })
-      .on("transactionHash", function(hash) {
+      .on("transactionHash", hash => {
         console.log("You choice has been submitted " + hash);
+        this.setState({
+          canPlay: false,
+          played: true,
+          stateLocalOverride: true,
+          gameState:
+            "Your choice has been submitted. Please wait for it to be confirmed..."
+        });
       })
-      .on("confirmation", function(confirmationNumber, receipt) {
+      .on("confirmation", (confirmationNumber, receipt) => {
         //Upto 24 confirmations
         console.log(
           "You choice has got " + confirmationNumber + " confirmations"
         );
         console.log(receipt);
       })
-      .on("receipt", function(receipt) {
+      .on("receipt", receipt => {
         console.log(receipt);
       });
-    // });
   };
 
   startReveal = () => {
-    let transactionGas;
     let transaction = this.state.contract.methods.startReveal();
-    // transaction
-    //   .estimateGas()
-    //   .then(gasAmount => {
-    //     console.log("Gas Estimate " + gasAmount);
-    //     transactionGas = gasAmount;
     transaction
-      .send({ from: this.state.metamaskAccount, gas: transactionGas * 2 })
-      .on("transactionHash", function(hash) {
+      .send({ from: this.state.metamaskAccount })
+      .on("transactionHash", hash => {
         console.log("Your request for start reveal has been submitted");
       })
-      .on("confirmation", function(confirmationNumber, receipt) {
+      .on("confirmation", (confirmationNumber, receipt) => {
         console.log(
           "You request has got " + confirmationNumber + " confirmations"
         );
       })
-      .on("receipt", function(receipt) {
+      .on("receipt", receipt => {
         console.log(receipt);
       });
-    // })
-    // .catch(function(error) {
-    //   console.error(error);
-    // });
   };
 
   reveal = () => {
-    let transactionGas;
     var choice = parseInt(this.state.inputValue, 10);
-
     let transaction = this.state.contract.methods.reveal(choice);
-    //TODO : Check Why estimateGas  not working here
-    // transaction.estimateGas().then(gasAmount => {
-    //   console.log("gas Estimate " + gasAmount);
-    //   transactionGas = 300000;
     transaction
       .send({
-        from: this.state.metamaskAccount,
-        gas: transactionGas * 2
+        from: this.state.metamaskAccount
       })
-      .on("transactionHash", function(hash) {
+      .on("transactionHash", hash => {
         console.log("You revealed choice has been submitted " + hash);
+        this.setState({
+          canReveal: false,
+          revealed: true,
+          stateLocalOverride: true,
+          gameState:
+            "Your revealed choice has been submitted. Please wait for it to be confirmed..."
+        });
       })
-      .on("confirmation", function(confirmationNumber, receipt) {
+      .on("confirmation", (confirmationNumber, receipt) => {
         //Upto 24 confirmations
         console.log(
           "You revealed choice has got " + confirmationNumber + " confirmations"
         );
         console.log(receipt);
       })
-      .on("receipt", function(receipt) {
+      .on("receipt", receipt => {
         console.log(receipt);
       });
-    // });
   };
 
   stopReveal = () => {
-    let transactionGas;
     let transaction = this.state.contract.methods.stopReveal();
-    // transaction
-    //   .estimateGas()
-    //   .then(gasAmount => {
-    //     console.log("Gas Estimate " + gasAmount);
-    //     transactionGas = gasAmount;
     transaction
-      .send({ from: this.state.metamaskAccount, gas: transactionGas * 2 })
-      .on("transactionHash", function(hash) {
+      .send({ from: this.state.metamaskAccount })
+      .on("transactionHash", hash => {
         console.log("Your request for stop play has been submitted");
       })
-      .on("confirmation", function(confirmationNumber, receipt) {
+      .on("confirmation", (confirmationNumber, receipt) => {
         console.log(
           "You request has got " + confirmationNumber + " confirmations"
         );
       })
-      .on("receipt", function(receipt) {
+      .on("receipt", receipt => {
         console.log(receipt);
       });
-    // })
-    // .catch(function(error) {
-    //   console.error(error);
-    // });
   };
 
   fundContract = () => {
-    //TODO Check why not working on production
     let fundInWei = new Web3(window.web3.currentProvider).utils.toWei(
       (parseFloat(this.state.inputValue) * 1e18).toString(),
       "wei"
@@ -996,39 +999,51 @@ class App extends Component {
         from: this.state.metamaskAccount,
         value: fundInWei
       })
-      .on("confirmation", function(confirmationNumber, receipt) {
+      .on("confirmation", (confirmationNumber, receipt) => {
         console.log(
           "You request has got " + confirmationNumber + " confirmations"
         );
       })
-      .on("receipt", function(receipt) {
+      .on("receipt", receipt => {
         console.log(receipt);
       });
-    // })
-    // .catch(function(error) {
-    //   console.error(error);
-    // });
+  };
+
+  withdraw = () => {
+    let transaction = this.state.contract.methods.transferBalanceToOwner();
+    transaction
+      .send({
+        from: this.state.metamaskAccount
+      })
+      .on("confirmation", (confirmationNumber, receipt) => {
+        console.log(
+          "You request has got " + confirmationNumber + " confirmations"
+        );
+      })
+      .on("receipt", receipt => {
+        console.log(receipt);
+      });
   };
 
   claimReward = () => {
-    let transactionGas;
-
     let transaction = this.state.contract.methods.claimRewardK(
       this.state.currentGame
     );
-    //TODO : Check Why estimateGas  not working here
-    // transaction.estimateGas().then(gasAmount => {
-    //   console.log("gas Estimate " + gasAmount);
-    //   transactionGas = 300000;
     transaction
       .send({
-        from: this.state.metamaskAccount,
-        gas: transactionGas * 2
+        from: this.state.metamaskAccount
       })
-      .on("transactionHash", function(hash) {
+      .on("transactionHash", hash => {
         console.log("Your claim reward request has been submitted " + hash);
+        this.setState({
+          canClaimReward: false,
+          claimedReward: true,
+          stateLocalOverride: true,
+          gameState:
+            "Your claim reward request has been submitted. Please wait for it to be confirmed..."
+        });
       })
-      .on("confirmation", function(confirmationNumber, receipt) {
+      .on("confirmation", (confirmationNumber, receipt) => {
         //Upto 24 confirmations
         console.log(
           "You claim reward request has got " +
@@ -1038,7 +1053,7 @@ class App extends Component {
         console.log(receipt);
         // let event = receipt.events.RegisterationOpened;
       })
-      .on("receipt", function(receipt) {
+      .on("receipt", receipt => {
         console.log(receipt);
       })
       .on("error", () => {
@@ -1046,7 +1061,6 @@ class App extends Component {
           warning: "Contract has insufficient balance. Try again later"
         });
       });
-    // });
   };
 
   updateInputValue = event => {
@@ -1139,6 +1153,10 @@ class App extends Component {
             >
               Fund Contract
             </button>
+            {"         "}
+            <button className="button-admin-enabled" onClick={this.withdraw}>
+              Withdraw
+            </button>
           </div>
         </div>
       );
@@ -1213,15 +1231,15 @@ class App extends Component {
     if (metamaskInstalled && !noAccountsInMetamask) {
       return (
         <div>
-          <div class="Game-section">
-            <div class="Reward-matrix">
+          <div className="Game-section">
+            <div className="Reward-matrix">
               <div style={{ paddingTop: "10px" }}>
                 <b>Game Balance is {contractBalance}</b>
                 {"                      "}
                 <b>{warning}</b>
               </div>
               <div style={{ paddingTop: "10px" }}>
-                <b>Reward Factor(K) is {k}</b>
+                <b>Reward Percentage(K) is {k}</b>
               </div>
               <div style={{ paddingTop: "10px" }}>
                 <b>Odd Player Bonus Percentage(B) is {b}</b>
@@ -1232,7 +1250,12 @@ class App extends Component {
               this.state.contractOwner
             )}
             <div className="GameState">
-              <b>{this.state.gameState}</b>
+              <div>
+                <b>{this.state.gameState}</b>
+              </div>
+              <div>
+                <Loading loading={this.state.stateLocalOverride} />
+              </div>
             </div>
             {this.PlayerSection()}
             <div className="PlayerInput">

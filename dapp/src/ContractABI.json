@@ -2,15 +2,6 @@
   {
     "constant": false,
     "inputs": [],
-    "name": "sendEther",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
     "name": "startRegistration",
     "outputs": [],
     "payable": false,
@@ -96,6 +87,28 @@
       }
     ],
     "name": "setRewardPercentageK",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_fees",
+        "type": "uint256"
+      },
+      {
+        "name": "_minBet",
+        "type": "uint256"
+      },
+      {
+        "name": "_maxBet",
+        "type": "uint256"
+      }
+    ],
+    "name": "setGameRules",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -231,6 +244,28 @@
     ],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getGameRules",
+    "outputs": [
+      {
+        "name": "_fees",
+        "type": "uint256"
+      },
+      {
+        "name": "_minBet",
+        "type": "uint256"
+      },
+      {
+        "name": "_maxBet",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -569,6 +604,43 @@
       }
     ],
     "name": "Disqualified",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_oldFees",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_newFees",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_oldMinBet",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_newMinBet",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_oldMaxBet",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_newMaxBet",
+        "type": "uint256"
+      }
+    ],
+    "name": "NewGameRules",
     "type": "event"
   },
   {

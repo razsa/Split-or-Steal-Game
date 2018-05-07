@@ -1,9 +1,8 @@
 pragma solidity ^0.4.22;
 
-//TODO : Max Amount Bet.
 //TODO : Handle suspended users for all methods.
 //TODO : Store Games in a Map instead of array. See if that has any advantages.
-//TODO : Upgrade syntax to 0.4.22 for constructor warning
+//TODO : Sequence of transactions on blockchain explorer is easy way of figuring out how much your opponent bet
 
 contract owned {
     
@@ -30,16 +29,19 @@ contract SplitStealContract is owned, priced {
     bool playStarted = false;
     bool revealing = false;
     bool lastGameFinished = true;
-    uint256 REGISTRATION_COST = 5 * 10**14; // 0.0005 Ether
-    uint256 MINIMUM_COST_OF_BET = 5 * 10**15; // 0.005 Ether
-    uint256 ODD_PLAYER_BONUS_PERCENT = 10;
     uint constant STEAL = 0;
     uint constant SPLIT = 1;
     mapping(address=>bool) suspended;
 
+    //Game Rules
+    uint256 REGISTRATION_COST = 5 * 10**14;// 0.0005 Ether
+    uint256 MINIMUM_COST_OF_BET = 10**17;// 0.1 Ether
+    uint256 MAXIMUM_COST_OF_BET = 5 * 10**18;//5 Ether
+
     //Reward Matrix Parameters
-    uint D = 4;
-    uint K = 25;
+    uint256 K = 25;
+    uint256 ODD_PLAYER_BONUS_PERCENT = 10;
+
     
     //Events
     event RegisterationOpened(uint indexed _gameNumber);
@@ -53,8 +55,9 @@ contract SplitStealContract is owned, priced {
     event Transferred(uint indexed _gameNumber,address _to, uint256 _amount);
     event Paired(uint indexed _gameNumber, address indexed _player1, address indexed _player2, uint256 betAmount1, uint256 betAmount2);
     event Disqualified(uint indexed _gameNumber, address indexed _player, bytes32 _encryptedChoice, uint _actualChoice, bytes32 _encryptedActualChoice);
+    event NewGameRules(uint _oldFees, uint _newFees, uint _oldMinBet, uint _newMinBet, uint _oldMaxBet, uint _newMaxBet);
     event NewRewardMatrix(uint _n1, uint _n2, uint _n3, uint _d);
-    event NewRewardPercentage(uint _oldK, uint _k);
+    event NewRewardPercentage(uint256 _oldK, uint256 _k);
     event NewOddPlayerBonus(uint256 _fromPercentage, uint256 _toPercentage);
     event Suspended(address indexed _player);
     event UnSuspended(address indexed _player);
@@ -104,6 +107,7 @@ contract SplitStealContract is owned, priced {
 
     // ADMIN METHODS START
     function changeOwner(address _to) public onlyOwner {
+        require(_to != address(0));
         owner = _to;
     }
 
@@ -131,19 +135,27 @@ contract SplitStealContract is owned, priced {
     }
 
     function setOddPlayerBonusPercent(uint256 _percentage) public onlyOwner {
-        uint256 oldPercentage = ODD_PLAYER_BONUS_PERCENT;
+        require(_percentage >= 0);
+        emit NewOddPlayerBonus(ODD_PLAYER_BONUS_PERCENT, _percentage);
         ODD_PLAYER_BONUS_PERCENT = _percentage;
-        emit NewOddPlayerBonus(oldPercentage, _percentage);
     }
 
-    function setRewardPercentageK(uint _k) public onlyOwner {
-        uint oldK = K;
+    function setRewardPercentageK(uint256 _k) public onlyOwner {
+        require(_k >= 0);
+        emit NewRewardPercentage(K, _k);
         K = _k;
-        emit NewRewardPercentage(oldK, K);
     }
 
-    function sendEther() external payable onlyOwner {
+    function setGameRules(uint256 _fees, uint256 _minBet, uint256 _maxBet) public onlyOwner {
+        require(_fees >= 0);
+        require(_minBet >= 0);
+        require(_maxBet >= 0);
+        emit NewGameRules(REGISTRATION_COST, _fees, MINIMUM_COST_OF_BET, _minBet, MAXIMUM_COST_OF_BET, _maxBet);
+        REGISTRATION_COST = _fees;
+        MINIMUM_COST_OF_BET = _minBet;
+        MAXIMUM_COST_OF_BET = _maxBet;
     }
+
 
     //ADMIN METHODS STOP
 
@@ -159,6 +171,10 @@ contract SplitStealContract is owned, priced {
 
     function getRewardMatrix() public view returns(uint _k, uint _oddPlayerBonusPercentage) {
         return (K, ODD_PLAYER_BONUS_PERCENT);
+    }
+
+    function getGameRules() public view returns(uint256 _fees, uint256 _minBet, uint256 _maxBet) {
+        return (REGISTRATION_COST, MINIMUM_COST_OF_BET, MAXIMUM_COST_OF_BET);
     }
 
     function getGameState() public view returns(uint256 _gameNumber, bool _registerationOpen, bool _playStarted, bool _revealing, bool _lastGameFinished, uint256 _totalPlayers) {
@@ -197,7 +213,8 @@ contract SplitStealContract is owned, priced {
 
     function bet(uint256 _betAmount) public payable costs(_betAmount) returns(bool _accepted) {
         require(!suspended[msg.sender]);
-        require(_betAmount > MINIMUM_COST_OF_BET);
+        require(_betAmount >= MINIMUM_COST_OF_BET);
+        require(_betAmount <= MAXIMUM_COST_OF_BET);
         require(registerationOpen);
         require(!games[gameIndex].registered[msg.sender]);
         games[gameIndex].registered[msg.sender] = true;
@@ -295,17 +312,22 @@ contract SplitStealContract is owned, priced {
         
         address player1 = msg.sender;
         address player2 = game.pairs[player1];
-        
+        uint256 reward = 0;
+        uint256 gameReward = 0;
+        uint256 totalBet = (game.bets[player1].betAmount + game.bets[player2].betAmount);
         if (player2 == address(0)) {
             //Odd Player1 , Pay back.
             //Give back extra % of bet amount
-            ethTransfer(gameNumber, player1, ((100 + game.oddPlayerBonusPercent) * game.bets[player1].betAmount) / 100);
+            //Unlucky Bonus
+            reward = ((100 + game.oddPlayerBonusPercent) * game.bets[player1].betAmount) / 100;
+            ethTransfer(gameNumber, player1, reward);
             game.reward[player1] = reward;
             game.claimedReward[msg.sender] = true;
             return true;
         }
-        if(game.disqualified[player2]) {
-            uint256 reward = ((100 + game.k) * game.bets[player1].betAmount) / 100;
+        if ( game.disqualified[player2] || !game.revealed[player2] || !game.played[player2]) {
+            gameReward = ((100 + game.k) * game.bets[player1].betAmount) / 100;
+            reward = gameReward < totalBet ? gameReward : totalBet; //Min (X+Y, (100+K)*X/100)
             ethTransfer(gameNumber, player1, reward);
             game.reward[player1] = reward;
             game.claimedReward[msg.sender] = true;
@@ -318,24 +340,28 @@ contract SplitStealContract is owned, priced {
             game.claimedReward[msg.sender] = true;
             return true;
         }
-        if( !isEven(game.bets[player1].actualChoice) && isEven(game.bets[player2].actualChoice) ) { // Split Steal
+        if ( !isEven(game.bets[player1].actualChoice) && isEven(game.bets[player2].actualChoice) ) { // Split Steal
             game.reward[player1] = 0;
             game.claimedReward[msg.sender] = true;
             return true;
         }
-        if( isEven(game.bets[player1].actualChoice) && !isEven(game.bets[player2].actualChoice) ) { // Steal Split
-            reward = (((100 + game.k) * game.bets[player1].betAmount)/100);
+        if ( isEven(game.bets[player1].actualChoice) && !isEven(game.bets[player2].actualChoice) ) { // Steal Split
+            gameReward = (((100 + game.k) * game.bets[player1].betAmount)/100);
+            reward = gameReward < totalBet ? gameReward : totalBet; //Min (X+Y, (100+K)*X/100)
             ethTransfer(gameNumber, player1, reward);
             game.reward[player1] = reward;
             game.claimedReward[msg.sender] = true;
             return true;
         }
-        if( isEven(game.bets[player1].actualChoice) && isEven(game.bets[player2].actualChoice) ) { // Steal Steal
+        if ( isEven(game.bets[player1].actualChoice) && isEven(game.bets[player2].actualChoice) ) { // Steal Steal
             reward = 0;
             if( game.bets[player1].betAmount > game.bets[player2].betAmount) {
-                (((100 + game.k) * (game.bets[player1].betAmount - game.bets[player2].betAmount)) / 100 );
+                gameReward = ((100 + game.k) * (game.bets[player1].betAmount - game.bets[player2].betAmount)) / 100;
+                reward = gameReward < totalBet ? gameReward : totalBet; //Min (X+Y, (100+K)*(X-Y)/100)
             }
-            ethTransfer(gameNumber, player1, reward);
+            if(reward > 0) {
+                ethTransfer(gameNumber, player1, reward);
+            }
             game.reward[player1] = reward;
             game.claimedReward[msg.sender] = true;
             return true;

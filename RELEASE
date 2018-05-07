@@ -1,3 +1,17 @@
+V 0.2
+Contract Deployed at : https://rinkeby.etherscan.io/tx/0x3d1b13db319d739568ca2c0b1576890e4b60bcb8027c3f1fe6400749e358e2ea
+Release Date : 7th May 2018
+
+CHANGELOG
+
+Contract
+1. Enforced Minumum and Maximum Bet Amount. Values configurable by Contract Owner.
+2. Fixed bugs in ClaimReward.
+3. Enforced Max win to be X + Y.
+
+Dapp
+1. Improved UX when player submits the choice by adding ETH loader and disabling selected control.
+2. Added button to withdraw ether from contract for Admin.
 
 V 0.1
 Contract Deployed at : https://rinkeby.etherscan.io/tx/0x23e6972774a14972a4ef3771cee648d9361baa1a6d478521a2be7a07197cac7e
