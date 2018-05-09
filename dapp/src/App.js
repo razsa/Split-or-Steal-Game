@@ -10,7 +10,30 @@ import AutosizeInput from "react-input-autosize";
 //TODO : CssTransitionGroup Animation
 
 class About extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      X: 2, //exmaple value
+      Y: 1 //example value
+    };
+  }
+
+  updateX = event => {
+    const val = event.target.value;
+    this.setState({
+      X: val
+    });
+  };
+
+  updateY = event => {
+    const val = event.target.value;
+    this.setState({
+      Y: val
+    });
+  };
+
   render() {
+    let { k, b } = this.props;
     //TODO : Add Fees etc.. game rules
     return (
       <div id="about" className="App-header">
@@ -42,25 +65,25 @@ class About extends Component {
                   <b>Split</b>
                 </td>
                 <td>(X+Y)/2</td>
-                <td>0 \ Min(X+Y, ((100+K)*Y)/100) </td>
-                <td>Min(X+Y, ((100+K)*X)/100) \ 0</td>
-                <td>Min(X+Y, ((100+B)*X)/100) \ 0</td>
+                <td>0 \ Min(X+Y, K*Y) </td>
+                <td>Min(X+Y, K*X) \ 0</td>
+                <td>Min(X+Y, B*X) \ 0</td>
               </tr>
               <tr>
                 <td>
                   <b>Steal</b>
                 </td>
-                <td>Min(X+Y, ((100+K)*X)/100) \ 0</td>
-                <td>Min(X+Y, ((100+K)*Max(0,X-Y)/100))</td>
-                <td>Min(X+Y, ((100+K)*X)/100) \ 0</td>
-                <td>Min(X+Y, ((100+B)*X)/100) \ 0</td>
+                <td>Min(X+Y, K*X) \ 0</td>
+                <td>Min(X+Y, K*Max(0,X-Y))</td>
+                <td>Min(X+Y, K*X) \ 0</td>
+                <td>Min(X+Y, B*X) \ 0</td>
               </tr>
               <tr>
                 <td>
                   <b>Disqualified</b>
                 </td>
-                <td>0 \ Min(X+Y, ((100+K)*Y)/100) </td>
-                <td>0 \ Min(X+Y, ((100+K)*Y)/100) </td>
+                <td>0 \ Min(X+Y, K*Y) </td>
+                <td>0 \ Min(X+Y, K*Y) </td>
                 <td>0 \ 0</td>
                 <td>0 \ 0</td>
               </tr>
@@ -68,8 +91,8 @@ class About extends Component {
                 <td>
                   <b>No Opponent</b>
                 </td>
-                <td>0 \ Min(X+Y, ((100+B)*Y)/100) </td>
-                <td>0 \ Min(X+Y, ((100+B)*Y)/100) </td>
+                <td>0 \ Min(X+Y, B*Y) </td>
+                <td>0 \ Min(X+Y, B*Y) </td>
                 <td>0 \ 0</td>
                 <td>0 \ 0</td>
               </tr>
@@ -79,9 +102,164 @@ class About extends Component {
           <b>where</b>,
           <ul className="App-list">
             <li> X & Y are bet amounts by PlayerX and PlayerY respectively</li>
-            <li>K > 0</li>
-            <li>B > 0</li>
+            <li>K > 1</li>
+            <li>B > 1</li>
           </ul>
+          <b>Interactive Reward Matrix</b>
+          <br />
+          <br />
+          Enter your and opponent's hypothetical bet amounts to visualize
+          winnings.
+          <br />
+          <br />
+          I Bet :{" "}
+          <AutosizeInput
+            autoComplete="off"
+            inputClassName="input"
+            onChange={this.updateX}
+            value={this.state.X}
+          />
+          {"   "}
+          Opponent Bets :{" "}
+          <AutosizeInput
+            autoComplete="off"
+            inputClassName="input"
+            onChange={this.updateY}
+            value={this.state.Y}
+          />
+          <br />
+          <br />
+          <b>
+            R(X,Y,K,B) => R({this.state.X}, {this.state.Y}, {k}, {b})
+          </b>
+          <br />
+          <table className="App-table">
+            <tbody>
+              <tr>
+                <th>(Me \ Opponent)</th>
+                <th>Split</th>
+                <th>Steal</th>
+                <th>Disqualified</th>
+                <th>No Opponent</th>
+              </tr>
+              <tr>
+                <td>
+                  <b>Split</b>
+                </td>
+                <td>
+                  ({(parseFloat(this.state.X) + parseFloat(this.state.Y)) / 2})
+                </td>
+                <td>
+                  0 \{" "}
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    k * parseFloat(this.state.Y)
+                  )}
+                </td>
+                <td>
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    k * parseFloat(this.state.X)
+                  )}{" "}
+                  \ 0
+                </td>
+                <td>
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    (b * parseFloat(this.state.X)).toPrecision(4)
+                  )}{" "}
+                  \ 0
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <b>Steal</b>
+                </td>
+                <td>
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    k * parseFloat(this.state.X)
+                  )}{" "}
+                  \ 0
+                </td>
+                <td>
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    k *
+                      Math.max(
+                        0,
+                        parseFloat(this.state.X) - parseFloat(this.state.Y)
+                      )
+                  )}{" "}
+                  \
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    k *
+                      Math.max(
+                        0,
+                        parseFloat(this.state.Y) - parseFloat(this.state.X)
+                      )
+                  )}
+                </td>
+                <td>
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    k * parseFloat(this.state.X)
+                  )}{" "}
+                  \ 0
+                </td>
+                <td>
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    (b * parseFloat(this.state.X)).toPrecision(4)
+                  )}{" "}
+                  \ 0
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <b>Disqualified</b>
+                </td>
+                <td>
+                  0 \{" "}
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    k * parseFloat(this.state.Y)
+                  )}{" "}
+                </td>
+                <td>
+                  0 \{" "}
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    k * parseFloat(this.state.Y)
+                  )}{" "}
+                </td>
+                <td>0 \ 0</td>
+                <td>0 \ 0</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>No Opponent</b>
+                </td>
+                <td>
+                  0 \{" "}
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    (b * parseFloat(this.state.Y)).toPrecision(4)
+                  )}{" "}
+                </td>
+                <td>
+                  0 \{" "}
+                  {Math.min(
+                    parseFloat(this.state.X) + parseFloat(this.state.Y),
+                    (b * parseFloat(this.state.Y)).toPrecision(4)
+                  )}{" "}
+                </td>
+                <td>0 \ 0</td>
+                <td>0 \ 0</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div className="App-about">
           <br />
@@ -96,25 +274,25 @@ class About extends Component {
               </li>
               <li>
                 {" "}
-                If X chooses to SPLIT and Y chooses to STEAL, then Y gains K %
-                of Y (Capped by X+Y) and X gets 0, thus the higher you bet
+                If X chooses to SPLIT and Y chooses to STEAL, then Y gains K
+                times of Y (Capped by X+Y) and X gets 0, thus the higher you bet
                 higher you win.
               </li>
               <li>
                 {" "}
-                If X chooses to STEAL and Y chooses to SPLIT, then X gains K %
-                of X (Capped by X+Y) and Y gets 0, thus the higher you bet
+                If X chooses to STEAL and Y chooses to SPLIT, then X gains K
+                times of X (Capped by X+Y) and Y gets 0, thus the higher you bet
                 higher you win.
               </li>
               <li>
                 If X chooses to STEAL and Y also chooses to STEAL, then they win
-                K % of Max(0, X-Y) (Capped by X+Y), thus player betting higher
-                gets some part back.
+                K times of Max(0, X-Y) (Capped by X+Y), thus player betting
+                higher gets some part back.
               </li>
 
               <li>
                 If a player's opponent gets disqualified and the player not,
-                then player gains K % of player's bet (Capped by X+Y).
+                then player gains K times of player's bet (Capped by X+Y).
               </li>
 
               <li>
@@ -123,7 +301,7 @@ class About extends Component {
 
               <li>
                 If a player remains odd one out, i.e. is not paired with any
-                one, that player gains B % of player's bet.
+                one, that player gains B times of player's bet.
                 <ul>
                   <li>This can happen if total players who bet are odd.</li>
                 </ul>
@@ -309,6 +487,54 @@ class About extends Component {
   }
 }
 
+class Fair extends Component {
+  render() {
+    return (
+      <div id="how-provably-fair" className="App-about">
+        <br />
+        <b>
+          How is this game{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://en.wikipedia.org/wiki/Provably_fair"
+          >
+            Provably Fair
+          </a>?
+        </b>
+        <br />
+        <br />
+        <div className="Center">
+          <ol className="App-list">
+            <li>
+              Contract code can be found{" "}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://rinkeby.etherscan.io/address/0x9b5f424c2705ebaf35bd730011b7caefcc7776f5#code"
+              >
+                here
+              </a>.
+            </li>
+            <li>
+              {" "}
+              All transactions on contract can be found{" "}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://rinkeby.etherscan.io/address/0x9b5f424c2705ebaf35bd730011b7caefcc7776f5"
+              >
+                here
+              </a>.
+            </li>
+          </ol>
+        </div>
+        <br />
+      </div>
+    );
+  }
+}
+
 class MyHeader extends Component {
   render() {
     let { metamaskInstalled, noAccountsInMetamask } = this.props;
@@ -335,7 +561,19 @@ class MyHeader extends Component {
         <h1 className="App-title-metamask">
           Welcome to "SPLIT or STEAL" game on BLOCKCHAIN
         </h1>
-
+        <div>
+          <b>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Provably_fair"
+            >
+              Provably Fair
+            </a>
+          </b>{" "}
+          <a href="#how-provably-fair">(How?)</a>
+        </div>
+        <br />
         {warningMessage === null ? null : (
           <h2 className="App-title-metamask">
             {warningMessage}{" "}
@@ -354,10 +592,7 @@ class MyHeader extends Component {
         {!metamaskInstalled || noAccountsInMetamask ? null : (
           <div className="App-info">
             <div style={{ paddingTop: "0px" }}>
-              <a
-                href="#about"
-                // href="https://github.fkinternal.com/Flipkart/Split-or-Steal-Game/blob/master/README.md"
-              >
+              <a href="#about">
                 <b>How to play this game ?</b>
               </a>
             </div>
@@ -393,8 +628,8 @@ class App extends Component {
       contract: null,
       //Game State Variables
       currentGame: 0,
-      k: "being calculated", //Reward %
-      b: "being calculated", //Odd player Bonus Percentage
+      k: "being calculated", //Reward Factor
+      b: "being calculated", //Odd Player Bonus Factor
       gameState: "Fetching the latest game state... Please wait",
       registerationOpen: false,
       playStarted: false,
@@ -655,8 +890,7 @@ class App extends Component {
             preInputText: playStarted
               ? "Wait for next round."
               : revealing
-                ? "Enter your previously selected choice.(Split[ODD] or Steal[EVEN]) for Game " +
-                  this.state.currentGame
+                ? "Reveal your choice for Game Number " + gameNumber
                 : "Wait for next game to bet",
             inputPlaceholder: playStarted
               ? "Not accepting any bets"
@@ -671,7 +905,8 @@ class App extends Component {
                 " You had bet " +
                 betAmount
               : revealing
-                ? "Reveal your choice for Game Number " + gameNumber
+                ? "Enter your previously selected choice.([ODD] for SPLIT or [EVEN] for STEAL) for Game " +
+                  this.state.currentGame
                 : "You are not eligible to play as you didn't reveal your choice for game " +
                   this.state.currentGame +
                   " You had bet " +
@@ -686,8 +921,7 @@ class App extends Component {
             preInputText: registerationOpen
               ? "Wait for next round."
               : playStarted
-                ? "Enter your choice.(Split[ODD] or Steal[EVEN]) for Game " +
-                  this.state.currentGame
+                ? "Enter your choice for Game " + this.state.currentGame
                 : "Wait for next game to bet.",
             inputPlaceholder: registerationOpen
               ? "Not accepting any bets"
@@ -701,7 +935,7 @@ class App extends Component {
                 " You had bet " +
                 betAmount
               : playStarted
-                ? "Enter your choice(Split[ODD] or Steal[EVEN]) for Game" +
+                ? "Enter your choice([ODD] for SPLIT or [EVEN] for STEAL) for Game" +
                   this.state.currentGame
                 : "You are not eligible to play as you didn't enter your choice for game " +
                   this.state.currentGame +
@@ -812,8 +1046,10 @@ class App extends Component {
       })
       .then(result => {
         this.setState({
-          k: result._k.toString(),
-          b: result._oddPlayerBonusPercentage.toString()
+          k: parseFloat((parseInt(result._k, 10) + 100) / 100).toString(),
+          b: parseFloat(
+            (parseInt(result._oddPlayerBonusPercentage, 10) + 100) / 100
+          ).toString()
         });
       });
   };
@@ -1239,10 +1475,10 @@ class App extends Component {
                 <b>{warning}</b>
               </div>
               <div style={{ paddingTop: "10px" }}>
-                <b>Reward Percentage(K) is {k}</b>
+                <b>Reward Factor(K) is {k}</b>
               </div>
               <div style={{ paddingTop: "10px" }}>
-                <b>Odd Player Bonus Percentage(B) is {b}</b>
+                <b>Odd Player Bonus Factor(B) is {b}</b>
               </div>
             </div>
             {this.AdminSection(
@@ -1257,12 +1493,19 @@ class App extends Component {
                 <Loading loading={this.state.stateLocalOverride} />
               </div>
             </div>
-            {this.PlayerSection()}
             <div className="PlayerInput">
               Your address{" "}
-              <b>
-                <font color="blue">{this.state.metamaskAccount}</font>
-              </b>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                // TODO : Make sure to change domain according to Smart Contract address
+                href={
+                  "https://rinkeby.etherscan.io/address/" +
+                  this.state.metamaskAccount
+                }
+              >
+                {this.state.metamaskAccount}
+              </a>
               <div className="bottomMargin">{this.state.preInputText}</div>
               <div className="bottomMargin">
                 <AutosizeInput
@@ -1276,6 +1519,7 @@ class App extends Component {
               </div>
               <div className="bottomMargin">{this.state.postInputText}</div>
             </div>
+            {this.PlayerSection()}
           </div>
         </div>
       );
@@ -1304,7 +1548,9 @@ class App extends Component {
           this.state.b
         )}
         <hr />
-        <About />
+        <About k={this.state.k} b={this.state.b} />
+        <hr />
+        <Fair />
       </div>
     );
   };
