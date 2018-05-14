@@ -664,9 +664,9 @@ class App extends Component {
       this.setState({
         contract: new client.eth.Contract(
           abi,
-          "0x9b5f424c2705ebaf35bd730011b7caefcc7776f5"
+          "0x460e2134173aa1ed87866ee72221d8d0082a1609"
         ),
-        contractAddress: "0x9b5f424c2705ebaf35bd730011b7caefcc7776f5"
+        contractAddress: "0x460e2134173aa1ed87866ee72221d8d0082a1609"
       });
       //Check if metamask is installed/enabled
       if (

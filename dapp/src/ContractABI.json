@@ -1,15 +1,6 @@
 [
   {
     "constant": false,
-    "inputs": [],
-    "name": "startRegistration",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
     "inputs": [
       {
         "name": "_player",
@@ -30,7 +21,7 @@
   {
     "constant": false,
     "inputs": [],
-    "name": "startPlay",
+    "name": "transferBalanceToOwner",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -38,11 +29,38 @@
   },
   {
     "constant": false,
-    "inputs": [],
-    "name": "transferBalanceToOwner",
+    "inputs": [
+      {
+        "name": "_gameNumber",
+        "type": "uint256"
+      },
+      {
+        "name": "_betAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "_encryptedChoice",
+        "type": "bytes32"
+      }
+    ],
+    "name": "joinGame",
     "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getTotalGames",
+    "outputs": [
+      {
+        "name": "_totalGames",
+        "type": "uint256"
+      }
+    ],
     "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -60,22 +78,17 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
+    "constant": true,
+    "inputs": [],
+    "name": "getTotalGamesStarted",
+    "outputs": [
       {
-        "name": "_betAmount",
+        "name": "_totalGames",
         "type": "uint256"
       }
     ],
-    "name": "bet",
-    "outputs": [
-      {
-        "name": "_accepted",
-        "type": "bool"
-      }
-    ],
-    "payable": true,
-    "stateMutability": "payable",
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -146,11 +159,15 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_to",
-        "type": "address"
+        "name": "_gameNumber",
+        "type": "uint256"
+      },
+      {
+        "name": "_choice",
+        "type": "uint256"
       }
     ],
-    "name": "changeOwner",
+    "name": "reveal",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -158,8 +175,13 @@
   },
   {
     "constant": false,
-    "inputs": [],
-    "name": "startReveal",
+    "inputs": [
+      {
+        "name": "_to",
+        "type": "address"
+      }
+    ],
+    "name": "changeOwner",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -175,56 +197,26 @@
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "getGameState",
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_betAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "_encryptedChoice",
+        "type": "bytes32"
+      }
+    ],
+    "name": "startGame",
     "outputs": [
       {
         "name": "_gameNumber",
         "type": "uint256"
-      },
-      {
-        "name": "_registerationOpen",
-        "type": "bool"
-      },
-      {
-        "name": "_playStarted",
-        "type": "bool"
-      },
-      {
-        "name": "_revealing",
-        "type": "bool"
-      },
-      {
-        "name": "_lastGameFinished",
-        "type": "bool"
-      },
-      {
-        "name": "_totalPlayers",
-        "type": "uint256"
       }
     ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_choice",
-        "type": "uint256"
-      }
-    ],
-    "name": "reveal",
-    "outputs": [
-      {
-        "name": "_accepted",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
+    "payable": true,
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -270,15 +262,6 @@
   },
   {
     "constant": false,
-    "inputs": [],
-    "name": "stopReveal",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
     "inputs": [
       {
         "name": "_player",
@@ -297,36 +280,17 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_encryptedChoice",
-        "type": "bytes32"
-      }
-    ],
-    "name": "submit",
+    "constant": true,
+    "inputs": [],
+    "name": "getTotalGamesParticipated",
     "outputs": [
       {
-        "name": "_accepted",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_percentage",
+        "name": "_totalGames",
         "type": "uint256"
       }
     ],
-    "name": "setOddPlayerBonusPercent",
-    "outputs": [],
     "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -348,10 +312,6 @@
         "type": "bool"
       },
       {
-        "name": "_played",
-        "type": "bool"
-      },
-      {
         "name": "_revealed",
         "type": "bool"
       },
@@ -362,10 +322,6 @@
       {
         "name": "_claimedReward",
         "type": "bool"
-      },
-      {
-        "name": "_opponent",
-        "type": "address"
       },
       {
         "name": "_betAmount",
@@ -388,10 +344,33 @@
       {
         "name": "_k",
         "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "gameNumber",
+        "type": "uint256"
+      }
+    ],
+    "name": "getGameState",
+    "outputs": [
+      {
+        "name": "_registerationOpen",
+        "type": "bool"
       },
       {
-        "name": "_oddPlayerBonusPercentage",
-        "type": "uint256"
+        "name": "_revealing",
+        "type": "bool"
+      },
+      {
+        "name": "_lastGameFinished",
+        "type": "bool"
       }
     ],
     "payable": false,
@@ -423,77 +402,9 @@
         "indexed": true,
         "name": "_gameNumber",
         "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "name": "_player",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "_betAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "Registered",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "_gameNumber",
-        "type": "uint256"
       }
     ],
     "name": "RegisterationClosed",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "_gameNumber",
-        "type": "uint256"
-      }
-    ],
-    "name": "PlayStarted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "_gameNumber",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "_player",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "_encryptedChoice",
-        "type": "bytes32"
-      }
-    ],
-    "name": "Played",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "_gameNumber",
-        "type": "uint256"
-      }
-    ],
-    "name": "PlayStopped",
     "type": "event"
   },
   {
@@ -540,38 +451,6 @@
       }
     ],
     "name": "Transferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "_gameNumber",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "name": "_player1",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "name": "_player2",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "betAmount1",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "betAmount2",
-        "type": "uint256"
-      }
-    ],
-    "name": "Paired",
     "type": "event"
   },
   {
@@ -685,23 +564,6 @@
       }
     ],
     "name": "NewRewardPercentage",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "_fromPercentage",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "_toPercentage",
-        "type": "uint256"
-      }
-    ],
-    "name": "NewOddPlayerBonus",
     "type": "event"
   },
   {

@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   /* background-image: url("roulette.png"); */
-  /* background-color: olive; */
+  background-color: rgba(255, 255, 255, 0);
 }
 
 .App-logo {
@@ -12,7 +12,7 @@
 
 .App-header {
   border-radius: 25px;
-  background-color: rgba(255, 255, 255);
+  background-color: transparent;
   height: fit-content;
   padding: 20px;
   font-family: Georgia, "Times New Roman", Times, serif;
@@ -24,7 +24,7 @@
 
 .Game-section {
   border-radius: 25px;
-  background-color: rgba(255, 255, 255);
+  background-color: transparent;
   height: fit-content;
   padding: 20px;
   font-family: Georgia, "Times New Roman", Times, serif;
@@ -66,11 +66,13 @@
   height: fit-content;
   width: fit-content;
   border-radius: 25px;
-  background-color: rgba(35, 76, 163, 0.356);
+  background-color: rgba(70, 92, 141, 0.356);
   height: fit-content;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: cursive;
+
   font-style: bold;
   margin-top: 10px;
+  font-size: 18;
   float: center;
   margin-left: auto;
   margin-right: auto;
@@ -130,7 +132,19 @@
   }
 }
 
+.btn-new {
+  outline-width: 0;
+  display: inline-block;
+  padding: 20px 52px;
+  border-radius: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
 .button-admin {
+  outline-width: 0;
   border-radius: 25px;
   background-color: grey;
   border: none;
@@ -142,6 +156,7 @@
 }
 
 .button-admin-enabled {
+  outline-width: 0;
   border-radius: 25px;
   background-color: rgba(11, 202, 11, 0.849);
   border: none;
@@ -152,7 +167,44 @@
   cursor: pointer;
 }
 
+.button-admin-enabled:active {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: rgba(12, 211, 111, 0.753);
+  border: none;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button-donation-enabled {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: gold;
+  border: none;
+  color: chocolate;
+  padding: 15px 25px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button-donation-enabled:active {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: rgb(180, 155, 10);
+  border: none;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 .button-player {
+  outline-width: 0;
   border-radius: 25px;
   background-color: grey;
   border: none;
@@ -164,8 +216,47 @@
 }
 
 .button-player-enabled {
+  outline-width: 0;
   border-radius: 25px;
   background-color: rgba(11, 202, 11, 0.849);
+  border: none;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button-player-enabled:active {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: rgba(12, 211, 111, 0.753);
+  border: none;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button-more-games {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: rgba(255, 0, 0, 0.712);
+  border: none;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button-more-games:active {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: rgba(201, 38, 16, 0.74);
   border: none;
   color: white;
   padding: 15px 25px;
@@ -184,12 +275,95 @@
   border: 10px;
   color: white;
   padding: 30px 50px;
-  text-align: center;
   font-size: 22px;
   cursor: pointer;
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
-  align-self: center;
+}
+
+.Donate {
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 20px;
+  margin-top: 20px;
+  border-radius: 25px;
+  background-color: transparent;
+  border: 10px;
+  color: goldenrod;
+  padding: 10px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
+.NewGame {
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 25px;
+  background-color: rgba(167, 221, 18, 0.596);
+  border: 20px;
+  color: rgba(13, 109, 153, 0.863);
+  padding: 10px 50px;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  margin-top: 10px;
+}
+
+.Inline {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 10px;
+  display: inline-block;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.Footer {
+  margin-top: 10px;
+  background-color: rgba(0, 0, 0);
+  color: white;
+}
+
+.AllGamesCard {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 10px;
+  display: inline-block;
+  margin-left: 20px;
+  margin-right: 20px;
+  border-radius: 25px;
+  background-color: rgba(167, 221, 18, 0.596);
+  border: 10px;
+  color: rgba(13, 109, 153, 0.863);
+  padding: 10px 25px;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
+.AllGames {
+  margin-bottom: 10px;
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 25px;
+  background-color: transparent;
+  border: 10px;
+  color: rgba(13, 109, 153, 0.863);
+  padding: 30px 50px;
+  font-size: 22px;
+  cursor: pointer;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }
 
 .Player {
@@ -209,6 +383,7 @@
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
 }
+
 .GameState {
   height: fit-content;
   width: fit-content;
@@ -220,6 +395,25 @@
   margin-top: 10px;
   color: white;
   padding: 30px 50px;
+  text-align: center;
+  font-size: 22px;
+  cursor: pointer;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
+.Player {
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 25px;
+  background-color: rgba(160, 221, 18, 0.856);
+  border: 10px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  color: white;
+  padding: 10px 20px;
   text-align: center;
   font-size: 22px;
   cursor: pointer;
@@ -246,6 +440,19 @@
     "Lucida Sans", Arial, sans-serif;
 }
 
+.game-input {
+  outline-width: 0;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  width: 30px;
+  padding: 10px;
+  font-size: 14px;
+  background-color: #ffffff;
+  border: solid 1px #b3b3b3;
+  border-radius: 25px;
+  box-shadow: inset 0px 1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
 .input {
   border-radius: 18px;
   background: rgb(0, 153, 107);
@@ -266,16 +473,20 @@
   margin-bottom: 10px;
 }
 table {
-  border-collapse: collapse;
-  border: solid black 1px;
+  border-collapse: separate;
+  border: solid black;
+  border-radius: 25px;
+  padding: 15px 15px;
 }
 
 td,
 th {
-  border-left: solid black 1px;
-  border-top: solid black 1px;
+  /* border-left: solid black 1px; */
+  border: solid black 1px;
+  border-radius: 5px;
+  text-align: left;
 }
-
+/* 
 th {
   border-top: none;
-}
+} */

@@ -1,3 +1,15 @@
+V 0.3
+Contract Deployed at : https://rinkeby.etherscan.io/tx/0x1b577502cdd4b33377fd0d7c19bf14e98809bb3ecc15387a8714a2053ed8446d
+Release Date : 14th May 2018
+
+CHANGELOG
+
+Contract
+Instead of Admin Driven, contract has been modified to be played unsupervised.
+
+Dapp
+Ability to playe game without admin
+
 V 0.2
 Contract Deployed at : https://rinkeby.etherscan.io/tx/0x3d1b13db319d739568ca2c0b1576890e4b60bcb8027c3f1fe6400749e358e2ea
 Release Date : 7th May 2018
