@@ -1734,6 +1734,29 @@ class AppV2 extends Component {
 
     return (
       <div className="App">
+        <a
+          href="https://github.com/showmeyourcode/Split-or-Steal-Game"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            style={{ float: "left", border: 0 }}
+            src="https://s3.amazonaws.com/github/ribbons/forkme_left_orange_ff7600.png"
+            alt="Fork me on GitHub"
+          />
+        </a>
+
+        <a
+          href="https://github.com/showmeyourcode/Split-or-Steal-Game"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            style={{ float: "right", border: 0 }}
+            src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+            alt="Fork me on GitHub"
+          />
+        </a>
         <MyHeader
           metamaskInstalled={this.state.metamaskInstalled}
           noAccountsInMetamask={this.state.noAccountsInMetamask}
