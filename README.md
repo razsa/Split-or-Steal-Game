@@ -1,10 +1,10 @@
 # Split-or-Steal-Game
 
-DAPP Game on ethereum blockchain deployed at [Rinkeby](https://rinkeby.etherscan.io/address/0x2ac77fe38e7be6f3d15f797594aa8d03d8810cea#code).
+DAPP Game on ethereum blockchain deployed at [Rinkeby](https://rinkeby.etherscan.io/address/0x65fb55676278a460f002aa98b59718bfe6cd9078#code).
 
 [How to Play](http://showmeyourcode.github.io/Split-or-Steal-Game/#about)
 
-![DAPP Game on ethereum blockchain](https://imgur.com/Nd8nmnV.jpg)
+![DAPP Game on ethereum blockchain](https://i.imgur.com/sN5IWiq.jpg)
 
 **How to run tests**
 
@@ -14,7 +14,7 @@ Download and run [Ganache](http://truffleframework.com/ganache/)
 
 **USING REMIX**
 
-* Open [remix(v0.4.21)](http://remix.ethereum.org/#optimize=false&version=soljson-v0.4.21+commit.dfe3193c.js)
+* Open [remix(v0.4.21)](http://remix.ethereum.org/)
 * Copy Paste [contract](https://github.com/showmeyourcode/Split-or-Steal-Game/blob/master/truffle/contracts/SplitStealContractV2.sol) in remix IDE
 * Go to _Run_ tab and in _Environment_ select _Web3 Provider_
 * Provide endpoint as http://localhost:7545 (That's where Ganache is running)

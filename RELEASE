@@ -1,4 +1,30 @@
-V 0.3
+V 0.3.2
+Contract Deployed at : https://rinkeby.etherscan.io/tx/0x698c9e23dc375d6783b84fe082652af344824891aeef324730fe7a0c5c57066c
+Release Date : 15th May 2018
+
+CHANGELOG
+
+Contract 
+1. BUG FIX : making contract balance 0 when contract balance is withdrawn.
+
+V 0.3.1
+Contract Deployed at : https://rinkeby.etherscan.io/tx/0xc7a17e884112b1a2d0b4c1310e895a2a73100c4f2684c37d2fd9215a019f7c65
+Release Date : 15t May 2018
+
+CHANGELOG
+
+Contract 
+1. Added start, reveal and finish time stamp in game
+2. Introduced Stage Timeout concept.
+3. Added a way to break deadlock if stage doesn't advance or ether are stuck in contract
+4. Added Contract Earnings, making game more reliable as owner can't withdraw contract balance completely now.
+
+Dapp
+1. Fixed a bug of random gas in view method calls, added min gas to it.
+2. Changed UI to accomodate above Contract changes.
+
+
+V 0.3.0
 Contract Deployed at : https://rinkeby.etherscan.io/tx/0x1b577502cdd4b33377fd0d7c19bf14e98809bb3ecc15387a8714a2053ed8446d
 Release Date : 14th May 2018
 
@@ -10,7 +36,7 @@ Instead of Admin Driven, contract has been modified to be played unsupervised.
 Dapp
 Ability to playe game without admin
 
-V 0.2
+V 0.2.0
 Contract Deployed at : https://rinkeby.etherscan.io/tx/0x3d1b13db319d739568ca2c0b1576890e4b60bcb8027c3f1fe6400749e358e2ea
 Release Date : 7th May 2018
 
@@ -25,7 +51,7 @@ Dapp
 1. Improved UX when player submits the choice by adding ETH loader and disabling selected control.
 2. Added button to withdraw ether from contract for Admin.
 
-V 0.1
+V 0.1.0
 Contract Deployed at : https://rinkeby.etherscan.io/tx/0x23e6972774a14972a4ef3771cee648d9361baa1a6d478521a2be7a07197cac7e
 Release Date : 4th May 2018
 

@@ -5,8 +5,6 @@ import Web3 from "web3";
 import abi from "./ContractABI.json";
 import AutosizeInput from "react-input-autosize";
 
-//TODO : ETHEREUM_CLIENT usage , can be scoped to file instead of App
-//TODO : NO SHOW WHO You are paired other wise people can exploit it
 //TODO : CssTransitionGroup Animation
 //TODO : Add Animation for EVEN STEAL and odd SPLIT
 
@@ -35,9 +33,8 @@ class About extends Component {
 
   render() {
     let { k } = this.props;
-    //TODO : Add Fees etc.. game rules
     return (
-      <div id="about" className="App-header">
+      <div id="about">
         <div className="App-about">
           <b>
             <h2>What is the game?</h2>
@@ -88,11 +85,17 @@ class About extends Component {
           </table>
           <br />
           <b>where</b>,
-          <ul className="App-list">
-            <li> X & Y are bet amounts by PlayerX and PlayerY respectively</li>
-            <li>K > 1</li>
-            <li>B > 1</li>
-          </ul>
+          <div id="reward-factor">
+            <ul className="App-list">
+              <li>
+                {" "}
+                X & Y are bet amounts by PlayerX and PlayerY respectively
+              </li>
+              <li>
+                K > 1, K is <b>Reward Factor</b>
+              </li>
+            </ul>
+          </div>
           <b>
             <h3>Interactive Reward Matrix</h3>
           </b>
@@ -317,13 +320,48 @@ class About extends Component {
                   Contract would reward player according to Reward Matrix.
                   **(THIS WOULD COST GAS)**{" "}
                 </li>
-                <li>
-                  Reward would be given after deducting Game Fees(F) from Reward
-                  amount
+                <li id="game-fees">
+                  Reward would be given after deducting <b>Game Fees(F)</b> from
+                  Reward amount
                 </li>
               </ol>
             </li>
           </ol>
+          <br />
+          <div id="stage-timeout">
+            <h3>Stage Timeout</h3>
+            Stage Timeout is used to unlock deadlock situations like,
+            <ol className="App-list">
+              <li>
+                If a game is in revealing stage since a long time because,
+                <ul>
+                  <li>Either both players did not reveal their choices, OR</li>
+                  <li>One of the players did not reveal choice</li>
+                </ul>
+                then, Admin can diqualify player(s) who did not reveal after
+                Stage Timeout.
+              </li>
+              <br />
+              <li>
+                If a game is in claim reward stage since a long time and,
+                <ul>
+                  <li>Either both players did not claim their rewards, OR</li>
+                  <li>One of the players did not claim reward</li>
+                </ul>
+                then, Admin can diqualify player(s) who did not claim reward.
+                <ul>
+                  <li>
+                    This essentially means that Player should claim reward
+                    within Stage Timeout amount of time.
+                  </li>
+                  <li>
+                    This is done so that the ether doesn't get locked in
+                    contract address
+                  </li>
+                </ul>
+              </li>
+            </ol>
+          </div>
         </div>
       </div>
     );
@@ -353,7 +391,7 @@ class Fair extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://rinkeby.etherscan.io/address/0x2ac77fe38e7be6f3d15f797594aa8d03d8810cea#code"
+                href="https://rinkeby.etherscan.io/address/0x65fb55676278a460f002aa98b59718bfe6cd9078#code"
               >
                 here
               </a>.
@@ -364,7 +402,7 @@ class Fair extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://rinkeby.etherscan.io/address/0x2ac77fe38e7be6f3d15f797594aa8d03d8810cea"
+                href="https://rinkeby.etherscan.io/address/0x65fb55676278a460f002aa98b59718bfe6cd9078"
               >
                 here
               </a>.
@@ -401,7 +439,7 @@ class MyHeader extends Component {
     return (
       <header className="App-header">
         <h1 className="App-title-metamask">
-          Welcome to "SPLIT or STEAL" game on BLOCKCHAIN
+          <b>Welcome to "SPLIT or STEAL" game on BLOCKCHAIN</b>
         </h1>
         <div>
           <b>
@@ -436,7 +474,9 @@ class MyHeader extends Component {
             <div>
               <br />
               <a href="#about">
-                <b>How to play this game ?</b>
+                <h2>
+                  <b>How to play this game ?</b>
+                </h2>
               </a>
             </div>
           </div>
@@ -459,14 +499,38 @@ class Loading extends Component {
 
 class RewardMatrix extends Component {
   render() {
-    let { k, gameFees, minBet, maxBet } = this.props;
+    let { k, gameFees, minBet, maxBet, stageTimeout } = this.props;
     return (
       <div className="Reward-matrix">
-        <h2>Game Rules</h2>
-        <div style={{ paddingTop: "10px" }}>Reward Factor(K) is {k}</div>
-        <div style={{ paddingTop: "10px" }}>Game Fees(F) is {gameFees}</div>
-        <div style={{ paddingTop: "10px" }}>Minimum Bet is {minBet}</div>
-        <div style={{ paddingTop: "10px" }}>Maximum Bet is {maxBet}</div>
+        <h3>Game Rules</h3>
+        <div className="Reward-matrix-list">
+          <ul>
+            <li>
+              <div style={{ paddingTop: "10px" }}>
+                <a href="#reward-factor">Reward Factor(K)</a> is {k}
+              </div>
+            </li>
+            <li>
+              <div style={{ paddingTop: "10px" }}>
+                <a href="#game-fees">Game Fees(F)</a> is {gameFees}
+              </div>
+            </li>
+            <li>
+              <div style={{ paddingTop: "10px" }}>Minimum Bet is {minBet}</div>
+            </li>
+            <li>
+              <div style={{ paddingTop: "10px" }}>Maximum Bet is {maxBet}</div>
+            </li>
+            <li>
+              <div style={{ paddingTop: "10px" }}>
+                <a href="#stage-timeout">Stage Timeout</a> is {stageTimeout}
+              </div>
+            </li>
+            <li>
+              <div style={{ paddingTop: "10px" }}>No Cheating !</div>
+            </li>
+          </ul>
+        </div>
       </div>
     );
   }
@@ -479,10 +543,12 @@ class AppV2 extends Component {
       //Global State
       web3: null,
       contractBalance: "being calculated",
+      contractEarnings: "being calculated",
       k: "being calulated",
       gameFees: "being calculated",
       minBet: "being calculated",
       maxBet: "being calculated",
+      stageTimout: "being calculated",
       contractOwner: null,
       metamaskAccount: null,
       metamaskInstalled: false,
@@ -493,6 +559,8 @@ class AppV2 extends Component {
       totalGamesMessage: "",
       //Admin
       fundValue: "",
+      adminStateOverride: "",
+      adminStateMessage: "",
       //Player
       totalGamesStarted: 0,
       totalGamesJoined: 0,
@@ -524,9 +592,9 @@ class AppV2 extends Component {
       this.setState({
         contract: new web3.eth.Contract(
           abi,
-          "0x2ac77fe38e7be6f3d15f797594aa8d03d8810cea"
+          "0x65fb55676278a460f002aa98b59718bfe6cd9078"
         ),
-        contractAddress: "0x2ac77fe38e7be6f3d15f797594aa8d03d8810cea"
+        contractAddress: "0x65fb55676278a460f002aa98b59718bfe6cd9078"
       });
       //Check if metamask is installed/enabled
       if (web3.currentProvider.isMetaMask) {
@@ -570,7 +638,7 @@ class AppV2 extends Component {
       .getOwner()
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.floor(Math.random() * 10000000) + 1
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(result => {
         this.setState({
@@ -625,7 +693,7 @@ class AppV2 extends Component {
       .getTotalGames()
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.floor(Math.random() * 10000000) + 1
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(result => {
         console.log("Total Games from Contract " + result);
@@ -661,7 +729,7 @@ class AppV2 extends Component {
       .getTotalGamesStarted()
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.floor(Math.random() * 10000000) + 1
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(result => {
         this.setState({
@@ -675,7 +743,7 @@ class AppV2 extends Component {
       .getTotalGamesParticipated()
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.floor(Math.random() * 10000000) + 1
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(result => {
         this.setState({
@@ -687,7 +755,7 @@ class AppV2 extends Component {
   addToAllGames = () => {
     console.log("total games " + this.state.totalGames);
     console.log("total games fetched " + this.state.totalGamesFetched);
-    if (this.state.totalGames - this.state.totalGamesFetched === 0) {
+    if (this.state.totalGames - this.state.totalGamesFetched <= 0) {
       console.log("No games to fetch");
       if (this.state.totalGames !== 0) {
         this.setState({
@@ -726,22 +794,28 @@ class AppV2 extends Component {
     let claimedReward = false;
     let betAmount = 0;
     let rewardAmount = 0;
+    let startTime = 0;
+    let revealTime = 0;
+    let finishTime = 0;
 
     this.state.contract.methods
       .getGameState(gameNumber)
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.floor(Math.random() * 10000000) + 1
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(resultGameState => {
         registerationOpen = resultGameState._registerationOpen;
         revealing = resultGameState._revealing;
         lastGameFinished = resultGameState._lastGameFinished;
+        startTime = resultGameState._startTime;
+        revealTime = resultGameState._revealTime;
+        finishTime = resultGameState._finishTime;
         this.state.contract.methods
           .getPlayerState(gameNumber)
           .call({
             from: this.state.metamaskAccount,
-            gas: Math.floor(Math.random() * 10000000) + 1
+            gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
           })
           .then(resultPlayerState => {
             suspended = resultPlayerState._suspended;
@@ -756,6 +830,9 @@ class AppV2 extends Component {
               registerationOpen: registerationOpen,
               revealing: revealing,
               lastGameFinished: lastGameFinished,
+              startTime: startTime,
+              revealTime: revealTime,
+              finishTime: finishTime,
               suspended: suspended,
               registered: registered,
               revealed: revealed,
@@ -813,11 +890,13 @@ class AppV2 extends Component {
     this.addToAllGames();
   };
 
-  updateGame = gameNumber => {
+  updateGame = (gameNumber, tellUser) => {
     console.log("Updating Game " + gameNumber);
-    this.setState({
-      totalGamesMessage: "Updating game number " + gameNumber.toString()
-    });
+    if (tellUser) {
+      this.setState({
+        totalGamesMessage: "Updating game number " + gameNumber.toString()
+      });
+    }
     let _allGames = this.state.allGames;
     let registerationOpen = false;
     let revealing = false;
@@ -829,12 +908,15 @@ class AppV2 extends Component {
     let claimedReward = false;
     let betAmount = 0;
     let rewardAmount = 0;
+    let startTime = 0;
+    let revealTime = 0;
+    let finishTime = 0;
 
     this.state.contract.methods
       .getGameState(gameNumber)
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.floor(Math.random() * 10000000) + 1
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(resultGameState => {
         console.log("Updating game " + gameNumber + " got Game State");
@@ -842,11 +924,15 @@ class AppV2 extends Component {
         registerationOpen = resultGameState._registerationOpen;
         revealing = resultGameState._revealing;
         lastGameFinished = resultGameState._lastGameFinished;
+        startTime = resultGameState._startTime;
+        revealTime = resultGameState._revealTime;
+        finishTime = resultGameState._finishTime;
+
         this.state.contract.methods
           .getPlayerState(gameNumber)
           .call({
             from: this.state.metamaskAccount,
-            gas: Math.floor(Math.random() * 10000000) + 1
+            gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
           })
           .then(resultPlayerState => {
             console.log("Updating game " + gameNumber + " got Player State");
@@ -863,6 +949,9 @@ class AppV2 extends Component {
               registerationOpen: registerationOpen,
               revealing: revealing,
               lastGameFinished: lastGameFinished,
+              startTime: startTime,
+              revealTime: revealTime,
+              finishTime: finishTime,
               suspended: suspended,
               registered: registered,
               revealed: revealed,
@@ -871,33 +960,19 @@ class AppV2 extends Component {
               betAmount: betAmount,
               rewardAmount: rewardAmount
             };
-            let _allGameBetAmount = this.state.allGameBetAmount;
-            _allGameBetAmount[gameNumber] = "";
-            let _allGameChoice = this.state.allGameChoice;
-            _allGameChoice[gameNumber] = "";
-            let _allGameRevealChoice = this.state.allGameRevealChoice;
-            _allGameRevealChoice[gameNumber] = "";
             let _allGameLocalOverride = this.state.allGameLocalOverride;
-            _allGameLocalOverride[gameNumber] = false;
             let _allGameMessage = this.state.allGameMessage;
-            _allGameMessage[gameNumber] = "";
-
+            if (tellUser) {
+              _allGameLocalOverride[gameNumber] = false;
+              _allGameMessage[gameNumber] = "";
+            }
             console.log("Setting... All Games.");
             this.setState({
               allGames: _allGames,
-              allGameBetAmount: _allGameBetAmount,
-              allGameChoice: _allGameChoice,
-              allGameRevealChoice: _allGameRevealChoice,
               allGameLocalOverride: _allGameLocalOverride,
               allGameMessage: _allGameMessage
             });
-          })
-          .catch(error => {
-            this.updateGame(gameNumber);
           });
-      })
-      .catch(error => {
-        this.updateGame(gameNumber);
       });
   };
 
@@ -906,53 +981,87 @@ class AppV2 extends Component {
       this.updateTotalGames();
       this.updateTotalGamesStarted();
       this.updateTotalGamesJoined();
+      let totalGames = this.state.totalGames;
+      let totalGamesFetched = this.state.totalGamesFetched;
+      for (
+        let i = totalGames;
+        i > totalGames - totalGamesFetched && i > 0;
+        i--
+      ) {
+        try {
+          this.updateGame(i, false);
+        } catch (ignore) {}
+      }
     }, 2000);
   };
 
   registerStateListener = () => {
     setInterval(() => {
       this.state.contract.methods
-        .getContractBalance()
+        .getContractEarnings()
         .call({
           from: this.state.metamaskAccount,
-          gas: Math.floor(Math.random() * 10000000) + 1
+          gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
         })
-        .then(balance => {
+        .then(earnings => {
           this.state.contract.methods
-            .getRewardMatrix()
+            .getContractBalance()
             .call({
               from: this.state.metamaskAccount,
-              gas: Math.floor(Math.random() * 10000000) + 1
+              gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
             })
-            .then(rewardFactor => {
+            .then(balance => {
               this.state.contract.methods
-                .getGameRules()
+                .getRewardMatrix()
                 .call({
                   from: this.state.metamaskAccount,
-                  gas: Math.floor(Math.random() * 10000000) + 1
+                  gas: Math.min(
+                    Math.floor(Math.random() * 10000000) + 1,
+                    210000
+                  )
                 })
-                .then(result => {
-                  this.setState({
-                    contractBalance:
-                      this.state.web3.utils
-                        .fromWei(balance, "ether")
-                        .toString() + " ether",
-                    k: parseFloat(
-                      (parseInt(rewardFactor, 10) + 100) / 100
-                    ).toString(),
-                    gameFees:
-                      this.state.web3.utils
-                        .fromWei(result._fees, "ether")
-                        .toString() + " ether",
-                    minBet:
-                      this.state.web3.utils
-                        .fromWei(result._minBet, "ether")
-                        .toString() + " ether",
-                    maxBet:
-                      this.state.web3.utils
-                        .fromWei(result._maxBet, "ether")
-                        .toString() + " ether"
-                  });
+                .then(rewardFactor => {
+                  this.state.contract.methods
+                    .getGameRules()
+                    .call({
+                      from: this.state.metamaskAccount,
+                      gas: Math.min(
+                        Math.floor(Math.random() * 10000000) + 1,
+                        210000
+                      )
+                    })
+                    .then(result => {
+                      this.setState({
+                        contractEarnings:
+                          this.state.web3.utils
+                            .fromWei(earnings, "ether")
+                            .toString() + " ether",
+                        contractBalance:
+                          this.state.web3.utils
+                            .fromWei(balance, "ether")
+                            .toString() + " ether",
+                        k: parseFloat(
+                          (parseInt(rewardFactor, 10) + 100) / 100
+                        ).toString(),
+                        gameFees:
+                          this.state.web3.utils
+                            .fromWei(result._fees, "ether")
+                            .toString() + " ether",
+                        minBet:
+                          this.state.web3.utils
+                            .fromWei(result._minBet, "ether")
+                            .toString() + " ether",
+                        maxBet:
+                          this.state.web3.utils
+                            .fromWei(result._maxBet, "ether")
+                            .toString() + " ether",
+                        stageTimout:
+                          (
+                            parseInt(result._stageTimeout, 10) /
+                            (60 * 60 * 24)
+                          ).toString() + " days"
+                      });
+                    });
                 });
             });
         });
@@ -960,36 +1069,43 @@ class AppV2 extends Component {
   };
 
   //ADMIN METHODS START
-  fundContract() {
-    return () => {
-      let fundInWei = this.state.web3.utils.toWei(
-        (parseFloat(this.state.fundValue) * 1e18).toString(),
-        "wei"
-      );
-      let transaction = this.state.contract.methods.fund();
-      transaction
-        .send({
-          from: this.state.metamaskAccount,
-          value: fundInWei
-        })
-        .on("confirmation", (confirmationNumber, receipt) => {
-          console.log(
-            "You request has got " + confirmationNumber + " confirmations"
-          );
-        })
-        .on("receipt", receipt => {
-          console.log(receipt);
-        });
-    };
-  }
+  fundContract = () => {
+    let fundInWei = this.state.web3.utils.toWei(
+      (parseFloat(this.state.fundValue) * 1e18).toString(),
+      "wei"
+    );
+    let transaction = this.state.contract.methods.fund();
+    transaction
+      .send({
+        from: this.state.metamaskAccount,
+        value: fundInWei
+      })
+      .on("confirmation", (confirmationNumber, receipt) => {
+        console.log(
+          "You request has got " + confirmationNumber + " confirmations"
+        );
+      })
+      .on("receipt", receipt => {
+        console.log(receipt);
+      });
+  };
 
   withdraw() {
     return () => {
-      let transaction = this.state.contract.methods.transferBalanceToOwner();
+      let transaction = this.state.contract.methods.transferEarningsToOwner();
       transaction
         .send({
           from: this.state.metamaskAccount
         })
+        .on("transactionHash", hash => {
+          this.setState({
+            adminStateOverride: true,
+            adminStateMessage: "Withdrawing Earnings....."
+          });
+          console.log(
+            "Your request for withdraw earnings has been submitted. "
+          );
+        })
         .on("confirmation", (confirmationNumber, receipt) => {
           console.log(
             "You request has got " + confirmationNumber + " confirmations"
@@ -997,6 +1113,10 @@ class AppV2 extends Component {
         })
         .on("receipt", receipt => {
           console.log(receipt);
+          this.setState({
+            adminStateOverride: false,
+            adminStateMessage: ""
+          });
         });
     };
   }
@@ -1099,7 +1219,7 @@ class AppV2 extends Component {
         })
         .on("receipt", receipt => {
           console.log(receipt);
-          this.updateGame(gameNumber);
+          this.updateGame(gameNumber, true);
         });
     };
   }
@@ -1137,7 +1257,7 @@ class AppV2 extends Component {
         })
         .on("receipt", receipt => {
           console.log(receipt);
-          this.updateGame(gameNumber);
+          this.updateGame(gameNumber, true);
         });
     };
   }
@@ -1176,7 +1296,7 @@ class AppV2 extends Component {
         })
         .on("receipt", receipt => {
           console.log(receipt);
-          this.updateGame(gameNumber);
+          this.updateGame(gameNumber, true);
         });
     };
   }
@@ -1204,6 +1324,11 @@ class AppV2 extends Component {
 
   AdminSection = (metamaskAccount, contractOwner) => {
     if (metamaskAccount === contractOwner) {
+      let disbaled =
+        this.state.adminStateOverride ||
+        this.state.contractEarnings === "being calculated" ||
+        this.state.contractEarnings === "0 ether";
+      let className = disbaled ? "button-admin" : "button-admin-enabled";
       return (
         <div className="Admin">
           <div>
@@ -1215,10 +1340,22 @@ class AppV2 extends Component {
             <div className="bottomMargin">
               Game Balance is {this.state.contractBalance}
             </div>
+            <div className="bottomMargin">
+              Game Earnigs are {this.state.contractEarnings}
+            </div>
             <div>
-              <button className="button-admin-enabled" onClick={this.withdraw}>
-                Withdraw
+              <button
+                className={className}
+                onClick={this.withdraw()}
+                disabled={disbaled}
+              >
+                Withdraw Earnings
               </button>
+            </div>
+
+            <div>{this.state.adminStateMessage}</div>
+            <div>
+              <Loading loading={this.state.adminStateOverride} />
             </div>
           </div>
         </div>
@@ -1245,17 +1382,20 @@ class AppV2 extends Component {
   };
 
   NewGame = () => {
+    let className = this.state.startGameLocalOverride
+      ? "button-player"
+      : "button-player-enabled";
     return (
       <div className="NewGame">
         <div>
-          <h1>
+          <h2>
             <b>Create a new game</b>
-          </h1>
+          </h2>
         </div>
-        <div class="Inline">
+        <div>
           <div>
             <AutosizeInput
-              placeholder="Enter your bet amount in ETH."
+              placeholder="Enter your bet amount."
               inputClassName="game-input"
               onChange={this.updateStartGameBetAmount}
               value={this.state.startGameBetAmount}
@@ -1263,24 +1403,28 @@ class AppV2 extends Component {
           </div>
           {" ETH"}
         </div>
-        <div className="Inline">
+        <div>
           <div>
             <AutosizeInput
-              placeholder="Enter your choice."
+              placeholder="You want to Split or Steal."
               inputClassName="game-input"
               onChange={this.updateStartGameChoice}
               value={this.state.startGameChoice}
             />
           </div>
-          {" ODD for SPLIT / EVEN for STEAL"}
+          {" ODD number for SPLIT / EVEN number for STEAL"}
         </div>
 
-        <br />
         <div>
-          <button className="button-player-enabled" onClick={this.startGame()}>
+          <button
+            className={className}
+            onClick={this.startGame()}
+            disabled={this.state.startGameLocalOverride}
+          >
             Start Game
           </button>
         </div>
+
         <div>{this.state.startGameMessage}</div>
         <div>
           <Loading loading={this.state.startGameLocalOverride} />
@@ -1313,7 +1457,15 @@ class AppV2 extends Component {
 
       let cta = null;
       let input = null;
+      let sinceStart = "";
+      let sinceReveal = "";
+      let sinceFinished = "";
+      let disabled = this.state.allGameLocalOverride[gameNumber];
+      let classNameGame = disabled ? "button-player" : "button-player-enabled";
       if (game.registerationOpen) {
+        sinceStart =
+          "Game Started on " +
+          new Date(parseInt(game.startTime, 10) * 1000).toString();
         if (game.registered) {
           if (game.claimedReward) {
             gameState = "You abondoned game.";
@@ -1321,8 +1473,9 @@ class AppV2 extends Component {
             gameState = "Waiting for someone to join the game.";
             cta = (
               <button
-                className="button-player-enabled"
+                className={classNameGame}
                 onClick={this.claimReward(gameNumber)}
+                disabled={disabled}
               >
                 Abandon Game
               </button>
@@ -1332,8 +1485,9 @@ class AppV2 extends Component {
           gameState = "Place your Bet.";
           cta = (
             <button
-              className="button-player-enabled"
+              className={classNameGame}
               onClick={this.joinGame(gameNumber)}
+              disabled={disabled}
             >
               Join Game
             </button>
@@ -1379,6 +1533,12 @@ class AppV2 extends Component {
         }
       }
       if (game.revealing) {
+        sinceStart =
+          "Game Started on " +
+          new Date(parseInt(game.startTime, 10) * 1000).toString();
+        sinceReveal =
+          "Reveal Round Started on " +
+          new Date(parseInt(game.revealTime, 10) * 1000).toString();
         if (!game.registered) {
           gameState = "You cannot play this game. This is";
           gameSubstate = "being played by some other people.";
@@ -1389,15 +1549,16 @@ class AppV2 extends Component {
             gameState = "Waiting for opponent to reveal choice.";
           }
         } else {
-          gameState = "Reveal your choice.";
-          gameSubstate = "Enter Previously entered choice.";
+          gameState = "Reveal your previously entered choice.";
+          gameSubstate = "ODD number for SPLIT / EVEN number for STEAL";
           cta = cta = (
             <button
-              className="button-player-enabled"
+              className={classNameGame}
               onClick={this.reveal(
                 gameNumber,
                 this.state.allGameRevealChoice[gameNumber]
               )}
+              disabled={disabled}
             >
               Reveal
             </button>
@@ -1420,6 +1581,15 @@ class AppV2 extends Component {
         }
       }
       if (game.lastGameFinished) {
+        sinceStart =
+          "Game Started on " +
+          new Date(parseInt(game.startTime, 10) * 1000).toString();
+        sinceReveal =
+          "Reveal Round Started on " +
+          new Date(parseInt(game.revealTime, 10) * 1000).toString();
+        sinceFinished =
+          "Game finished on " +
+          new Date(parseInt(game.finishTime, 10) * 1000).toString();
         gameState = "This game is finished.";
         if (!game.registered) {
           gameSubstate = "You did not play this game.";
@@ -1432,8 +1602,9 @@ class AppV2 extends Component {
           gameState = "Claim your reward";
           cta = (
             <button
-              className="button-player-enabled"
+              className={classNameGame}
               onClick={this.claimReward(game.gameNumber)}
+              disabled={disabled}
             >
               Claim Reward
             </button>
@@ -1447,6 +1618,9 @@ class AppV2 extends Component {
             <h3>
               <b>GAME NUMBER {game.gameNumber}</b>
             </h3>
+            <div>{sinceStart}</div>
+            <div>{sinceReveal}</div>
+            <div>{sinceFinished}</div>
           </div>
           <br />
           <div>{gameState}</div>
@@ -1461,27 +1635,30 @@ class AppV2 extends Component {
         </div>
       );
     }
+    let disbaledMoreGames =
+      this.state.totalGames === 0 ||
+      this.state.totalGames - this.state.totalGamesFetched <= 0;
+    let className = disbaledMoreGames
+      ? "button-more-games"
+      : "button-more-games-enabled";
     return (
-      <div className="AllGames">
-        <div className="bottomMargin">
+      <div>
+        <div className="AllGames">
+          <div className="bottomMargin">{games}</div>
           <h2>
             <b>All Games</b>
           </h2>
-        </div>
-        <div className="bottomMargin">{this.state.totalGamesMessage}</div>
-        <div className="bottomMargin">{games}</div>
-        <div>
-          {this.state.totalGames !== 0 ? (
+          <div className="bottomMargin">{this.state.totalGamesMessage}</div>
+          <div>
             <button
-              className="button-more-games"
+              className={className}
               onClick={this.userAddToAllGames}
+              disabled={disbaledMoreGames}
             >
               {" "}
               Get More Games
             </button>
-          ) : (
-            <div />
-          )}
+          </div>
         </div>
       </div>
     );
@@ -1497,7 +1674,7 @@ class AppV2 extends Component {
           <div>If you like the game, Please</div>
           <div>encourage with small donation.</div>
 
-          <div class="Inline">
+          <div className="Inline">
             <div>
               <AutosizeInput
                 placeholder="Enter donation amount in ETH."
@@ -1527,21 +1704,23 @@ class AppV2 extends Component {
         <div>
           <div className="Game-section">
             {this.Player()}
-            <RewardMatrix
-              contractBalance={this.state.contractBalance}
-              k={this.state.k}
-              gameFees={this.state.gameFees}
-              minBet={this.state.minBet}
-              maxBet={this.state.maxBet}
-            />
             {this.AdminSection(
               this.state.metamaskAccount,
               this.state.contractOwner
             )}
-            {this.NewGame()}
+            <div className="Game-section">
+              <RewardMatrix
+                contractBalance={this.state.contractBalance}
+                k={this.state.k}
+                gameFees={this.state.gameFees}
+                minBet={this.state.minBet}
+                maxBet={this.state.maxBet}
+                stageTimeout={this.state.stageTimout}
+              />
+              {this.NewGame()}
+            </div>
             {this.AllGames()}
           </div>
-          <hr />
         </div>
       );
     } else {
@@ -1559,7 +1738,6 @@ class AppV2 extends Component {
           metamaskInstalled={this.state.metamaskInstalled}
           noAccountsInMetamask={this.state.noAccountsInMetamask}
         />
-        <hr />
         {this.GameSection()}
         <About k={this.state.k} />
         <Fair />

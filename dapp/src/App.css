@@ -11,11 +11,11 @@
 }
 
 .App-header {
-  border-radius: 25px;
-  background-color: transparent;
+  background-color: rgb(0, 0, 0);
   height: fit-content;
   padding: 20px;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: fantasy;
+  color: goldenrod;
   font-style: bold;
   margin-left: auto;
   margin-right: auto;
@@ -25,13 +25,15 @@
 .Game-section {
   border-radius: 25px;
   background-color: transparent;
-  height: fit-content;
   padding: 20px;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: fantasy;
   font-style: bold;
+  height: fit-content;
+  width: fit-content;
   margin-left: auto;
   margin-right: auto;
   margin-top: auto;
+  margin-bottom: 40px;
 }
 
 .App-info {
@@ -43,23 +45,37 @@
   margin-right: auto;
   margin-top: 10px;
   padding: 20px;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: fantasy;
   font-style: bold;
   float: center;
 }
 
 .Reward-matrix {
   border-radius: 25px;
-  background-color: rgba(45, 199, 166, 0.712);
+  background-color: rgb(180, 16, 37);
   height: fit-content;
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 10px;
-  padding: 20px;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: fantasy;
   font-style: bold;
-  float: center;
+  color: white;
+  float: left;
+}
+
+.Reward-matrix-list {
+  background-color: transparent;
+  height: fit-content;
+  width: fit-content;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  padding-right: 10px;
+  font-family: fantasy;
+  font-size: 20px;
+  font-style: bold;
+  text-align: left;
+  float: left;
 }
 
 .App-about {
@@ -68,8 +84,7 @@
   border-radius: 25px;
   background-color: rgba(70, 92, 141, 0.356);
   height: fit-content;
-  font-family: cursive;
-
+  font-family: fantasy;
   font-style: bold;
   margin-top: 10px;
   font-size: 18;
@@ -84,7 +99,7 @@
   background-color: rgba(236, 6, 75, 0.363);
   height: fit-content;
   width: fit-content;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: fantasy;
   font-style: bold;
   margin-top: 10px;
   margin-left: auto;
@@ -108,15 +123,15 @@
   font-size: 40px;
   text-align: center;
   margin-top: 20px;
-  font-family: monospace;
+  font-family: fantasy;
 }
 
 .App-title-metamask {
-  color: rgba(0, 0, 0);
-  font-size: 20px;
+  color: goldenrod;
+  font-size: 25px;
   text-align: center;
   margin-top: 20px;
-  font-family: monospace;
+  font-family: fantasy;
 }
 
 .App-intro {
@@ -212,6 +227,7 @@
   padding: 15px 25px;
   text-align: center;
   font-size: 16px;
+  margin-top: 20px;
   cursor: pointer;
 }
 
@@ -244,6 +260,18 @@
 .button-more-games {
   outline-width: 0;
   border-radius: 25px;
+  background-color: grey;
+  border: none;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button-more-games-enabled {
+  outline-width: 0;
+  border-radius: 25px;
   background-color: rgba(255, 0, 0, 0.712);
   border: none;
   color: white;
@@ -272,13 +300,13 @@
   margin-right: auto;
   border-radius: 25px;
   background-color: rgba(221, 18, 18, 0.856);
-  border: 10px;
+  border: 20px;
   color: white;
-  padding: 30px 50px;
-  font-size: 22px;
+  padding: 20px;
+  padding-bottom: 40px;
+  font-size: 15px;
   cursor: pointer;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
+  font-family: fantasy;
 }
 
 .Donate {
@@ -295,25 +323,25 @@
   padding: 10px 10px;
   font-size: 12px;
   cursor: pointer;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
+  font-family: fantasy;
 }
 
 .NewGame {
   height: fit-content;
   width: fit-content;
-  margin-left: auto;
+  margin-left: 20px;
   margin-right: auto;
   border-radius: 25px;
-  background-color: rgba(167, 221, 18, 0.596);
+  background-color: rgba(42, 221, 18, 0.596);
   border: 20px;
   color: rgba(13, 109, 153, 0.863);
-  padding: 10px 50px;
+  padding: 15px 30px;
   font-size: 15px;
   cursor: pointer;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
+  font-family: fantasy;
   margin-top: 10px;
+  margin-bottom: 20px;
+  float: left;
 }
 
 .Inline {
@@ -345,11 +373,11 @@
   padding: 10px 25px;
   font-size: 15px;
   cursor: pointer;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
+  font-family: fantasy;
 }
 
 .AllGames {
+  margin-top: 20px;
   margin-bottom: 10px;
   height: fit-content;
   width: fit-content;
@@ -362,8 +390,8 @@
   padding: 30px 50px;
   font-size: 22px;
   cursor: pointer;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
+  font-family: fantasy;
+  float: none;
 }
 
 .Player {
@@ -372,16 +400,17 @@
   margin-left: auto;
   margin-right: auto;
   border-radius: 25px;
-  background-color: rgba(79, 18, 221, 0.856);
+  background-color: slateblue;
   border: 10px;
   margin-top: 10px;
+  margin-bottom: 20px;
   color: white;
   padding: 30px 50px;
   text-align: center;
   font-size: 22px;
   cursor: pointer;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
+
+  font-family: fantasy;
 }
 
 .GameState {
@@ -398,27 +427,7 @@
   text-align: center;
   font-size: 22px;
   cursor: pointer;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
-}
-
-.Player {
-  height: fit-content;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 25px;
-  background-color: rgba(160, 221, 18, 0.856);
-  border: 10px;
-  margin-top: 20px;
-  margin-bottom: 30px;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  font-size: 22px;
-  cursor: pointer;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
+  font-family: fantasy;
 }
 
 .PlayerInput {
@@ -436,8 +445,7 @@
   text-align: center;
   font-size: 22px;
   cursor: pointer;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
+  font-family: fantasy;
 }
 
 .game-input {
@@ -486,7 +494,7 @@ th {
   border-radius: 5px;
   text-align: left;
 }
-/* 
-th {
-  border-top: none;
-} */
+
+a {
+  color: gold;
+}

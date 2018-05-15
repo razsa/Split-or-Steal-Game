@@ -21,7 +21,7 @@
   {
     "constant": false,
     "inputs": [],
-    "name": "transferBalanceToOwner",
+    "name": "transferEarningsToOwner",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -106,42 +106,6 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_fees",
-        "type": "uint256"
-      },
-      {
-        "name": "_minBet",
-        "type": "uint256"
-      },
-      {
-        "name": "_maxBet",
-        "type": "uint256"
-      }
-    ],
-    "name": "setGameRules",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "amountInWei",
-        "type": "uint256"
-      }
-    ],
-    "name": "transferToOwner",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "constant": true,
     "inputs": [],
     "name": "getOwner",
@@ -185,6 +149,20 @@
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getContractEarnings",
+    "outputs": [
+      {
+        "name": "_earnings",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -253,6 +231,10 @@
       },
       {
         "name": "_maxBet",
+        "type": "uint256"
+      },
+      {
+        "name": "_stageTimeout",
         "type": "uint256"
       }
     ],
@@ -351,6 +333,32 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_fees",
+        "type": "uint256"
+      },
+      {
+        "name": "_minBet",
+        "type": "uint256"
+      },
+      {
+        "name": "_maxBet",
+        "type": "uint256"
+      },
+      {
+        "name": "_stageTimeout",
+        "type": "uint256"
+      }
+    ],
+    "name": "setGameRules",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [
       {
@@ -371,6 +379,18 @@
       {
         "name": "_lastGameFinished",
         "type": "bool"
+      },
+      {
+        "name": "_startTime",
+        "type": "uint256"
+      },
+      {
+        "name": "_revealTime",
+        "type": "uint256"
+      },
+      {
+        "name": "_finishTime",
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -516,6 +536,16 @@
       {
         "indexed": false,
         "name": "_newMaxBet",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_oldStageTimeout",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_newStageTimeout",
         "type": "uint256"
       }
     ],
