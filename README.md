@@ -4,7 +4,11 @@ DAPP Game on ethereum blockchain deployed at [Rinkeby](https://rinkeby.etherscan
 
 [How to Play](http://showmeyourcode.github.io/Split-or-Steal-Game/#about)
 
+<<<<<<< HEAD
 ![DAPP Game on ethereum blockchain](https://i.imgur.com/sN5IWiq.jpg)
+=======
+![DAPP Game on ethereum blockchain](https://imgur.com/YIWkulG.jpg)
+>>>>>>> b06ca0a8bd68805961eeaa77cb70d8f85aead382
 
 **How to run tests**
 
