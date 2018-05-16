@@ -34,7 +34,8 @@ class About extends Component {
   render() {
     let { k } = this.props;
     return (
-      <div id="about">
+      <div id="about" className="About">
+        <br />
         <div className="App-about">
           <b>
             <h2>What is the game?</h2>
@@ -106,7 +107,7 @@ class About extends Component {
           I Bet :{" "}
           <AutosizeInput
             autoComplete="off"
-            inputClassName="input"
+            inputClassName="game-input"
             onChange={this.updateX}
             value={this.state.X}
           />
@@ -114,7 +115,7 @@ class About extends Component {
           Opponent Bets :{" "}
           <AutosizeInput
             autoComplete="off"
-            inputClassName="input"
+            inputClassName="game-input"
             onChange={this.updateY}
             value={this.state.Y}
           />
@@ -363,6 +364,7 @@ class About extends Component {
             </ol>
           </div>
         </div>
+        <br />
       </div>
     );
   }
@@ -371,7 +373,7 @@ class About extends Component {
 class Fair extends Component {
   render() {
     return (
-      <div id="how-provably-fair" className="App-about">
+      <div id="how-provably-fair" className="App-fair">
         <b>
           <h2>
             How is this game{" "}
@@ -502,7 +504,8 @@ class RewardMatrix extends Component {
     let { k, gameFees, minBet, maxBet, stageTimeout } = this.props;
     return (
       <div className="Reward-matrix">
-        <h3>Game Rules</h3>
+        <br />
+        <h2>Game Rules</h2>
         <div className="Reward-matrix-list">
           <ul>
             <li>
@@ -592,9 +595,9 @@ class AppV2 extends Component {
       this.setState({
         contract: new web3.eth.Contract(
           abi,
-          "0x65fb55676278a460f002aa98b59718bfe6cd9078"
+          "0xe221c3fdd91ecb2839b57049eb136cd85965956f"
         ),
-        contractAddress: "0x65fb55676278a460f002aa98b59718bfe6cd9078"
+        contractAddress: "0xe221c3fdd91ecb2839b57049eb136cd85965956f"
       });
       //Check if metamask is installed/enabled
       if (web3.currentProvider.isMetaMask) {
@@ -1384,7 +1387,7 @@ class AppV2 extends Component {
   NewGame = () => {
     let className = this.state.startGameLocalOverride
       ? "button-player"
-      : "button-player-enabled";
+      : "button-new-games";
     return (
       <div className="NewGame">
         <div>
@@ -1708,17 +1711,15 @@ class AppV2 extends Component {
               this.state.metamaskAccount,
               this.state.contractOwner
             )}
-            <div className="Game-section">
-              <RewardMatrix
-                contractBalance={this.state.contractBalance}
-                k={this.state.k}
-                gameFees={this.state.gameFees}
-                minBet={this.state.minBet}
-                maxBet={this.state.maxBet}
-                stageTimeout={this.state.stageTimout}
-              />
-              {this.NewGame()}
-            </div>
+            <RewardMatrix
+              contractBalance={this.state.contractBalance}
+              k={this.state.k}
+              gameFees={this.state.gameFees}
+              minBet={this.state.minBet}
+              maxBet={this.state.maxBet}
+              stageTimeout={this.state.stageTimout}
+            />
+            {this.NewGame()}
             {this.AllGames()}
           </div>
         </div>

@@ -482,6 +482,28 @@
         "type": "uint256"
       },
       {
+        "indexed": false,
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_reason",
+        "type": "string"
+      }
+    ],
+    "name": "ContractEarnings",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "_gameNumber",
+        "type": "uint256"
+      },
+      {
         "indexed": true,
         "name": "_player",
         "type": "address"

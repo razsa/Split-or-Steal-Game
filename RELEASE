@@ -1,3 +1,16 @@
+V 0.3.3
+Contract Deployed at : https://rinkeby.etherscan.io/tx/0xe78951118ecd262508340879f01c733a559978baa37ef20e3245245ea0d66d63
+Release Date : 16th May 2018
+
+CHANGELOG
+
+Contract
+1. Bug Fix : when both player got disqualified, contract earnings was not being incremented
+2. Added ContractEarnings event
+
+Dapp
+Theme fix
+
 V 0.3.2
 Contract Deployed at : https://rinkeby.etherscan.io/tx/0x698c9e23dc375d6783b84fe082652af344824891aeef324730fe7a0c5c57066c
 Release Date : 15th May 2018

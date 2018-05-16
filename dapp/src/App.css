@@ -60,7 +60,6 @@
   font-family: fantasy;
   font-style: bold;
   color: white;
-  float: left;
 }
 
 .Reward-matrix-list {
@@ -75,18 +74,43 @@
   font-size: 20px;
   font-style: bold;
   text-align: left;
-  float: left;
+}
+
+.About {
+  background-color: black;
 }
 
 .App-about {
   height: fit-content;
   width: fit-content;
   border-radius: 25px;
-  background-color: rgba(70, 92, 141, 0.356);
+  background-color: white;
+  color: #4d648d;
+  /* color: rgba(13, 109, 153, 0.863); */
   height: fit-content;
   font-family: fantasy;
   font-style: bold;
-  margin-top: 10px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  font-size: 18;
+  float: center;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  padding: 30px 50px;
+}
+
+.App-fair {
+  height: fit-content;
+  width: fit-content;
+  border-radius: 25px;
+  background-color: black;
+  color: white;
+  height: fit-content;
+  font-family: fantasy;
+  font-style: bold;
+  margin-top: 30px;
+  margin-bottom: 30px;
   font-size: 18;
   float: center;
   margin-left: auto;
@@ -96,7 +120,7 @@
 }
 
 .App-table {
-  background-color: rgba(236, 6, 75, 0.363);
+  background-color: rgb(20, 18, 18);
   height: fit-content;
   width: fit-content;
   font-family: fantasy;
@@ -104,6 +128,7 @@
   margin-top: 10px;
   margin-left: auto;
   margin-right: auto;
+  color: gold;
   float: center;
   text-align: center;
 }
@@ -173,9 +198,9 @@
 .button-admin-enabled {
   outline-width: 0;
   border-radius: 25px;
-  background-color: rgba(11, 202, 11, 0.849);
+  background-color: gold;
   border: none;
-  color: white;
+  color: chocolate;
   padding: 15px 25px;
   text-align: center;
   font-size: 16px;
@@ -185,9 +210,9 @@
 .button-admin-enabled:active {
   outline-width: 0;
   border-radius: 25px;
-  background-color: rgba(12, 211, 111, 0.753);
+  background-color: goldenrod;
   border: none;
-  color: white;
+  color: chocolate;
   padding: 15px 25px;
   text-align: center;
   font-size: 16px;
@@ -234,9 +259,9 @@
 .button-player-enabled {
   outline-width: 0;
   border-radius: 25px;
-  background-color: rgba(11, 202, 11, 0.849);
+  background-color: gold;
   border: none;
-  color: white;
+  color: black;
   padding: 15px 25px;
   text-align: center;
   margin-top: 20px;
@@ -247,9 +272,9 @@
 .button-player-enabled:active {
   outline-width: 0;
   border-radius: 25px;
-  background-color: rgba(12, 211, 111, 0.753);
+  background-color: goldenrod;
   border: none;
-  color: white;
+  color: black;
   padding: 15px 25px;
   text-align: center;
   margin-top: 20px;
@@ -293,6 +318,32 @@
   cursor: pointer;
 }
 
+.button-new-games {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: black;
+  border: none;
+  color: goldenrod;
+  padding: 15px 25px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.button-new-games:active {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: rgba(0, 0, 0, 0.438);
+  border: none;
+  color: gold;
+  padding: 15px 25px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
 .Admin {
   height: fit-content;
   width: fit-content;
@@ -303,7 +354,8 @@
   border: 20px;
   color: white;
   padding: 20px;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
   font-size: 15px;
   cursor: pointer;
   font-family: fantasy;
@@ -329,10 +381,11 @@
 .NewGame {
   height: fit-content;
   width: fit-content;
-  margin-left: 20px;
+  margin-left: auto;
   margin-right: auto;
   border-radius: 25px;
-  background-color: rgba(42, 221, 18, 0.596);
+  /* background-color: rgba(42, 221, 18, 0.596); */
+  background-color: gold;
   border: 20px;
   color: rgba(13, 109, 153, 0.863);
   padding: 15px 30px;
@@ -341,7 +394,7 @@
   font-family: fantasy;
   margin-top: 10px;
   margin-bottom: 20px;
-  float: left;
+  float: center;
 }
 
 .Inline {
@@ -363,13 +416,15 @@
   padding-left: 10px;
   padding-right: 10px;
   margin-top: 10px;
-  display: inline-block;
+  /* display: inline-block; */
   margin-left: 20px;
   margin-right: 20px;
   border-radius: 25px;
-  background-color: rgba(167, 221, 18, 0.596);
+  /* background-color: rgba(167, 221, 18, 0.596); */
+  background-color: black;
   border: 10px;
-  color: rgba(13, 109, 153, 0.863);
+  /* color: rgba(13, 109, 153, 0.863); */
+  color: goldenrod;
   padding: 10px 25px;
   font-size: 15px;
   cursor: pointer;
@@ -490,7 +545,7 @@ table {
 td,
 th {
   /* border-left: solid black 1px; */
-  border: solid black 1px;
+  border: solid goldenrod 1px;
   border-radius: 5px;
   text-align: left;
 }
