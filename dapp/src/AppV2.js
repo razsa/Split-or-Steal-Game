@@ -279,8 +279,12 @@ class About extends Component {
                 <li>
                   This can be done in two ways,
                   <ul>
-                    <li>Either by starting a new game.</li>
-                    <li>Or by Joining an exiting game.</li>
+                    <li>
+                      Either by starting a <a href="#new-game">new game</a>.
+                    </li>
+                    <li>
+                      Or by <a href="#all-games">Joining</a> an exiting game.
+                    </li>
                   </ul>
                 </li>
               </ul>
@@ -329,6 +333,27 @@ class About extends Component {
             </li>
           </ol>
           <br />
+          <div id="abandon-game">
+            <h3>Abandon Game</h3>
+            Player who started game can abandon it if no body joined the game.
+            <ul className="App-list">
+              <li>
+                If Player abandon's game <b>before</b>{" "}
+                <a href="#stage-timeout">Stage Timeout</a> then,
+                <ul>
+                  <li>
+                    Player's bet amount is refunded dedecuting{" "}
+                    <a href="#game-fees">Game Fees(F)</a>
+                  </li>
+                </ul>
+                else
+                <ul>
+                  <li>Player's entire bet amount is refunded.</li>
+                </ul>
+                So it is advisable to let you game be open till it expires.
+              </li>
+            </ul>
+          </div>
           <div id="stage-timeout">
             <h3>Stage Timeout</h3>
             Stage Timeout is used to unlock deadlock situations like,
@@ -393,7 +418,7 @@ class Fair extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://rinkeby.etherscan.io/address/0x65fb55676278a460f002aa98b59718bfe6cd9078#code"
+                href="https://rinkeby.etherscan.io/address/0xc93936184064b92b72f74803d13312f799896609#code"
               >
                 here
               </a>.
@@ -404,7 +429,7 @@ class Fair extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://rinkeby.etherscan.io/address/0x65fb55676278a460f002aa98b59718bfe6cd9078"
+                href="https://rinkeby.etherscan.io/address/0xc93936184064b92b72f74803d13312f799896609"
               >
                 here
               </a>.
@@ -562,6 +587,7 @@ class AppV2 extends Component {
       totalGamesMessage: "",
       //Admin
       fundValue: "",
+      overrideGameNumber: "",
       adminStateOverride: "",
       adminStateMessage: "",
       //Player
@@ -595,9 +621,9 @@ class AppV2 extends Component {
       this.setState({
         contract: new web3.eth.Contract(
           abi,
-          "0xe221c3fdd91ecb2839b57049eb136cd85965956f"
+          "0xc93936184064b92b72f74803d13312f799896609"
         ),
-        contractAddress: "0xe221c3fdd91ecb2839b57049eb136cd85965956f"
+        contractAddress: "0xc93936184064b92b72f74803d13312f799896609"
       });
       //Check if metamask is installed/enabled
       if (web3.currentProvider.isMetaMask) {
@@ -800,6 +826,7 @@ class AppV2 extends Component {
     let startTime = 0;
     let revealTime = 0;
     let finishTime = 0;
+    let stageTimeout = 0;
 
     this.state.contract.methods
       .getGameState(gameNumber)
@@ -814,6 +841,7 @@ class AppV2 extends Component {
         startTime = resultGameState._startTime;
         revealTime = resultGameState._revealTime;
         finishTime = resultGameState._finishTime;
+        stageTimeout = resultGameState._stageTimeout;
         this.state.contract.methods
           .getPlayerState(gameNumber)
           .call({
@@ -836,6 +864,7 @@ class AppV2 extends Component {
               startTime: startTime,
               revealTime: revealTime,
               finishTime: finishTime,
+              stageTimeout: stageTimeout,
               suspended: suspended,
               registered: registered,
               revealed: revealed,
@@ -914,6 +943,7 @@ class AppV2 extends Component {
     let startTime = 0;
     let revealTime = 0;
     let finishTime = 0;
+    let stageTimeout = 0;
 
     this.state.contract.methods
       .getGameState(gameNumber)
@@ -930,6 +960,7 @@ class AppV2 extends Component {
         startTime = resultGameState._startTime;
         revealTime = resultGameState._revealTime;
         finishTime = resultGameState._finishTime;
+        stageTimeout = resultGameState._stageTimeout;
 
         this.state.contract.methods
           .getPlayerState(gameNumber)
@@ -955,6 +986,7 @@ class AppV2 extends Component {
               startTime: startTime,
               revealTime: revealTime,
               finishTime: finishTime,
+              stageTimeout: stageTimeout,
               suspended: suspended,
               registered: registered,
               revealed: revealed,
@@ -1096,6 +1128,39 @@ class AppV2 extends Component {
   withdraw() {
     return () => {
       let transaction = this.state.contract.methods.transferEarningsToOwner();
+      transaction
+        .send({
+          from: this.state.metamaskAccount
+        })
+        .on("transactionHash", hash => {
+          this.setState({
+            adminStateOverride: true,
+            adminStateMessage: "Withdrawing Earnings....."
+          });
+          console.log(
+            "Your request for withdraw earnings has been submitted. "
+          );
+        })
+        .on("confirmation", (confirmationNumber, receipt) => {
+          console.log(
+            "You request has got " + confirmationNumber + " confirmations"
+          );
+        })
+        .on("receipt", receipt => {
+          console.log(receipt);
+          this.setState({
+            adminStateOverride: false,
+            adminStateMessage: ""
+          });
+        });
+    };
+  }
+
+  override(gameNumber) {
+    return () => {
+      let transaction = this.state.contract.methods.ownerOverride(
+        parseInt(gameNumber, 10)
+      );
       transaction
         .send({
           from: this.state.metamaskAccount
@@ -1311,6 +1376,13 @@ class AppV2 extends Component {
     });
   };
 
+  updateOverrideGameNumber = event => {
+    const val = event.target.value;
+    this.setState({
+      overrideGameNumber: val
+    });
+  };
+
   updateStartGameBetAmount = event => {
     const val = event.target.value;
     this.setState({
@@ -1331,7 +1403,50 @@ class AppV2 extends Component {
         this.state.adminStateOverride ||
         this.state.contractEarnings === "being calculated" ||
         this.state.contractEarnings === "0 ether";
+
+      let overrideGameNumber = 0;
+      let canOverrideGame = false;
+      try {
+        overrideGameNumber = parseInt(this.state.overrideGameNumber, 10);
+      } catch (ignore) {}
+      let nowSecs = new Date().getTime() / 1000;
+      if (
+        this.state.totalGames >= overrideGameNumber &&
+        overrideGameNumber > 0
+      ) {
+        let game = this.state.allGames[overrideGameNumber];
+        if (game.registerationOpen) {
+          if (
+            nowSecs - parseInt(game.startTime, 10) >
+            parseInt(game.stageTimeout, 10)
+          ) {
+            canOverrideGame = true;
+          }
+        } else if (game.revealing) {
+          if (
+            nowSecs - parseInt(game.revealTime, 10) >
+            parseInt(game.stageTimeout, 10)
+          ) {
+            canOverrideGame = true;
+          }
+        } else if (game.lastGameFinished) {
+          if (
+            nowSecs - parseInt(game.finishTime, 10) >
+            parseInt(game.stageTimeout, 10)
+          ) {
+            canOverrideGame = true;
+          }
+        }
+      }
+
+      let disableOverride =
+        this.state.adminStateOverride ||
+        this.state.overrideGameNumber === "" ||
+        !canOverrideGame;
       let className = disbaled ? "button-admin" : "button-admin-enabled";
+      let classNameOverride = disableOverride
+        ? "button-admin"
+        : "button-admin-enabled";
       return (
         <div className="Admin">
           <div>
@@ -1353,6 +1468,24 @@ class AppV2 extends Component {
                 disabled={disbaled}
               >
                 Withdraw Earnings
+              </button>
+            </div>
+            <br />
+            <div>
+              <div>
+                <AutosizeInput
+                  placeholder="Game number to override."
+                  inputClassName="game-input"
+                  onChange={this.updateOverrideGameNumber}
+                  value={this.state.overrideGameNumber}
+                />
+              </div>
+              <button
+                className={classNameOverride}
+                onClick={this.override()}
+                disabled={disableOverride}
+              >
+                Override Game
               </button>
             </div>
 
@@ -1385,11 +1518,16 @@ class AppV2 extends Component {
   };
 
   NewGame = () => {
-    let className = this.state.startGameLocalOverride
-      ? "button-player"
-      : "button-new-games";
+    let disable =
+      isNaN(this.state.startGameBetAmount) ||
+      isNaN(this.state.startGameChoice) ||
+      !Number.isInteger(parseFloat(this.state.startGameChoice)) ||
+      this.state.startGameBetAmount === "" ||
+      this.state.startGameChoice === "" ||
+      this.state.startGameLocalOverride;
+    let className = disable ? "button-player" : "button-new-games";
     return (
-      <div className="NewGame">
+      <div className="NewGame" id="new-game">
         <div>
           <h2>
             <b>Create a new game</b>
@@ -1422,12 +1560,11 @@ class AppV2 extends Component {
           <button
             className={className}
             onClick={this.startGame()}
-            disabled={this.state.startGameLocalOverride}
+            disabled={disable}
           >
             Start Game
           </button>
         </div>
-
         <div>{this.state.startGameMessage}</div>
         <div>
           <Loading loading={this.state.startGameLocalOverride} />
@@ -1463,18 +1600,23 @@ class AppV2 extends Component {
       let sinceStart = "";
       let sinceReveal = "";
       let sinceFinished = "";
+      let timeout = "";
       let disabled = this.state.allGameLocalOverride[gameNumber];
       let classNameGame = disabled ? "button-player" : "button-player-enabled";
       if (game.registerationOpen) {
         sinceStart =
           "Game Started on " +
           new Date(parseInt(game.startTime, 10) * 1000).toString();
+        timeout =
+          "Game will expire on " +
+          new Date(
+            (parseInt(game.startTime, 10) + parseInt(game.stageTimeout, 10)) *
+              1000
+          ).toString();
         if (game.registered) {
-          if (game.claimedReward) {
-            gameState = "You abondoned game.";
-          } else {
-            gameState = "Waiting for someone to join the game.";
-            cta = (
+          gameState = "Waiting for someone to join the game.";
+          cta = (
+            <div>
               <button
                 className={classNameGame}
                 onClick={this.claimReward(gameNumber)}
@@ -1482,10 +1624,24 @@ class AppV2 extends Component {
               >
                 Abandon Game
               </button>
-            );
-          }
+              <div>
+                <br />
+                <a href="#abandon-game">[Abandon?]</a>
+              </div>
+            </div>
+          );
         } else {
           gameState = "Place your Bet.";
+          disabled =
+            disabled ||
+            isNaN(this.state.allGameBetAmount[gameNumber]) ||
+            isNaN(this.state.allGameChoice[gameNumber]) ||
+            !Number.isInteger(
+              parseFloat(this.state.allGameChoice[gameNumber])
+            ) ||
+            this.state.allGameBetAmount[gameNumber] === "" ||
+            this.state.allGameChoice[gameNumber] === "";
+          classNameGame = disabled ? "button-player" : "button-player-enabled";
           cta = (
             <button
               className={classNameGame}
@@ -1542,11 +1698,18 @@ class AppV2 extends Component {
         sinceReveal =
           "Reveal Round Started on " +
           new Date(parseInt(game.revealTime, 10) * 1000).toString();
+        timeout =
+          "Game will expire on " +
+          new Date(
+            (parseInt(game.revealTime, 10) + parseInt(game.stageTimeout, 10)) *
+              1000
+          ).toString();
         if (!game.registered) {
           gameState = "You cannot play this game. This is";
           gameSubstate = "being played by some other people.";
         } else if (game.revealed) {
           if (game.disqualified) {
+            timeout = null;
             gameState = "Your are disqualified.";
           } else {
             gameState = "Waiting for opponent to reveal choice.";
@@ -1554,6 +1717,14 @@ class AppV2 extends Component {
         } else {
           gameState = "Reveal your previously entered choice.";
           gameSubstate = "ODD number for SPLIT / EVEN number for STEAL";
+          disabled =
+            disabled ||
+            isNaN(this.state.allGameRevealChoice[gameNumber]) ||
+            !Number.isInteger(
+              parseFloat(this.state.allGameRevealChoice[gameNumber])
+            ) ||
+            this.state.allGameRevealChoice[gameNumber] === "";
+          classNameGame = disabled ? "button-player" : "button-player-enabled";
           cta = cta = (
             <button
               className={classNameGame}
@@ -1593,12 +1764,20 @@ class AppV2 extends Component {
         sinceFinished =
           "Game finished on " +
           new Date(parseInt(game.finishTime, 10) * 1000).toString();
+        timeout =
+          "Game will expire on " +
+          new Date(
+            (parseInt(game.finishTime, 10) + parseInt(game.stageTimeout, 10)) *
+              1000
+          ).toString();
         gameState = "This game is finished.";
         if (!game.registered) {
           gameSubstate = "You did not play this game.";
         } else if (game.disqualified) {
+          timeout = null;
           gameState = "Your got disqualified.";
         } else if (game.claimedReward) {
+          timeout = null;
           gameState = "You have claimed your reward.";
           gameSubstate = gameSubstate + " You won " + reward;
         } else {
@@ -1624,6 +1803,10 @@ class AppV2 extends Component {
             <div>{sinceStart}</div>
             <div>{sinceReveal}</div>
             <div>{sinceFinished}</div>
+            <br />
+            <div>
+              <a href="#stage-timeout">{timeout}</a>{" "}
+            </div>
           </div>
           <br />
           <div>{gameState}</div>
@@ -1646,7 +1829,7 @@ class AppV2 extends Component {
       : "button-more-games-enabled";
     return (
       <div>
-        <div className="AllGames">
+        <div className="AllGames" id="all-games">
           <div className="bottomMargin">{games}</div>
           <h2>
             <b>All Games</b>

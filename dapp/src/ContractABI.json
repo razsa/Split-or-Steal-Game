@@ -106,6 +106,25 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_gameNumber",
+        "type": "uint256"
+      }
+    ],
+    "name": "ownerOverride",
+    "outputs": [
+      {
+        "name": "_overriden",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "getOwner",
@@ -390,6 +409,10 @@
       },
       {
         "name": "_finishTime",
+        "type": "uint256"
+      },
+      {
+        "name": "_stageTimeout",
         "type": "uint256"
       }
     ],

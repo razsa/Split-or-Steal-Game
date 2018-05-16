@@ -1,3 +1,20 @@
+V 0.3.4
+Contract Deployed at : https://rinkeby.etherscan.io/tx/0x1b6ffa76783d80c8edb9d36f7774ef08fa6c1589cd7936788c221174d3263ab0
+Release Date : 16th Math 2018
+
+CHANGELOG
+
+Contract
+1. Added Stage Timeout
+2. Re Entry Attack Bug Fixed
+3. Modified game state to have stage Timeout
+4. Removed redundant requires
+5. No Fees for abandon after stage Timeout
+
+Dapp
+1. UX Improved
+2. Added stage timeout message
+
 V 0.3.3
 Contract Deployed at : https://rinkeby.etherscan.io/tx/0xe78951118ecd262508340879f01c733a559978baa37ef20e3245245ea0d66d63
 Release Date : 16th May 2018

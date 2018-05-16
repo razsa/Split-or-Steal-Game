@@ -65,6 +65,7 @@ contract SplitStealContractV2 is owned, priced {
         address player2;
         uint256 registrationCost;
         uint256 k;
+        uint stageTimeout;
         bool registerationOpen;
         bool revealing;
         bool lastGameFinished;
@@ -107,8 +108,13 @@ contract SplitStealContractV2 is owned, priced {
     */
     function transferEarningsToOwner() public onlyOwner {
         require(address(this).balance >= contractEarnings);
-        owner.transfer(contractEarnings);
+        uint256 _contractEarnings = contractEarnings;
         contractEarnings = 0;
+        // VERY IMPORTANT
+        // PREVENTS REENTRANCY ATTACK BY CONTRACT OWNER
+        // contract Earnings need to be set to 0 first,
+        // and then transferred to owner
+        owner.transfer(_contractEarnings);
     }
 
     function suspend(address _player) public onlyOwner returns(bool _suspended){
@@ -164,10 +170,10 @@ contract SplitStealContractV2 is owned, priced {
         return (REGISTRATION_COST, MINIMUM_COST_OF_BET, MAXIMUM_COST_OF_BET, STAGE_TIMEOUT);
     }
 
-    function getGameState(uint gameNumber) public view returns(bool _registerationOpen, bool _revealing, bool _lastGameFinished, uint _startTime, uint _revealTime, uint _finishTime) {
+    function getGameState(uint gameNumber) public view returns(bool _registerationOpen, bool _revealing, bool _lastGameFinished, uint _startTime, uint _revealTime, uint _finishTime, uint _stageTimeout) {
         require(games.length >= gameNumber);    
         Game storage game = games[gameNumber - 1];    
-        return (game.registerationOpen, game.revealing, game.lastGameFinished, game.startTime, game.revealTime, game.finishTime);
+        return (game.registerationOpen, game.revealing, game.lastGameFinished, game.startTime, game.revealTime, game.finishTime, game.stageTimeout);
     }
 
     function getPlayerState(uint gameNumber) public view returns(bool _suspended, bool _registered, bool _revealed, bool _disqualified, bool _claimedReward, uint256 _betAmount, uint256 _reward) {
@@ -197,7 +203,7 @@ contract SplitStealContractV2 is owned, priced {
         require(!suspended[player]);   
         require(_betAmount >= MINIMUM_COST_OF_BET);
         require(_betAmount <= MAXIMUM_COST_OF_BET);
-        Game memory _game = Game(now, now, now, player, address(0), REGISTRATION_COST, K, true, false, false);  
+        Game memory _game = Game(now, now, now, player, address(0), REGISTRATION_COST, K, STAGE_TIMEOUT, true, false, false);  
         games.push(_game); 
         Game storage game = games[games.length-1]; 
         game.registered[player] = true;
@@ -211,12 +217,11 @@ contract SplitStealContractV2 is owned, priced {
         require(games.length >= _gameNumber);
         Game storage game = games[_gameNumber-1];
         address player = msg.sender;
-        require(game.player2 == address(0));
+        require(game.registerationOpen); 
+        require(game.player1 != player); // Can also put ```require(game.registered[player]);``` meaning, Same player cannot join the game.
         require(!suspended[player]);   
         require(_betAmount >= MINIMUM_COST_OF_BET);
         require(_betAmount <= MAXIMUM_COST_OF_BET);
-        require(game.registerationOpen); 
-        require(!game.registered[player]);  
         require(game.player2 == address(0)); 
         game.player2 = player;
         game.registered[player] = true;
@@ -232,65 +237,12 @@ contract SplitStealContractV2 is owned, priced {
         emit RevealStart(_gameNumber);
     }
 
-    function ownerRevealOverride(uint _gameNumber) private returns(bool _overriden){
-        if (msg.sender == owner) {
-            //Its been 7 days since revealing round started
-            Game storage game = games[_gameNumber-1];
-            if (now > (game.revealTime + STAGE_TIMEOUT)) {
-                if(!game.revealed[game.player1] && !game.revealed[game.player1]) {
-                    //Mark Player as following,
-                    //  1.)Revealed (To maintain sane state of game)
-                    //  2.)Disqualified (Since player did not finish the game in time)
-                    //  3.)Claimed Reward ( So that contract earnings can be accounted for)
-                    //  Also set reward amount as 0
-                    game.revealed[game.player1] = true;
-                    game.disqualified[game.player1] = true;
-                    game.claimedReward[game.player1] = true;
-                    game.reward[game.player1] = 0;
-                    emit Disqualified(_gameNumber, game.player1, "", 0, "");
-                    game.revealed[game.player2] = true;
-                    game.disqualified[game.player2] = true;
-                    game.claimedReward[game.player2] = true;
-                    game.reward[game.player2] = 0;
-                    emit Disqualified(_gameNumber, game.player2, "", 0, "");
-                    uint256 gameEarnings = game.bets[game.player1].betAmount + game.bets[game.player2].betAmount;
-                    contractEarnings = contractEarnings + gameEarnings;
-                    emit ContractEarnings(_gameNumber, gameEarnings, "BOTH_NO_REVEAL");
-                } else if (game.revealed[game.player1] && !game.revealed[game.player2]) {
-                    game.revealed[game.player2] = true;
-                    game.disqualified[game.player2] = true;
-                    game.claimedReward[game.player2] = true;
-                    game.reward[game.player2] = 0;
-                    emit Disqualified(_gameNumber, game.player2, "", 0, "");
-                    game.finishTime = now;
-                } else if (!game.revealed[game.player1] && game.revealed[game.player2]) {           
-                    game.revealed[game.player1] = true;
-                    game.disqualified[game.player1] = true;
-                    game.claimedReward[game.player1] = true;
-                    game.reward[game.player1] = 0;
-                    emit Disqualified(_gameNumber, game.player1, "", 0, "");
-                    game.finishTime = now;
-                }
-                game.revealing = false;
-                game.lastGameFinished = true;
-                emit RevealStop(_gameNumber);
-                return true;
-            }
-        }
-        return false;
-
-    }
-
     function reveal(uint _gameNumber, uint256 _choice) public {
         require(games.length >= _gameNumber);
         Game storage game = games[_gameNumber-1];
         require(game.revealing);
-        if(ownerRevealOverride(_gameNumber)) {
-            return;
-        }
         address player = msg.sender;
         require(!suspended[player]);
-        require(game.player1 == player || game.player2 == player);
         require(game.registered[player]);
         require(!game.revealed[player]);
         game.revealed[player] = true;
@@ -323,7 +275,6 @@ contract SplitStealContractV2 is owned, priced {
     //REWARD WITHDRAW STARTS
     function ethTransfer(uint gameNumber, address _to, uint256 _amount) private {
         require(!suspended[_to]);
-        require(_amount > 0);
         require(_to != address(0));
         if ( _amount > games[gameNumber-1].registrationCost) {
             //Take game Commission
@@ -332,33 +283,6 @@ contract SplitStealContractV2 is owned, priced {
             _to.transfer(amount);
             emit Transferred(gameNumber, _to, amount);
         }
-    }
-
-    function ownerClaimOverride(uint _gameNumber) private returns(bool _overriden){
-        if (msg.sender == owner) {
-            //Its been STAGE_TIMEOUT days since game finished
-            Game storage game = games[_gameNumber-1];
-            if (now > (game.finishTime + STAGE_TIMEOUT)) {
-                if(!game.claimedReward[game.player1] && !game.claimedReward[game.player1]) {
-                    game.claimedReward[game.player1] = true;
-                    game.reward[game.player1] = 0;
-                    game.claimedReward[game.player2] = true;
-                    game.reward[game.player2] = 0;
-                } else if (game.claimedReward[game.player1] && !game.claimedReward[game.player2]) {
-                    game.claimedReward[game.player2] = true;
-                    game.reward[game.player2] = 0;
-                } else if (!game.claimedReward[game.player1] && game.claimedReward[game.player2]) {           
-                    game.claimedReward[game.player1] = true;
-                    game.reward[game.player1] = 0;
-                }
-                uint256 totalBet = (game.bets[game.player1].betAmount + game.bets[game.player2].betAmount);
-                uint gameEarnings = totalBet - game.reward[game.player1] - game.reward[game.player2];
-                contractEarnings = contractEarnings + gameEarnings;
-                emit ContractEarnings(_gameNumber, gameEarnings, "OWNER_CLAIM_OVERRIDE");
-                return true;
-            }
-        }
-        return false;
     }
 
 
@@ -373,22 +297,26 @@ contract SplitStealContractV2 is owned, priced {
             game.claimedReward[player] = true;
             game.registerationOpen = false;
             game.lastGameFinished = true;
+            if ( now > (game.startTime + game.stageTimeout)) {
+                //No commision if game was open till stage timeout.
+                commission = 0;
+            }
             game.reward[player] = game.bets[player].betAmount - commission;
-            contractEarnings = contractEarnings + commission;
-            emit ContractEarnings(gameNumber, commission, "GAME_ABANDONED");
+            if (commission > 0) {
+                contractEarnings = contractEarnings + commission;
+                emit ContractEarnings(gameNumber, commission, "GAME_ABANDONED");
+            }
             //Bet amount can't be less than commission.
             //Hence no -ve check is required
             ethTransfer(gameNumber, player, game.bets[player].betAmount);
             return true;
         }
         require(game.lastGameFinished);
-        if (ownerClaimOverride(gameNumber)) {
-            return;
-        }
         require(!game.disqualified[player]);
         require(game.registered[player]);
         require(game.revealed[player]);
         require(!game.claimedReward[player]);
+        game.claimedReward[player] = true;
         address opponent = game.opponent[player];
         uint256 reward = 0;
         uint256 gameReward = 0;
@@ -396,32 +324,29 @@ contract SplitStealContractV2 is owned, priced {
         if ( game.disqualified[opponent]) {
             gameReward = ((100 + game.k) * game.bets[player].betAmount) / 100;
             reward = gameReward < totalBet ? gameReward : totalBet; //Min (X+Y, (100+K)*X/100)
-            ethTransfer(gameNumber, player, reward);
             game.reward[player] = reward - commission;
             //Min (X+Y, (100+K)*X/100) can't be less than commision.
             //Hence no -ve check is required
-            game.claimedReward[player] = true;
             contractEarnings = contractEarnings + (totalBet - game.reward[player]);
             emit ContractEarnings(gameNumber, (totalBet - game.reward[player]), "OPPONENT_DISQUALIFIED");
+            ethTransfer(gameNumber, player, reward);
             return true;
         }
         if ( !isEven(game.bets[player].actualChoice) && !isEven(game.bets[opponent].actualChoice) ) { // Split Split
             reward = (game.bets[player].betAmount + game.bets[opponent].betAmount) / 2;
-            ethTransfer(gameNumber, player, reward);
             game.reward[player] = reward - commission;
             //(X+Y)/2 can't be less than commision.
             //Hence no -ve check is required
-            game.claimedReward[player] = true;
             if ( game.claimedReward[opponent] ) {
                 uint256 gameEarnings = (totalBet - game.reward[player] - game.reward[opponent]);
                 contractEarnings = contractEarnings + gameEarnings;
                 emit ContractEarnings(gameNumber, gameEarnings, "SPLIT_SPLIT");
             }
+            ethTransfer(gameNumber, player, reward);
             return true;
         }
         if ( !isEven(game.bets[player].actualChoice) && isEven(game.bets[opponent].actualChoice) ) { // Split Steal
             game.reward[player] = 0;
-            game.claimedReward[player] = true;
             if ( game.claimedReward[opponent] ) {
                 gameEarnings = (totalBet - game.reward[player] - game.reward[opponent]);
                 contractEarnings = contractEarnings + gameEarnings;
@@ -432,16 +357,15 @@ contract SplitStealContractV2 is owned, priced {
         if ( isEven(game.bets[player].actualChoice) && !isEven(game.bets[opponent].actualChoice) ) { // Steal Split
             gameReward = (((100 + game.k) * game.bets[player].betAmount)/100);
             reward = gameReward < totalBet ? gameReward : totalBet; 
-            ethTransfer(gameNumber, player, reward);
             game.reward[player] = reward - commission;
             //Min (X+Y, (100+K)*X/100) can't be less than commision.
             //Hence no -ve check is required
-            game.claimedReward[player] = true;
             if ( game.claimedReward[opponent] ) {
                 gameEarnings = (totalBet - game.reward[player] - game.reward[opponent]);
                 contractEarnings = contractEarnings + gameEarnings;
                 emit ContractEarnings(gameNumber, gameEarnings, "STEAL_SPLIT");
             }
+            ethTransfer(gameNumber, player, reward);
             return true;
         }
         if ( isEven(game.bets[player].actualChoice) && isEven(game.bets[opponent].actualChoice) ) { // Steal Steal
@@ -451,20 +375,145 @@ contract SplitStealContractV2 is owned, priced {
                 reward = gameReward < totalBet ? gameReward : totalBet; //Min (X+Y, (100+K)*(X-Y)/100)
             }
             if(reward > 0) {
-                ethTransfer(gameNumber, player, reward);
                 //Min (X+Y, (100+K)*(X-Y)/100) CAN BE LESS THAN COMMISSION.
                 //Hence -ve check is required
                 game.reward[player] = reward > commission ? reward - commission : 0;
             }
-            game.claimedReward[msg.sender] = true;
             if ( game.claimedReward[opponent] ) {
                 gameEarnings = (totalBet - game.reward[player] - game.reward[opponent]);
                 contractEarnings = contractEarnings + gameEarnings;
                 emit ContractEarnings(gameNumber, gameEarnings, "STEAL_STEAL");
             }
+            ethTransfer(gameNumber, player, reward);
             return true;
         }
     }
     //REWARD WITHDRAW ENDS
+
+
+    //OWNER OVERRIDE SECTION STARTS
+    /** 
+     *  Give back to game creator instead of consuming to contract.
+     *  So in case Game owner has PTSD and wants al game finished,
+     *  Game owner will call this on game which is in registeration open
+     *  state since past stage timeout.
+     *  Do some good :)
+     *  ALTHOUGH if game creator wants to abandon after stage timeout
+     *  No fees is charged. See claimReward Method for that.
+     */
+    function ownerAbandonOverride(uint _gameNumber) private returns(bool _overriden) {
+        Game storage game = games[_gameNumber-1];
+        if (game.registerationOpen) {
+            if (now > (game.startTime + game.stageTimeout)) {
+                game.claimedReward[game.player1] = true;
+                game.registerationOpen = false;
+                game.lastGameFinished = true;
+                game.reward[game.player1] = game.bets[game.player1].betAmount; 
+                //Do not cut commision as no one came to play. 
+                //This also incentivisies users to keep the game open for long time.
+                ethTransfer(_gameNumber, game.player1, game.bets[game.player1].betAmount);
+                return true;
+            }                  
+        }      
+        return false;
+    }
+
+    /** 
+     *  If both palayer(s) does(-es) not reveal choice in time they get disqualified.
+     *  If both players do not reveal choice in time, Game's earnings are updated.
+     *  If one of the player does not reveal choice, then game's earnings are not updated.
+     *  Player who has revealed is given chance to claim reward.
+     */
+
+    function ownerRevealOverride(uint _gameNumber) private returns(bool _overriden) {
+        Game storage game = games[_gameNumber-1];
+        if ( game.revealing) {
+            if (now > (game.revealTime + game.stageTimeout)) {
+                if(!game.revealed[game.player1] && !game.revealed[game.player1]) {
+                    //Mark Player as following,
+                    //  1.)Revealed (To maintain sane state of game)
+                    //  2.)Disqualified (Since player did not finish the game in time)
+                    //  3.)Claimed Reward ( So that contract earnings can be accounted for)
+                    //  Also set reward amount as 0
+                    game.revealed[game.player1] = true;
+                    game.disqualified[game.player1] = true;
+                    game.claimedReward[game.player1] = true;
+                    game.reward[game.player1] = 0;
+                    emit Disqualified(_gameNumber, game.player1, "", 0, "");
+                    game.revealed[game.player2] = true;
+                    game.disqualified[game.player2] = true;
+                    game.claimedReward[game.player2] = true;
+                    game.reward[game.player2] = 0;
+                    emit Disqualified(_gameNumber, game.player2, "", 0, "");
+                    game.finishTime = now;
+                    uint256 gameEarnings = game.bets[game.player1].betAmount + game.bets[game.player2].betAmount;
+                    contractEarnings = contractEarnings + gameEarnings;
+                    emit ContractEarnings(_gameNumber, gameEarnings, "BOTH_NO_REVEAL");
+                } else if (game.revealed[game.player1] && !game.revealed[game.player2]) {
+                    game.revealed[game.player2] = true;
+                    game.disqualified[game.player2] = true;
+                    game.claimedReward[game.player2] = true;
+                    game.reward[game.player2] = 0;
+                    emit Disqualified(_gameNumber, game.player2, "", 0, "");
+                    game.finishTime = now;
+                } else if (!game.revealed[game.player1] && game.revealed[game.player2]) {           
+                    game.revealed[game.player1] = true;
+                    game.disqualified[game.player1] = true;
+                    game.claimedReward[game.player1] = true;
+                    game.reward[game.player1] = 0;
+                    emit Disqualified(_gameNumber, game.player1, "", 0, "");
+                    game.finishTime = now;
+                }
+                game.revealing = false;
+                game.lastGameFinished = true;
+                emit RevealStop(_gameNumber);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *  If both palayer(s) does(-es) not claim reward in time 
+     *  they loose their chance to claim reward.
+     *  Game earnings are calculated as if this gets executed successully,
+     *  both players have claimed rewards eseentialy.      
+     */
+    function ownerClaimOverride(uint _gameNumber) private returns(bool _overriden) {
+        Game storage game = games[_gameNumber-1];
+        if ( game.lastGameFinished) {
+            if (now > (game.finishTime + game.stageTimeout)) {
+                if(!game.claimedReward[game.player1] && !game.claimedReward[game.player1]) {
+                    game.claimedReward[game.player1] = true;
+                    game.reward[game.player1] = 0;
+                    game.claimedReward[game.player2] = true;
+                    game.reward[game.player2] = 0;
+                } else if (game.claimedReward[game.player1] && !game.claimedReward[game.player2]) {
+                    game.claimedReward[game.player2] = true;
+                    game.reward[game.player2] = 0;
+                } else if (!game.claimedReward[game.player1] && game.claimedReward[game.player2]) {           
+                    game.claimedReward[game.player1] = true;
+                    game.reward[game.player1] = 0;
+                } else {
+                    //Both players have alreay claimed reward.
+                    return false;
+                }
+                uint256 totalBet = (game.bets[game.player1].betAmount + game.bets[game.player2].betAmount);
+                uint gameEarnings = totalBet - game.reward[game.player1] - game.reward[game.player2];
+                contractEarnings = contractEarnings + gameEarnings;
+                emit ContractEarnings(_gameNumber, gameEarnings, "OWNER_CLAIM_OVERRIDE");
+            }
+        }
+    }
+
+    function ownerOverride(uint _gameNumber) public onlyOwner returns(bool _overriden){
+        if (msg.sender == owner) {
+            if( ownerAbandonOverride(_gameNumber) || ownerRevealOverride(_gameNumber) || ownerClaimOverride(_gameNumber) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+    //OWNER OVERRIDE SECTION ENDS
 
 }
