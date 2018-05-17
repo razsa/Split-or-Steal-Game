@@ -512,7 +512,11 @@ class MyHeader extends Component {
               <div>Listed on www.stateofthedapps.com</div>
               <div>Solidified Audit in progress</div>
               <div>
-                <img src={affiliation} alt="affiliation" />
+                <img
+                  src={affiliation}
+                  alt="affiliation"
+                  style={{ borderRadius: 20 }}
+                />
               </div>
             </div>
           </a>
