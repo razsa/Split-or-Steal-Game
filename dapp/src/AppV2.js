@@ -1737,7 +1737,7 @@ class AppV2 extends Component {
                   value={this.state.allGameChoice[gameNumber]}
                 />
               </div>
-              {" ODD for SPLIT / EVEN for STEAL"}
+              {"ODD number for SPLIT / EVEN number for STEAL"}
             </div>
           );
         }
