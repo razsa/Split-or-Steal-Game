@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
+import metamask from "./metamask.png";
 import "./App.css";
 import Web3 from "web3";
 import abi from "./ContractABI.json";
@@ -444,7 +445,12 @@ class Fair extends Component {
 
 class MyHeader extends Component {
   render() {
-    let { metamaskInstalled, noAccountsInMetamask } = this.props;
+    let {
+      metamaskInstalled,
+      noAccountsInMetamask,
+      changeNetwork,
+      netId
+    } = this.props;
     let numberOfCoins = 5;
     let warningMessage = !metamaskInstalled
       ? "Please install"
@@ -463,6 +469,33 @@ class MyHeader extends Component {
     for (let i = 0; i < numberOfCoins; i++) {
       coins.push(<img key={i} src={logo} className="App-logo" alt="logo" />);
     }
+    let network = "some unknown network";
+    switch (netId) {
+      case "1":
+        console.log("This is mainnet");
+        network = "the Main Ethereum Network";
+        break;
+      case "2":
+        console.log("This is the deprecated Morden test network.");
+        network = "the deprecated Morden Test Network";
+        break;
+      case "3":
+        console.log("This is the ropsten test network.");
+        network = "the Ropsten Test Network";
+        break;
+      case "4":
+        changeNetwork = false;
+        console.log("This is the Rinkeby test network.");
+        network = "the Rinkeby Test Network";
+        break;
+      case "42":
+        console.log("This is the Kovan test network.");
+        network = "the Kovan Test Network";
+        break;
+      default:
+        console.log("This is an unknown network.");
+    }
+
     return (
       <header className="App-header">
         <h1 className="App-title-metamask">
@@ -498,6 +531,20 @@ class MyHeader extends Component {
         {coins}
         {!metamaskInstalled || noAccountsInMetamask ? null : (
           <div>
+            {!changeNetwork ? null : (
+              <div>
+                <div>
+                  <h2>Looks like you are on {network}.</h2>
+                </div>
+                <div>
+                  <h1>
+                    Please change your network to Rinkeby Test Network <br />
+                    as shown below, in order to play the game.
+                  </h1>
+                  <img src={metamask} alt="metamask" />
+                </div>
+              </div>
+            )}
             <div>
               <br />
               <a href="#about">
@@ -569,6 +616,7 @@ class AppV2 extends Component {
     super(props);
     this.state = {
       //Global State
+      netId: null,
       web3: null,
       contractBalance: "being calculated",
       contractEarnings: "being calculated",
@@ -629,6 +677,9 @@ class AppV2 extends Component {
       if (web3.currentProvider.isMetaMask) {
         this.setState({
           metamaskInstalled: true
+        });
+        window.web3.version.getNetwork((err, netId) => {
+          this.setState({ netId: netId });
         });
         web3.eth.getAccounts((error, accounts) => {
           if (accounts.length === 0) {
@@ -1850,8 +1901,8 @@ class AppV2 extends Component {
     );
   };
 
-  Donate = (metamaskInstalled, noAccountsInMetamask) => {
-    if (metamaskInstalled && !noAccountsInMetamask) {
+  Donate = (metamaskInstalled, noAccountsInMetamask, changeNetwork) => {
+    if (metamaskInstalled && !noAccountsInMetamask && !changeNetwork) {
       return (
         <div className="Donate">
           <div>
@@ -1885,7 +1936,11 @@ class AppV2 extends Component {
   };
 
   GameSection = () => {
-    if (this.state.metamaskInstalled && !this.state.noAccountsInMetamask) {
+    if (
+      this.state.metamaskInstalled &&
+      !this.state.noAccountsInMetamask &&
+      this.state.netId === "4"
+    ) {
       return (
         <div>
           <div className="Game-section">
@@ -1914,7 +1969,10 @@ class AppV2 extends Component {
 
   //DOM
   render = () => {
-    //TODO : Can get rid of mulitple ifs and returns
+    let changeNetwork = true;
+    if (this.state.netId === "4") {
+      changeNetwork = false;
+    }
 
     return (
       <div className="App">
@@ -1944,6 +2002,8 @@ class AppV2 extends Component {
         <MyHeader
           metamaskInstalled={this.state.metamaskInstalled}
           noAccountsInMetamask={this.state.noAccountsInMetamask}
+          changeNetwork={changeNetwork}
+          netId={this.state.netId}
         />
         {this.GameSection()}
         <About k={this.state.k} />
@@ -1951,7 +2011,8 @@ class AppV2 extends Component {
         <div className="Footer">
           {this.Donate(
             this.state.metamaskInstalled,
-            this.state.noAccountsInMetamask
+            this.state.noAccountsInMetamask,
+            changeNetwork
           )}
           <br />
           <br />
