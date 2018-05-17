@@ -420,7 +420,7 @@ class Fair extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://rinkeby.etherscan.io/address/0xc93936184064b92b72f74803d13312f799896609#code"
+                href="https://rinkeby.etherscan.io/address/0xbf601702214a7071684d17981ad6d0a65366499b#code"
               >
                 here
               </a>.
@@ -431,7 +431,7 @@ class Fair extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://rinkeby.etherscan.io/address/0xc93936184064b92b72f74803d13312f799896609"
+                href="https://rinkeby.etherscan.io/address/0xbf601702214a7071684d17981ad6d0a65366499b"
               >
                 here
               </a>.
@@ -687,9 +687,9 @@ class AppV2 extends Component {
       this.setState({
         contract: new web3.eth.Contract(
           abi,
-          "0xc93936184064b92b72f74803d13312f799896609"
+          "0xbf601702214a7071684d17981ad6d0a65366499b"
         ),
-        contractAddress: "0xc93936184064b92b72f74803d13312f799896609"
+        contractAddress: "0xbf601702214a7071684d17981ad6d0a65366499b"
       });
       //Check if metamask is installed/enabled
       if (web3.currentProvider.isMetaMask) {

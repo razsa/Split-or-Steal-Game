@@ -85,6 +85,7 @@ contract SplitStealContractV2 is owned, priced {
     }   
 
     function fund() payable external {
+        contractEarnings = contractEarnings + msg.value;
     }
 
     // UTILITY METHODS STARTS
