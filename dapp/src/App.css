@@ -361,6 +361,13 @@
   font-family: fantasy;
 }
 
+.Affiliation {
+  height: fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .Donate {
   height: fit-content;
   width: fit-content;

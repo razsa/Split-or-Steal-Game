@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import metamask from "./metamask.png";
+import affiliation from "./affiliation.png";
 import "./App.css";
 import Web3 from "web3";
 import abi from "./ContractABI.json";
@@ -502,6 +503,19 @@ class MyHeader extends Component {
           <b>Welcome to "SPLIT or STEAL" game on BLOCKCHAIN</b>
         </h1>
         <div>
+          <a
+            href="https://www.stateofthedapps.com/dapps/split-or-steal"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="Affiliation">
+              <div>Listed on www.stateofthedapps.com</div>
+              <div>Solidified Audit in progress</div>
+              <div>
+                <img src={affiliation} alt="affiliation" />
+              </div>
+            </div>
+          </a>
           <b>
             <a
               target="_blank"
