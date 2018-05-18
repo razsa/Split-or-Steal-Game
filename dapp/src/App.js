@@ -20,6 +20,8 @@ class App extends Component {
     super(props);
     this.state = {
       //Global State
+      intervals: [],
+      lastStateOk: false,
       netId: null,
       web3: null,
       contractBalance: "being calculated",
@@ -63,7 +65,6 @@ class App extends Component {
   }
 
   componentWillMount = () => {
-    console.log("componentWillMount");
     this.init();
   };
 
@@ -74,7 +75,6 @@ class App extends Component {
         this.setState({
           web3: web3
         });
-        console.log(web3);
         this.setState({
           contract: new web3.eth.Contract(
             abi,
@@ -92,31 +92,44 @@ class App extends Component {
           });
           web3.eth.getAccounts((error, accounts) => {
             if (accounts.length === 0) {
+              this.state.intervals.forEach(clearInterval);
+              this.setState({
+                noAccountsInMetamask: true,
+                lastStateOk: false,
+                intervals: []
+              });
+
               console.error("No Accounts in Metamask");
             } else {
-              console.log("Account found in Metamask");
               this.setState({
                 noAccountsInMetamask: false,
                 metamaskAccount: accounts[0]
               });
-            }
-            if (
-              this.state.metamaskInstalled &&
-              !this.state.noAccountsInMetamask
-            ) {
-              console.log("Calling Init.");
-              this.setContractOwner();
-            } else {
-              console.error("Not calling Init.");
-              console.error(this.state.metamaskInstalled);
-              console.error(!this.state.noAccountsInMetamask);
+              if (!this.state.lastStateOk) {
+                this.setContractOwner();
+              }
+              this.setState({
+                lastStateOk: true
+              });
             }
           });
         } else {
+          this.state.intervals.forEach(clearInterval);
+          this.setState({
+            metamaskInstalled: false,
+            lastStateOk: false,
+            intervals: []
+          });
           // Another web3 provider
           console.error("Some unknown web 3 provider found.");
         }
       } else {
+        this.state.intervals.forEach(clearInterval);
+        this.setState({
+          metamaskInstalled: false,
+          lastStateOk: false,
+          intervals: []
+        });
         // No web 3 provider
         console.error("No web 3 provider found.");
       }
@@ -142,7 +155,7 @@ class App extends Component {
   };
 
   registerMetamaskAddressChangeListner = () => {
-    setInterval(() => {
+    let interval = setInterval(() => {
       this.state.web3.eth.getAccounts((err, accounts) => {
         if (err) {
           return;
@@ -176,6 +189,11 @@ class App extends Component {
         }
       });
     }, 2000);
+    let _intervals = this.state.intervals;
+    _intervals.push(interval);
+    this.setState({
+      intervals: _intervals
+    });
   };
 
   updateTotalGames = () => {
@@ -345,7 +363,6 @@ class App extends Component {
             _allGameLocalOverride[gameNumber] = false;
             let _allGameMessage = this.state.allGameMessage;
             _allGameMessage[gameNumber] = "";
-            console.log("Setting... All Games.");
             let _totalGamesMessage = this.state.totalGamesMessage;
             if (gameNumber > 1) {
               if (_totalGamesFetched % this.state.maxAutoFetchGames === 0) {
@@ -413,8 +430,7 @@ class App extends Component {
         gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(resultGameState => {
-        console.log("Updating game " + gameNumber + " got Game State");
-        console.log(resultGameState);
+        console.log("Updating game " + gameNumber);
         registerationOpen = resultGameState._registerationOpen;
         revealing = resultGameState._revealing;
         lastGameFinished = resultGameState._lastGameFinished;
@@ -430,8 +446,6 @@ class App extends Component {
             gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
           })
           .then(resultPlayerState => {
-            console.log("Updating game " + gameNumber + " got Player State");
-            console.log(resultPlayerState);
             suspended = resultPlayerState._suspended;
             registered = resultPlayerState._registered;
             revealed = resultPlayerState._revealed;
@@ -462,7 +476,6 @@ class App extends Component {
               _allGameLocalOverride[gameNumber] = false;
               _allGameMessage[gameNumber] = "";
             }
-            console.log("Setting... All Games.");
             this.setState({
               allGames: _allGames,
               allGameLocalOverride: _allGameLocalOverride,
@@ -473,7 +486,7 @@ class App extends Component {
   };
 
   registerPlayerStateListner = () => {
-    setInterval(() => {
+    let interval = setInterval(() => {
       this.updateTotalGames();
       this.updateTotalGamesStarted();
       this.updateTotalGamesJoined();
@@ -489,10 +502,15 @@ class App extends Component {
         } catch (ignore) {}
       }
     }, 2000);
+    let _intervals = this.state.intervals;
+    _intervals.push(interval);
+    this.setState({
+      intervals: _intervals
+    });
   };
 
   registerStateListener = () => {
-    setInterval(() => {
+    let interval = setInterval(() => {
       this.state.contract.methods
         .getContractEarnings()
         .call({
@@ -562,6 +580,11 @@ class App extends Component {
             });
         });
     }, 2000);
+    let _intervals = this.state.intervals;
+    _intervals.push(interval);
+    this.setState({
+      intervals: _intervals
+    });
   };
 
   //ADMIN METHODS START

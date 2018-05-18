@@ -32,28 +32,22 @@ class MyHeader extends Component {
     let network = "some unknown network";
     switch (netId) {
       case "1":
-        console.log("This is mainnet");
         network = "the Main Ethereum Network";
         break;
       case "2":
-        console.log("This is the deprecated Morden test network.");
         network = "the deprecated Morden Test Network";
         break;
       case "3":
-        console.log("This is the ropsten test network.");
         network = "the Ropsten Test Network";
         break;
       case "4":
         changeNetwork = false;
-        console.log("This is the Rinkeby test network.");
         network = "the Rinkeby Test Network";
         break;
       case "42":
-        console.log("This is the Kovan test network.");
         network = "the Kovan Test Network";
         break;
       default:
-        console.log("This is an unknown network.");
     }
 
     return (
