@@ -1334,7 +1334,12 @@ class App extends Component {
           netId={this.state.netId}
         />
         {this.GameSection()}
-        <About k={this.state.k} />
+        <About
+          k={this.state.k}
+          metamaskInstalled={this.state.metamaskInstalled}
+          noAccountsInMetamask={this.state.noAccountsInMetamask}
+          changeNetwork={changeNetwork}
+        />
         <Fair />
         <Donate
           metamaskInstalled={this.state.metamaskInstalled}

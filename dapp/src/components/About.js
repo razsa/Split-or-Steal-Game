@@ -26,71 +26,16 @@ class About extends Component {
   };
 
   render() {
-    let { k } = this.props;
-    return (
-      <div id="about" className="About">
-        <br />
-        <div className="App-about">
-          <b>
-            <h2>What is the game?</h2>
-          </b>
-          It is a two player game(X, Y) where each player is asked to bet some
-          amount(X, Y) to play the game. <br /> Based on X and Y, Smart contract
-          would generate a <a href="#reward-matrix">Reward Matrix</a>, on which
-          game will be played.
-        </div>
-        <div id="reward-matrix" className="App-about">
-          <b>
-            <h2>What is the Reward Matrix?</h2>
-          </b>
-          <b>R(X,Y,K)</b> => <br />
-          <table className="App-table">
-            <tbody>
-              <tr>
-                <th>(X\Y)</th>
-                <th>Split</th>
-                <th>Steal</th>
-                <th>Disqualified</th>
-              </tr>
-              <tr>
-                <td>
-                  <b>Split</b>
-                </td>
-                <td>(X+Y)/2</td>
-                <td>0 \ Min(X+Y, K*Y) </td>
-                <td>Min(X+Y, K*X) \ 0</td>
-              </tr>
-              <tr>
-                <td>
-                  <b>Steal</b>
-                </td>
-                <td>Min(X+Y, K*X) \ 0</td>
-                <td>Min(X+Y, K*Max(0,X-Y))</td>
-                <td>Min(X+Y, K*X) \ 0</td>
-              </tr>
-              <tr>
-                <td>
-                  <b>Disqualified</b>
-                </td>
-                <td>0 \ Min(X+Y, K*Y) </td>
-                <td>0 \ Min(X+Y, K*Y) </td>
-                <td>0 \ 0</td>
-              </tr>
-            </tbody>
-          </table>
-          <br />
-          <b>where</b>,
-          <div id="reward-factor">
-            <ul className="App-list">
-              <li>
-                {" "}
-                X & Y are bet amounts by PlayerX and PlayerY respectively
-              </li>
-              <li>
-                K > 1, K is <b>Reward Factor</b>
-              </li>
-            </ul>
-          </div>
+    let {
+      k,
+      metamaskInstalled,
+      noAccountsInMetamask,
+      changeNetwork
+    } = this.props;
+
+    let interactiveRewardMatrix =
+      !metamaskInstalled || noAccountsInMetamask || changeNetwork ? null : (
+        <div>
           <b>
             <h3>Interactive Reward Matrix</h3>
           </b>
@@ -210,6 +155,75 @@ class About extends Component {
             </tbody>
           </table>
         </div>
+      );
+
+    return (
+      <div id="about" className="About">
+        <br />
+        <div className="App-about">
+          <b>
+            <h2>What is the game?</h2>
+          </b>
+          It is a two player game(X, Y) where each player is asked to bet some
+          amount(X, Y) to play the game. <br /> Based on X and Y, Smart contract
+          would generate a <a href="#reward-matrix">Reward Matrix</a>, on which
+          game will be played.
+        </div>
+        <div id="reward-matrix" className="App-about">
+          <b>
+            <h2>What is the Reward Matrix?</h2>
+          </b>
+          <b>R(X,Y,K)</b> => <br />
+          <table className="App-table">
+            <tbody>
+              <tr>
+                <th>(X\Y)</th>
+                <th>Split</th>
+                <th>Steal</th>
+                <th>Disqualified</th>
+              </tr>
+              <tr>
+                <td>
+                  <b>Split</b>
+                </td>
+                <td>(X+Y)/2</td>
+                <td>0 \ Min(X+Y, K*Y) </td>
+                <td>Min(X+Y, K*X) \ 0</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>Steal</b>
+                </td>
+                <td>Min(X+Y, K*X) \ 0</td>
+                <td>Min(X+Y, K*Max(0,X-Y))</td>
+                <td>Min(X+Y, K*X) \ 0</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>Disqualified</b>
+                </td>
+                <td>0 \ Min(X+Y, K*Y) </td>
+                <td>0 \ Min(X+Y, K*Y) </td>
+                <td>0 \ 0</td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <b>where</b>,
+          <div id="reward-factor">
+            <ul className="App-list">
+              <li>
+                {" "}
+                X & Y are bet amounts by PlayerX and PlayerY respectively
+              </li>
+              <li>
+                K > 1, K is <b>Reward Factor</b>
+              </li>
+            </ul>
+          </div>
+          {interactiveRewardMatrix}
+        </div>
+
         <div className="App-about">
           <b>
             <h2>How to read Reward Matrix case by case?</h2>
