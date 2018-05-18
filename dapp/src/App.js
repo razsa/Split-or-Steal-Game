@@ -64,57 +64,63 @@ class App extends Component {
 
   componentWillMount = () => {
     console.log("componentWillMount");
-    if (typeof window.web3 !== "undefined") {
-      let web3 = new Web3(window.web3.currentProvider);
-      this.setState({
-        web3: web3
-      });
-      console.log(web3);
-      this.setState({
-        contract: new web3.eth.Contract(
-          abi,
-          "0xbf601702214a7071684d17981ad6d0a65366499b"
-        ),
-        contractAddress: "0xbf601702214a7071684d17981ad6d0a65366499b"
-      });
-      //Check if metamask is installed/enabled
-      if (web3.currentProvider.isMetaMask) {
+    this.init();
+  };
+
+  init = () => {
+    setInterval(() => {
+      if (typeof window.web3 !== "undefined") {
+        let web3 = new Web3(window.web3.currentProvider);
         this.setState({
-          metamaskInstalled: true
+          web3: web3
         });
-        window.web3.version.getNetwork((err, netId) => {
-          this.setState({ netId: netId });
+        console.log(web3);
+        this.setState({
+          contract: new web3.eth.Contract(
+            abi,
+            "0xbf601702214a7071684d17981ad6d0a65366499b"
+          ),
+          contractAddress: "0xbf601702214a7071684d17981ad6d0a65366499b"
         });
-        web3.eth.getAccounts((error, accounts) => {
-          if (accounts.length === 0) {
-            console.error("No Accounts in Metamask");
-          } else {
-            console.log("Account found in Metamask");
-            this.setState({
-              noAccountsInMetamask: false,
-              metamaskAccount: accounts[0]
-            });
-          }
-          if (
-            this.state.metamaskInstalled &&
-            !this.state.noAccountsInMetamask
-          ) {
-            console.log("Calling Init.");
-            this.setContractOwner();
-          } else {
-            console.error("Not calling Init.");
-            console.error(this.state.metamaskInstalled);
-            console.error(!this.state.noAccountsInMetamask);
-          }
-        });
+        //Check if metamask is installed/enabled
+        if (web3.currentProvider.isMetaMask) {
+          this.setState({
+            metamaskInstalled: true
+          });
+          window.web3.version.getNetwork((err, netId) => {
+            this.setState({ netId: netId });
+          });
+          web3.eth.getAccounts((error, accounts) => {
+            if (accounts.length === 0) {
+              console.error("No Accounts in Metamask");
+            } else {
+              console.log("Account found in Metamask");
+              this.setState({
+                noAccountsInMetamask: false,
+                metamaskAccount: accounts[0]
+              });
+            }
+            if (
+              this.state.metamaskInstalled &&
+              !this.state.noAccountsInMetamask
+            ) {
+              console.log("Calling Init.");
+              this.setContractOwner();
+            } else {
+              console.error("Not calling Init.");
+              console.error(this.state.metamaskInstalled);
+              console.error(!this.state.noAccountsInMetamask);
+            }
+          });
+        } else {
+          // Another web3 provider
+          console.error("Some unknown web 3 provider found.");
+        }
       } else {
-        // Another web3 provider
-        console.error("Some unknown web 3 provider found.");
+        // No web 3 provider
+        console.error("No web 3 provider found.");
       }
-    } else {
-      // No web 3 provider
-      console.error("No web 3 provider found.");
-    }
+    }, 2000);
   };
 
   setContractOwner = () => {
@@ -1016,6 +1022,9 @@ class App extends Component {
     let totalGamesFetched = this.state.totalGamesFetched;
     for (let i = totalGames; i > totalGames - totalGamesFetched && i > 0; i--) {
       let game = this.state.allGames[i];
+      if (game === undefined) {
+        continue;
+      }
       let gameNumber = game.gameNumber;
       let gameState = "";
       let gameSubstate =
