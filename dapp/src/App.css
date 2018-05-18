@@ -361,13 +361,6 @@
   font-family: fantasy;
 }
 
-.Affiliation {
-  height: fit-content;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .Donate {
   height: fit-content;
   width: fit-content;
@@ -414,7 +407,6 @@
 }
 
 .Footer {
-  margin-top: 10px;
   background-color: rgba(0, 0, 0);
   color: white;
 }
