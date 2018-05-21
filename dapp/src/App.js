@@ -147,7 +147,7 @@ class App extends Component {
         this.setState({
           contractOwner: result
         });
-        console.log("Contract Owner : " + result);
+        console.log("Contract Owner is " + result);
         this.registerMetamaskAddressChangeListner();
         this.registerStateListener();
         this.registerPlayerStateListner();
@@ -175,332 +175,11 @@ class App extends Component {
         }
         if (this.state.metamaskAccount !== accounts[0]) {
           this.setState({
-            metamaskAccount: accounts[0],
-            totalGamesFetched: 0,
-            allGames: {},
-            allGameBetAmount: {},
-            allGameChoice: {},
-            allGameRevealChoice: {},
-            allGameLocalOverride: {},
-            allGameMessage: {}
+            metamaskAccount: accounts[0]
           });
-          this.addToAllGames();
           console.log("Metamask Account Changed");
         }
       });
-    }, 2000);
-    let _intervals = this.state.intervals;
-    _intervals.push(interval);
-    this.setState({
-      intervals: _intervals
-    });
-  };
-
-  updateTotalGames = () => {
-    this.state.contract.methods
-      .getTotalGames()
-      .call({
-        from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
-      })
-      .then(result => {
-        console.log("Total Games from Contract " + result);
-        let _totalGamesMessage = this.state.totalGamesMessage;
-        if (parseInt(result, 10) === 0) {
-          _totalGamesMessage = "No Games have been played yet.";
-        }
-        if (this.state.totalGames < result) {
-          _totalGamesMessage = "Found new Game(s), Fetching....";
-          this.setState({
-            totalGames: parseInt(result, 10),
-            totalGamesMessage: _totalGamesMessage,
-            totalGamesFetched: 0,
-            allGames: {},
-            allGameBetAmount: {},
-            allGameChoice: {},
-            allGameRevealChoice: {},
-            allGameLocalOverride: {},
-            allGameMessage: {}
-          });
-        } else {
-          this.setState({
-            totalGames: parseInt(result, 10),
-            totalGamesMessage: _totalGamesMessage
-          });
-        }
-        this.addToAllGames();
-      });
-  };
-
-  updateTotalGamesStarted = () => {
-    this.state.contract.methods
-      .getTotalGamesStarted()
-      .call({
-        from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
-      })
-      .then(result => {
-        this.setState({
-          totalGamesStarted: parseInt(result, 10)
-        });
-      });
-  };
-
-  updateTotalGamesJoined = () => {
-    this.state.contract.methods
-      .getTotalGamesParticipated()
-      .call({
-        from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
-      })
-      .then(result => {
-        this.setState({
-          totalGamesJoined: parseInt(result, 10)
-        });
-      });
-  };
-
-  addToAllGames = () => {
-    console.log("total games " + this.state.totalGames);
-    console.log("total games fetched " + this.state.totalGamesFetched);
-    if (this.state.totalGames - this.state.totalGamesFetched <= 0) {
-      console.log("No games to fetch");
-      if (this.state.totalGames !== 0) {
-        this.setState({
-          totalGamesMessage: "All Games have been fetched."
-        });
-      }
-      return;
-    }
-    let _allGames = this.state.allGames;
-    let _totalGamesFetched = this.state.totalGamesFetched;
-    let gameNumber = this.state.totalGames - this.state.totalGamesFetched;
-
-    if (
-      this.state.totalGamesFetched !== 0 &&
-      this.state.totalGamesFetched % this.state.maxAutoFetchGames === 0
-    ) {
-      if (!this.state.userOverrideMoreGame) {
-        this.setState({
-          totalGamesMessage:
-            "Click on 'Get More Games' to fetch previous games."
-        });
-        return;
-      }
-    }
-    console.log("Fetching game number " + gameNumber);
-    this.setState({
-      totalGamesMessage: "Fetching game number " + gameNumber.toString()
-    });
-    let registerationOpen = false;
-    let revealing = false;
-    let lastGameFinished = false;
-    let suspended = false;
-    let registered = false;
-    let revealed = false;
-    let disqualified = false;
-    let claimedReward = false;
-    let betAmount = 0;
-    let rewardAmount = 0;
-    let startTime = 0;
-    let revealTime = 0;
-    let finishTime = 0;
-    let stageTimeout = 0;
-
-    this.state.contract.methods
-      .getGameState(gameNumber)
-      .call({
-        from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
-      })
-      .then(resultGameState => {
-        registerationOpen = resultGameState._registerationOpen;
-        revealing = resultGameState._revealing;
-        lastGameFinished = resultGameState._lastGameFinished;
-        startTime = resultGameState._startTime;
-        revealTime = resultGameState._revealTime;
-        finishTime = resultGameState._finishTime;
-        stageTimeout = resultGameState._stageTimeout;
-        this.state.contract.methods
-          .getPlayerState(gameNumber)
-          .call({
-            from: this.state.metamaskAccount,
-            gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
-          })
-          .then(resultPlayerState => {
-            suspended = resultPlayerState._suspended;
-            registered = resultPlayerState._registered;
-            revealed = resultPlayerState._revealed;
-            disqualified = resultPlayerState._disqualified;
-            claimedReward = resultPlayerState._claimedReward;
-            betAmount = resultPlayerState._betAmount;
-            rewardAmount = resultPlayerState._reward;
-            _allGames[gameNumber] = {
-              gameNumber: gameNumber,
-              registerationOpen: registerationOpen,
-              revealing: revealing,
-              lastGameFinished: lastGameFinished,
-              startTime: startTime,
-              revealTime: revealTime,
-              finishTime: finishTime,
-              stageTimeout: stageTimeout,
-              suspended: suspended,
-              registered: registered,
-              revealed: revealed,
-              disqualified: disqualified,
-              claimedReward: claimedReward,
-              betAmount: betAmount,
-              rewardAmount: rewardAmount
-            };
-            _totalGamesFetched = _totalGamesFetched + 1;
-            let _allGameBetAmount = this.state.allGameBetAmount;
-            _allGameBetAmount[gameNumber] = "";
-            let _allGameChoice = this.state.allGameChoice;
-            _allGameChoice[gameNumber] = "";
-            let _allGameRevealChoice = this.state.allGameRevealChoice;
-            _allGameRevealChoice[gameNumber] = "";
-            let _allGameLocalOverride = this.state.allGameLocalOverride;
-            _allGameLocalOverride[gameNumber] = false;
-            let _allGameMessage = this.state.allGameMessage;
-            _allGameMessage[gameNumber] = "";
-            let _totalGamesMessage = this.state.totalGamesMessage;
-            if (gameNumber > 1) {
-              if (_totalGamesFetched % this.state.maxAutoFetchGames === 0) {
-                _totalGamesMessage =
-                  "Click on 'Get More Games' to fetch previous games.";
-              } else {
-                _totalGamesMessage = "Fetching game number " + (gameNumber - 1);
-              }
-            } else {
-              _totalGamesMessage = "All Games have been fetched.";
-            }
-            let _userOverrideMoreGame = this.state.userOverrideMoreGame;
-            if (_userOverrideMoreGame) {
-              _userOverrideMoreGame = false;
-            }
-            this.setState({
-              allGames: _allGames,
-              userOverrideMoreGame: _userOverrideMoreGame,
-              totalGamesMessage: _totalGamesMessage,
-              totalGamesFetched: _totalGamesFetched,
-              allGameBetAmount: _allGameBetAmount,
-              allGameChoice: _allGameChoice,
-              allGameRevealChoice: _allGameRevealChoice,
-              allGameLocalOverride: _allGameLocalOverride,
-              allGameMessage: _allGameMessage
-            });
-          });
-      });
-  };
-
-  userAddToAllGames = () => {
-    this.setState({
-      userOverrideMoreGame: true
-    });
-    this.addToAllGames();
-  };
-
-  updateGame = (gameNumber, tellUser) => {
-    console.log("Updating Game " + gameNumber);
-    if (tellUser) {
-      this.setState({
-        totalGamesMessage: "Updating game number " + gameNumber.toString()
-      });
-    }
-    let _allGames = this.state.allGames;
-    let registerationOpen = false;
-    let revealing = false;
-    let lastGameFinished = false;
-    let suspended = false;
-    let registered = false;
-    let revealed = false;
-    let disqualified = false;
-    let claimedReward = false;
-    let betAmount = 0;
-    let rewardAmount = 0;
-    let startTime = 0;
-    let revealTime = 0;
-    let finishTime = 0;
-    let stageTimeout = 0;
-
-    this.state.contract.methods
-      .getGameState(gameNumber)
-      .call({
-        from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
-      })
-      .then(resultGameState => {
-        console.log("Updating game " + gameNumber);
-        registerationOpen = resultGameState._registerationOpen;
-        revealing = resultGameState._revealing;
-        lastGameFinished = resultGameState._lastGameFinished;
-        startTime = resultGameState._startTime;
-        revealTime = resultGameState._revealTime;
-        finishTime = resultGameState._finishTime;
-        stageTimeout = resultGameState._stageTimeout;
-
-        this.state.contract.methods
-          .getPlayerState(gameNumber)
-          .call({
-            from: this.state.metamaskAccount,
-            gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
-          })
-          .then(resultPlayerState => {
-            suspended = resultPlayerState._suspended;
-            registered = resultPlayerState._registered;
-            revealed = resultPlayerState._revealed;
-            disqualified = resultPlayerState._disqualified;
-            claimedReward = resultPlayerState._claimedReward;
-            betAmount = resultPlayerState._betAmount;
-            rewardAmount = resultPlayerState._reward;
-            _allGames[gameNumber] = {
-              gameNumber: gameNumber,
-              registerationOpen: registerationOpen,
-              revealing: revealing,
-              lastGameFinished: lastGameFinished,
-              startTime: startTime,
-              revealTime: revealTime,
-              finishTime: finishTime,
-              stageTimeout: stageTimeout,
-              suspended: suspended,
-              registered: registered,
-              revealed: revealed,
-              disqualified: disqualified,
-              claimedReward: claimedReward,
-              betAmount: betAmount,
-              rewardAmount: rewardAmount
-            };
-            let _allGameLocalOverride = this.state.allGameLocalOverride;
-            let _allGameMessage = this.state.allGameMessage;
-            if (tellUser) {
-              _allGameLocalOverride[gameNumber] = false;
-              _allGameMessage[gameNumber] = "";
-            }
-            this.setState({
-              allGames: _allGames,
-              allGameLocalOverride: _allGameLocalOverride,
-              allGameMessage: _allGameMessage
-            });
-          });
-      });
-  };
-
-  registerPlayerStateListner = () => {
-    let interval = setInterval(() => {
-      this.updateTotalGames();
-      this.updateTotalGamesStarted();
-      this.updateTotalGamesJoined();
-      let totalGames = this.state.totalGames;
-      let totalGamesFetched = this.state.totalGamesFetched;
-      for (
-        let i = totalGames;
-        i > totalGames - totalGamesFetched && i > 0;
-        i--
-      ) {
-        try {
-          this.updateGame(i, false);
-        } catch (ignore) {}
-      }
     }, 2000);
     let _intervals = this.state.intervals;
     _intervals.push(interval);
@@ -587,6 +266,314 @@ class App extends Component {
     });
   };
 
+  registerPlayerStateListner = () => {
+    let interval = setInterval(() => {
+      this.updateTotalGamesStarted();
+      this.updateTotalGamesJoined();
+      this.updateFetchedGames();
+      this.updateTotalGames();
+    }, 2000);
+    let _intervals = this.state.intervals;
+    _intervals.push(interval);
+    this.setState({
+      intervals: _intervals
+    });
+  };
+
+  updateTotalGamesStarted = () => {
+    this.state.contract.methods
+      .getTotalGamesStarted()
+      .call({
+        from: this.state.metamaskAccount,
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+      })
+      .then(result => {
+        this.setState({
+          totalGamesStarted: parseInt(result, 10)
+        });
+      });
+  };
+
+  updateTotalGamesJoined = () => {
+    this.state.contract.methods
+      .getTotalGamesParticipated()
+      .call({
+        from: this.state.metamaskAccount,
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+      })
+      .then(result => {
+        this.setState({
+          totalGamesJoined: parseInt(result, 10)
+        });
+      });
+  };
+
+  updateFetchedGames = () => {
+    let _allGames = this.state.allGames;
+    for (let gameNumber in _allGames) {
+      try {
+        this.updateGame(gameNumber, false);
+      } catch (ignore) {}
+    }
+  };
+
+  updateGame = (gameNumber, tellUser) => {
+    // console.log("Updating Game " + gameNumber);
+    if (tellUser) {
+      this.setState({
+        totalGamesMessage: "Updating game number " + gameNumber.toString()
+      });
+    }
+    let _allGames = this.state.allGames;
+    let registerationOpen = false;
+    let revealing = false;
+    let lastGameFinished = false;
+    let suspended = false;
+    let registered = false;
+    let revealed = false;
+    let disqualified = false;
+    let claimedReward = false;
+    let betAmount = 0;
+    let rewardAmount = 0;
+    let startTime = 0;
+    let revealTime = 0;
+    let finishTime = 0;
+    let stageTimeout = 0;
+
+    this.state.contract.methods
+      .getGameState(gameNumber)
+      .call({
+        from: this.state.metamaskAccount,
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+      })
+      .then(resultGameState => {
+        // console.log("Updating game " + gameNumber);
+        registerationOpen = resultGameState._registerationOpen;
+        revealing = resultGameState._revealing;
+        lastGameFinished = resultGameState._lastGameFinished;
+        startTime = resultGameState._startTime;
+        revealTime = resultGameState._revealTime;
+        finishTime = resultGameState._finishTime;
+        stageTimeout = resultGameState._stageTimeout;
+
+        this.state.contract.methods
+          .getPlayerState(gameNumber)
+          .call({
+            from: this.state.metamaskAccount,
+            gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+          })
+          .then(resultPlayerState => {
+            suspended = resultPlayerState._suspended;
+            registered = resultPlayerState._registered;
+            revealed = resultPlayerState._revealed;
+            disqualified = resultPlayerState._disqualified;
+            claimedReward = resultPlayerState._claimedReward;
+            betAmount = resultPlayerState._betAmount;
+            rewardAmount = resultPlayerState._reward;
+            _allGames[gameNumber] = {
+              gameNumber: gameNumber,
+              registerationOpen: registerationOpen,
+              revealing: revealing,
+              lastGameFinished: lastGameFinished,
+              startTime: startTime,
+              revealTime: revealTime,
+              finishTime: finishTime,
+              stageTimeout: stageTimeout,
+              suspended: suspended,
+              registered: registered,
+              revealed: revealed,
+              disqualified: disqualified,
+              claimedReward: claimedReward,
+              betAmount: betAmount,
+              rewardAmount: rewardAmount
+            };
+            let _allGameLocalOverride = this.state.allGameLocalOverride;
+            let _allGameMessage = this.state.allGameMessage;
+            if (tellUser) {
+              _allGameLocalOverride[gameNumber] = false;
+              _allGameMessage[gameNumber] = "";
+            }
+            this.setState({
+              allGames: _allGames,
+              allGameLocalOverride: _allGameLocalOverride,
+              allGameMessage: _allGameMessage
+            });
+          });
+      });
+  };
+
+  updateTotalGames = () => {
+    this.state.contract.methods
+      .getTotalGames()
+      .call({
+        from: this.state.metamaskAccount,
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+      })
+      .then(_result => {
+        let result = parseInt(_result, 10);
+        let oldTotalGames = this.state.totalGames;
+        // console.log("Total Games from Contract " + result);
+        let _totalGamesMessage = this.state.totalGamesMessage;
+        if (result === 0) {
+          _totalGamesMessage = "No Games have been played yet.";
+        }
+        if (this.state.totalGames < result) {
+          let newGames = result - oldTotalGames;
+          // console.log("Found " + newGames + " Game(s), Fetching....");
+          _totalGamesMessage = "Found " + newGames + " Game(s), Fetching....";
+          this.setState({
+            totalGames: parseInt(result, 10),
+            totalGamesMessage: _totalGamesMessage
+          });
+        } else {
+          this.setState({
+            totalGames: parseInt(result, 10),
+            totalGamesMessage: _totalGamesMessage
+          });
+        }
+        let _totalGames = this.state.totalGames;
+        let _allGames = this.state.allGames;
+        if (_totalGames !== 0 && _totalGames === this.state.totalGamesFetched) {
+          this.setState({
+            totalGamesMessage: "All Games have been fetched."
+          });
+          return;
+        }
+        for (let gameNumber = _totalGames; gameNumber > 0; gameNumber--) {
+          if (_allGames[gameNumber] !== undefined) {
+            continue;
+          }
+          this.addToAllGames(gameNumber);
+        }
+      });
+  };
+
+  addToAllGames = gameNumber => {
+    // console.log("Fetching game number " + gameNumber);
+    // this.setState({
+    //   totalGamesMessage: "Fetching game number " + gameNumber.toString()
+    // });
+    let registerationOpen = false;
+    let revealing = false;
+    let lastGameFinished = false;
+    let suspended = false;
+    let registered = false;
+    let revealed = false;
+    let disqualified = false;
+    let claimedReward = false;
+    let betAmount = 0;
+    let rewardAmount = 0;
+    let startTime = 0;
+    let revealTime = 0;
+    let finishTime = 0;
+    let stageTimeout = 0;
+
+    this.state.contract.methods
+      .getGameState(gameNumber)
+      .call({
+        from: this.state.metamaskAccount,
+        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+      })
+      .then(resultGameState => {
+        registerationOpen = resultGameState._registerationOpen;
+        revealing = resultGameState._revealing;
+        lastGameFinished = resultGameState._lastGameFinished;
+        startTime = resultGameState._startTime;
+        revealTime = resultGameState._revealTime;
+        finishTime = resultGameState._finishTime;
+        stageTimeout = resultGameState._stageTimeout;
+        this.state.contract.methods
+          .getPlayerState(gameNumber)
+          .call({
+            from: this.state.metamaskAccount,
+            gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+          })
+          .then(resultPlayerState => {
+            suspended = resultPlayerState._suspended;
+            registered = resultPlayerState._registered;
+            revealed = resultPlayerState._revealed;
+            disqualified = resultPlayerState._disqualified;
+            claimedReward = resultPlayerState._claimedReward;
+            betAmount = resultPlayerState._betAmount;
+            rewardAmount = resultPlayerState._reward;
+            if (
+              this.state.totalGamesFetched !== 0 &&
+              this.state.totalGamesFetched % this.state.maxAutoFetchGames === 0
+            ) {
+              if (!this.state.userOverrideMoreGame) {
+                this.setState({
+                  totalGamesMessage:
+                    "Click on 'Get More Games' to fetch previous games."
+                });
+                return;
+              }
+            }
+            let _allGames = this.state.allGames;
+            let _totalGamesFetched = this.state.totalGamesFetched;
+            _allGames[gameNumber] = {
+              gameNumber: gameNumber,
+              registerationOpen: registerationOpen,
+              revealing: revealing,
+              lastGameFinished: lastGameFinished,
+              startTime: startTime,
+              revealTime: revealTime,
+              finishTime: finishTime,
+              stageTimeout: stageTimeout,
+              suspended: suspended,
+              registered: registered,
+              revealed: revealed,
+              disqualified: disqualified,
+              claimedReward: claimedReward,
+              betAmount: betAmount,
+              rewardAmount: rewardAmount
+            };
+            _totalGamesFetched = _totalGamesFetched + 1;
+            let _allGameBetAmount = this.state.allGameBetAmount;
+            _allGameBetAmount[gameNumber] = "";
+            let _allGameChoice = this.state.allGameChoice;
+            _allGameChoice[gameNumber] = "";
+            let _allGameRevealChoice = this.state.allGameRevealChoice;
+            _allGameRevealChoice[gameNumber] = "";
+            let _allGameLocalOverride = this.state.allGameLocalOverride;
+            _allGameLocalOverride[gameNumber] = false;
+            let _allGameMessage = this.state.allGameMessage;
+            _allGameMessage[gameNumber] = "";
+            let _totalGamesMessage = this.state.totalGamesMessage;
+            if (gameNumber === 1) {
+              //   if (_totalGamesFetched % this.state.maxAutoFetchGames === 0) {
+              //     _totalGamesMessage =
+              //       "Click on 'Get More Games' to fetch previous games.";
+              //   } else {
+              //     _totalGamesMessage = "Fetching game number " + (gameNumber - 1);
+              //   }
+              // } else {
+              _totalGamesMessage = "All Games have been fetched.";
+            }
+            let _userOverrideMoreGame = this.state.userOverrideMoreGame;
+            if (_userOverrideMoreGame) {
+              _userOverrideMoreGame = false;
+            }
+            this.setState({
+              allGames: _allGames,
+              userOverrideMoreGame: _userOverrideMoreGame,
+              totalGamesMessage: _totalGamesMessage,
+              totalGamesFetched: _totalGamesFetched,
+              allGameBetAmount: _allGameBetAmount,
+              allGameChoice: _allGameChoice,
+              allGameRevealChoice: _allGameRevealChoice,
+              allGameLocalOverride: _allGameLocalOverride,
+              allGameMessage: _allGameMessage
+            });
+          });
+      });
+  };
+
+  userAddToAllGames = () => {
+    this.setState({
+      userOverrideMoreGame: true
+    });
+  };
+
   //ADMIN METHODS START
   fundContract = () => {
     let fundInWei = this.state.web3.utils.toWei(
@@ -600,12 +587,12 @@ class App extends Component {
         value: fundInWei
       })
       .on("confirmation", (confirmationNumber, receipt) => {
-        console.log(
-          "You request has got " + confirmationNumber + " confirmations"
-        );
+        // console.log(
+        //   "You request has got " + confirmationNumber + " confirmations"
+        // );
       })
       .on("receipt", receipt => {
-        console.log(receipt);
+        // console.log(receipt);
       });
   };
 
@@ -621,17 +608,17 @@ class App extends Component {
             adminStateOverride: true,
             adminStateMessage: "Withdrawing Earnings....."
           });
-          console.log(
-            "Your request for withdraw earnings has been submitted. "
-          );
+          // console.log(
+          //   "Your request for withdraw earnings has been submitted. "
+          // );
         })
         .on("confirmation", (confirmationNumber, receipt) => {
-          console.log(
-            "You request has got " + confirmationNumber + " confirmations"
-          );
+          // console.log(
+          //   "You request has got " + confirmationNumber + " confirmations"
+          // );
         })
         .on("receipt", receipt => {
-          console.log(receipt);
+          // console.log(receipt);
           this.setState({
             adminStateOverride: false,
             adminStateMessage: ""
@@ -652,19 +639,17 @@ class App extends Component {
         .on("transactionHash", hash => {
           this.setState({
             adminStateOverride: true,
-            adminStateMessage: "Withdrawing Earnings....."
+            adminStateMessage: "Overriding Game....."
           });
-          console.log(
-            "Your request for withdraw earnings has been submitted. "
-          );
+          // console.log("Your request for overriding has been submitted. ");
         })
         .on("confirmation", (confirmationNumber, receipt) => {
-          console.log(
-            "You request has got " + confirmationNumber + " confirmations"
-          );
+          // console.log(
+          //   "You request has got " + confirmationNumber + " confirmations"
+          // );
         })
         .on("receipt", receipt => {
-          console.log(receipt);
+          // console.log(receipt);
           this.setState({
             adminStateOverride: false,
             adminStateMessage: ""
@@ -702,29 +687,21 @@ class App extends Component {
             startGameLocalOverride: true,
             startGameMessage: "Your new game is being created...."
           });
-          console.log(
-            "Your request for start registration has been submitted. "
-          );
+          // console.log(
+          //   "Your request for start registration has been submitted. "
+          // );
         })
         .on("confirmation", (confirmationNumber, receipt) => {
-          console.log(
-            "You request has got " + confirmationNumber + " confirmations"
-          );
+          // console.log(
+          //   "You request has got " + confirmationNumber + " confirmations"
+          // );
         })
         .on("receipt", receipt => {
-          console.log(receipt);
+          // console.log(receipt);
           this.setState({
             startGameLocalOverride: false,
-            startGameMessage: "",
-            totalGamesFetched: 0,
-            allGames: {},
-            allGameBetAmount: {},
-            allGameChoice: {},
-            allGameRevealChoice: {},
-            allGameLocalOverride: {},
-            allGameMessage: {}
+            startGameMessage: ""
           });
-          this.addToAllGames();
         });
     };
   }
@@ -762,15 +739,15 @@ class App extends Component {
             allGameLocalOverride: _allGameLocalOverride,
             allGameMessage: _allGameMessage
           });
-          console.log("Your request for bet has been submitted.");
+          // console.log("Your request for bet has been submitted.");
         })
         .on("confirmation", (confirmationNumber, receipt) => {
-          console.log(
-            "You request has got " + confirmationNumber + " confirmations"
-          );
+          // console.log(
+          //   "You request has got " + confirmationNumber + " confirmations"
+          // );
         })
         .on("receipt", receipt => {
-          console.log(receipt);
+          // console.log(receipt);
           this.updateGame(gameNumber, true);
         });
     };
@@ -800,15 +777,15 @@ class App extends Component {
             allGameLocalOverride: _allGameLocalOverride,
             allGameMessage: _allGameMessage
           });
-          console.log("Your request for revealing choice has been submitted.");
+          // console.log("Your request for revealing choice has been submitted.");
         })
         .on("confirmation", (confirmationNumber, receipt) => {
-          console.log(
-            "You request has got " + confirmationNumber + " confirmations"
-          );
+          // console.log(
+          //   "You request has got " + confirmationNumber + " confirmations"
+          // );
         })
         .on("receipt", receipt => {
-          console.log(receipt);
+          // console.log(receipt);
           this.updateGame(gameNumber, true);
         });
     };
@@ -839,15 +816,15 @@ class App extends Component {
             allGameMessage: _allGameMessage
           });
 
-          console.log("Your request has been submitted");
+          // console.log("Your request has been submitted");
         })
         .on("confirmation", (confirmationNumber, receipt) => {
-          console.log(
-            "You request has got " + confirmationNumber + " confirmations"
-          );
+          // console.log(
+          //   "You request has got " + confirmationNumber + " confirmations"
+          // );
         })
         .on("receipt", receipt => {
-          console.log(receipt);
+          // console.log(receipt);
           this.updateGame(gameNumber, true);
         });
     };
@@ -1041,14 +1018,23 @@ class App extends Component {
 
   AllGames = () => {
     let games = [];
-    let totalGames = this.state.totalGames;
-    let totalGamesFetched = this.state.totalGamesFetched;
-    for (let i = totalGames; i > totalGames - totalGamesFetched && i > 0; i--) {
-      let game = this.state.allGames[i];
+    let _allGames = this.state.allGames;
+    let gameNumberList = [];
+    for (let gameNumber in _allGames) {
+      gameNumberList.push(gameNumber);
+    }
+    gameNumberList.sort();
+    gameNumberList.reverse();
+    // console.log(this.state.allGames);
+    // console.log(this.state.totalGamesFetched);
+    for (let i = 0; i < gameNumberList.length; i++) {
+      let _gameNumber = gameNumberList[i];
+      let gameNumber = parseInt(_gameNumber, 10);
+      let game = this.state.allGames[gameNumber];
       if (game === undefined) {
+        // console.log("GAME is undefined ! for game number " + gameNumber);
         continue;
       }
-      let gameNumber = game.gameNumber;
       let gameState = "";
       let gameSubstate =
         parseInt(game.betAmount, 10) === 0
@@ -1264,7 +1250,7 @@ class App extends Component {
       }
 
       games.push(
-        <div key={i} className="AllGamesCard">
+        <div key={gameNumber} className="AllGamesCard">
           <div>
             <h3>
               <b>GAME NUMBER {game.gameNumber}</b>
