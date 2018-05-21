@@ -17,6 +17,7 @@ class MyHeader extends Component {
       : noAccountsInMetamask
         ? "Please Log in to"
         : null;
+    let subWarning = !metamaskInstalled ? " and refresh the page " : null;
     if (!metamaskInstalled) {
       numberOfCoins = 1;
     } else {
@@ -53,6 +54,7 @@ class MyHeader extends Component {
     return (
       <div>
         <a
+          style={{ visibility: "hidden" }}
           href="https://github.com/showmeyourcode/Split-or-Steal-Game"
           target="_blank"
           rel="noopener noreferrer"
@@ -102,6 +104,7 @@ class MyHeader extends Component {
               >
                 Metamask
               </a>{" "}
+              {subWarning}
               to play the game.
             </h2>
           )}

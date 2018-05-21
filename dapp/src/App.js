@@ -20,6 +20,7 @@ class App extends Component {
     super(props);
     this.state = {
       //Global State
+      addListeners: false,
       intervals: [],
       lastStateOk: false,
       netId: null,
@@ -45,6 +46,7 @@ class App extends Component {
       adminStateOverride: "",
       adminStateMessage: "",
       //Player
+      playerBalance: "being calculated",
       totalGamesStarted: 0,
       totalGamesJoined: 0,
       //Player Start Game
@@ -65,73 +67,87 @@ class App extends Component {
   }
 
   componentWillMount = () => {
+    if (typeof window.web3 !== "undefined") {
+      let web3 = new Web3(window.web3.currentProvider);
+      this.setState({
+        web3: web3
+      });
+      this.setState({
+        contract: new web3.eth.Contract(
+          abi,
+          "0xbf601702214a7071684d17981ad6d0a65366499b"
+        ),
+        contractAddress: "0xbf601702214a7071684d17981ad6d0a65366499b"
+      });
+      //Check if metamask is installed/enabled
+      this.checkMetamask();
+    }
     this.init();
+  };
+
+  checkMetamask = () => {
+    if (typeof window.web3 === "undefined") {
+      console.log("wind.web3 is undefined");
+      this.setState({
+        addListeners: false
+      });
+      return;
+    }
+    let web3 = new Web3(window.web3.currentProvider);
+    if (web3.currentProvider.isMetaMask) {
+      this.setState({
+        metamaskInstalled: true
+      });
+      window.web3.version.getNetwork((err, netId) => {
+        this.setState({ netId: netId });
+      });
+      web3.eth.getAccounts((error, accounts) => {
+        if (accounts.length === 0) {
+          this.state.intervals.forEach(clearInterval);
+          this.setState({
+            noAccountsInMetamask: true,
+            lastStateOk: false,
+            intervals: [],
+            addListeners: false
+          });
+          console.error("No Accounts in Metamask");
+        } else {
+          this.setState({
+            noAccountsInMetamask: false,
+            metamaskAccount: accounts[0]
+          });
+          if (!this.state.lastStateOk) {
+            this.setState({
+              addListeners: true
+            });
+          } else {
+            this.setState({
+              addListeners: false
+            });
+          }
+          this.setState({
+            lastStateOk: true
+          });
+        }
+      });
+    } else {
+      this.state.intervals.forEach(clearInterval);
+      this.setState({
+        metamaskInstalled: false,
+        lastStateOk: false,
+        intervals: [],
+        addListeners: false
+      });
+      // Another web3 provider
+      console.error("Some unknown web 3 provider found.");
+    }
   };
 
   init = () => {
     setInterval(() => {
-      if (typeof window.web3 !== "undefined") {
-        let web3 = new Web3(window.web3.currentProvider);
-        this.setState({
-          web3: web3
-        });
-        this.setState({
-          contract: new web3.eth.Contract(
-            abi,
-            "0xbf601702214a7071684d17981ad6d0a65366499b"
-          ),
-          contractAddress: "0xbf601702214a7071684d17981ad6d0a65366499b"
-        });
-        //Check if metamask is installed/enabled
-        if (web3.currentProvider.isMetaMask) {
-          this.setState({
-            metamaskInstalled: true
-          });
-          window.web3.version.getNetwork((err, netId) => {
-            this.setState({ netId: netId });
-          });
-          web3.eth.getAccounts((error, accounts) => {
-            if (accounts.length === 0) {
-              this.state.intervals.forEach(clearInterval);
-              this.setState({
-                noAccountsInMetamask: true,
-                lastStateOk: false,
-                intervals: []
-              });
-
-              console.error("No Accounts in Metamask");
-            } else {
-              this.setState({
-                noAccountsInMetamask: false,
-                metamaskAccount: accounts[0]
-              });
-              if (!this.state.lastStateOk) {
-                this.setContractOwner();
-              }
-              this.setState({
-                lastStateOk: true
-              });
-            }
-          });
-        } else {
-          this.state.intervals.forEach(clearInterval);
-          this.setState({
-            metamaskInstalled: false,
-            lastStateOk: false,
-            intervals: []
-          });
-          // Another web3 provider
-          console.error("Some unknown web 3 provider found.");
-        }
-      } else {
-        this.state.intervals.forEach(clearInterval);
-        this.setState({
-          metamaskInstalled: false,
-          lastStateOk: false,
-          intervals: []
-        });
-        // No web 3 provider
-        console.error("No web 3 provider found.");
+      this.checkMetamask();
+      if (this.state.addListeners) {
+        this.setContractOwner();
       }
     }, 2000);
   };
@@ -268,6 +284,7 @@ class App extends Component {
 
   registerPlayerStateListner = () => {
     let interval = setInterval(() => {
+      this.updateUserBalance();
       this.updateTotalGamesStarted();
       this.updateTotalGamesJoined();
       this.updateFetchedGames();
@@ -277,6 +294,17 @@ class App extends Component {
     _intervals.push(interval);
     this.setState({
       intervals: _intervals
+    });
+  };
+
+  updateUserBalance = () => {
+    this.state.web3.eth.getBalance(this.state.metamaskAccount).then(result => {
+      let balance =
+        this.state.web3.utils.fromWei(result, "ether").toString() + " ether";
+
+      this.setState({
+        playerBalance: balance
+      });
     });
   };
 
@@ -432,19 +460,13 @@ class App extends Component {
           });
         }
         let _totalGames = this.state.totalGames;
-        let _allGames = this.state.allGames;
         if (_totalGames !== 0 && _totalGames === this.state.totalGamesFetched) {
           this.setState({
             totalGamesMessage: "All Games have been fetched."
           });
           return;
         }
-        for (let gameNumber = _totalGames; gameNumber > 0; gameNumber--) {
-          if (_allGames[gameNumber] !== undefined) {
-            continue;
-          }
-          this.addToAllGames(gameNumber);
-        }
+        this.addToAllGames(this.state.totalGames);
       });
   };
 
@@ -453,6 +475,11 @@ class App extends Component {
     // this.setState({
     //   totalGamesMessage: "Fetching game number " + gameNumber.toString()
     // });
+    if (gameNumber < 1) return;
+    if (this.state.allGames[gameNumber] !== undefined) {
+      this.addToAllGames(gameNumber - 1);
+      return;
+    }
     let registerationOpen = false;
     let revealing = false;
     let lastGameFinished = false;
@@ -489,6 +516,7 @@ class App extends Component {
             gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
           })
           .then(resultPlayerState => {
+            let _userOverrideMoreGame = this.state.userOverrideMoreGame;
             suspended = resultPlayerState._suspended;
             registered = resultPlayerState._registered;
             revealed = resultPlayerState._revealed;
@@ -507,6 +535,9 @@ class App extends Component {
                 });
                 return;
               }
+            }
+            if (_userOverrideMoreGame) {
+              _userOverrideMoreGame = false;
             }
             let _allGames = this.state.allGames;
             let _totalGamesFetched = this.state.totalGamesFetched;
@@ -549,10 +580,6 @@ class App extends Component {
               // } else {
               _totalGamesMessage = "All Games have been fetched.";
             }
-            let _userOverrideMoreGame = this.state.userOverrideMoreGame;
-            if (_userOverrideMoreGame) {
-              _userOverrideMoreGame = false;
-            }
             this.setState({
               allGames: _allGames,
               userOverrideMoreGame: _userOverrideMoreGame,
@@ -564,6 +591,7 @@ class App extends Component {
               allGameLocalOverride: _allGameLocalOverride,
               allGameMessage: _allGameMessage
             });
+            this.addToAllGames(gameNumber - 1);
           });
       });
   };
@@ -1027,6 +1055,7 @@ class App extends Component {
     gameNumberList.reverse();
     // console.log(this.state.allGames);
     // console.log(this.state.totalGamesFetched);
+    // let stcikyTop = 100;
     for (let i = 0; i < gameNumberList.length; i++) {
       let _gameNumber = gameNumberList[i];
       let gameNumber = parseInt(_gameNumber, 10);
@@ -1250,6 +1279,16 @@ class App extends Component {
       }
 
       games.push(
+        // <div
+        //   key={gameNumber}
+        //   style={{
+        //     position: "sticky",
+        //     top: stcikyTop,
+        //     borderStyle: "solid",
+        //     borderColor: "gold",
+        //     borderRadius: 25
+        //   }}
+        // >
         <div key={gameNumber} className="AllGamesCard">
           <div>
             <h3>
@@ -1274,7 +1313,10 @@ class App extends Component {
           </div>
           <div>{this.state.allGameMessage[gameNumber]}</div>
         </div>
+        // </div>
       );
+      // games.push(<br />);
+      // stcikyTop = stcikyTop + 70;
     }
     let disbaledMoreGames =
       this.state.totalGames === 0 ||
@@ -1313,20 +1355,24 @@ class App extends Component {
     ) {
       return (
         <div>
+          <Player
+            metamaskAccount={this.state.metamaskAccount}
+            balance={this.state.playerBalance}
+            netId={this.state.netId}
+          />
+          <RewardMatrix
+            contractBalance={this.state.contractBalance}
+            k={this.state.k}
+            gameFees={this.state.gameFees}
+            minBet={this.state.minBet}
+            maxBet={this.state.maxBet}
+            stageTimeout={this.state.stageTimout}
+          />
           <div className="Game-section">
-            <Player metamaskAccount={this.state.metamaskAccount} />
             {this.AdminSection(
               this.state.metamaskAccount,
               this.state.contractOwner
             )}
-            <RewardMatrix
-              contractBalance={this.state.contractBalance}
-              k={this.state.k}
-              gameFees={this.state.gameFees}
-              minBet={this.state.minBet}
-              maxBet={this.state.maxBet}
-              stageTimeout={this.state.stageTimout}
-            />
             {this.NewGame()}
             {this.AllGames()}
           </div>
