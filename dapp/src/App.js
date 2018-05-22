@@ -445,28 +445,36 @@ class App extends Component {
         if (result === 0) {
           _totalGamesMessage = "No Games have been played yet.";
         }
+        let newGamesFound = false;
         if (this.state.totalGames < result) {
           let newGames = result - oldTotalGames;
           // console.log("Found " + newGames + " Game(s), Fetching....");
           _totalGamesMessage = "Found " + newGames + " Game(s), Fetching....";
           this.setState({
-            totalGames: parseInt(result, 10),
+            totalGames: result,
             totalGamesMessage: _totalGamesMessage
           });
+          newGamesFound = true;
+          // console.log("NEW GAMES FOUND");
         } else {
           this.setState({
-            totalGames: parseInt(result, 10),
+            totalGames: result,
             totalGamesMessage: _totalGamesMessage
           });
         }
-        let _totalGames = this.state.totalGames;
-        if (_totalGames !== 0 && _totalGames === this.state.totalGamesFetched) {
+        if (result !== 0 && result === this.state.totalGamesFetched) {
           this.setState({
             totalGamesMessage: "All Games have been fetched."
           });
           return;
         }
-        this.addToAllGames(this.state.totalGames);
+        if (newGamesFound) {
+          // console.log("Fetching New Games");
+          this.setState({
+            userOverrideMoreGame: true
+          });
+        }
+        this.addToAllGames(result);
       });
   };
 
@@ -591,6 +599,7 @@ class App extends Component {
               allGameLocalOverride: _allGameLocalOverride,
               allGameMessage: _allGameMessage
             });
+            // console.log("Set Game number " + gameNumber);
             this.addToAllGames(gameNumber - 1);
           });
       });
@@ -1052,11 +1061,13 @@ class App extends Component {
     let _allGames = this.state.allGames;
     let gameNumberList = [];
     for (let gameNumber in _allGames) {
-      gameNumberList.push(gameNumber);
+      gameNumberList.push(parseInt(gameNumber, 10));
     }
-    gameNumberList.sort();
+    gameNumberList.sort((a, b) => {
+      return a - b;
+    });
     gameNumberList.reverse();
-    // console.log(this.state.allGames);
+    // console.log(gameNumberList);
     // console.log(this.state.totalGamesFetched);
     // let stcikyTop = 100;
     for (let i = 0; i < gameNumberList.length; i++) {

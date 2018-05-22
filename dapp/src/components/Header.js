@@ -42,7 +42,6 @@ class MyHeader extends Component {
         network = "the Ropsten Test Network";
         break;
       case "4":
-        changeNetwork = false;
         network = "the Rinkeby Test Network";
         break;
       case "42":
