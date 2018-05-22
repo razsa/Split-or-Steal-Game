@@ -1369,7 +1369,7 @@ class App extends Component {
       this.state.netId === "4"
     ) {
       return (
-        <div>
+        <div className="FitContent">
           <div className="StickyLeft">{this.NewGame()}</div>
           <div className="StickyRight">
             <Player
@@ -1414,7 +1414,7 @@ class App extends Component {
           changeNetwork={changeNetwork}
           netId={this.state.netId}
         />
-        <div className="FitContent">{this.GameSection()}</div>
+        {this.GameSection()}
         <About
           k={this.state.k}
           metamaskInstalled={this.state.metamaskInstalled}
