@@ -24,7 +24,7 @@ class Player extends Component {
       default:
     }
     return (
-      <div key="player" className="Player StickyLeft">
+      <div key="player" className="Player" id="player">
         <div>
           Your address{" "}
           <a

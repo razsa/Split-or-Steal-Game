@@ -39,7 +39,7 @@ class App extends Component {
       contract: null,
       totalGames: 0,
       totalGamesFetched: 0,
-      totalGamesMessage: "",
+      totalGamesMessage: "Looking for games.....",
       //Admin
       fundValue: "",
       overrideGameNumber: "",
@@ -904,26 +904,29 @@ class App extends Component {
         overrideGameNumber > 0
       ) {
         let game = this.state.allGames[overrideGameNumber];
-        if (game.registerationOpen) {
-          if (
-            nowSecs - parseInt(game.startTime, 10) >
-            parseInt(game.stageTimeout, 10)
-          ) {
-            canOverrideGame = true;
-          }
-        } else if (game.revealing) {
-          if (
-            nowSecs - parseInt(game.revealTime, 10) >
-            parseInt(game.stageTimeout, 10)
-          ) {
-            canOverrideGame = true;
-          }
-        } else if (game.lastGameFinished) {
-          if (
-            nowSecs - parseInt(game.finishTime, 10) >
-            parseInt(game.stageTimeout, 10)
-          ) {
-            canOverrideGame = true;
+        if (game === undefined) {
+        } else {
+          if (game.registerationOpen) {
+            if (
+              nowSecs - parseInt(game.startTime, 10) >
+              parseInt(game.stageTimeout, 10)
+            ) {
+              canOverrideGame = true;
+            }
+          } else if (game.revealing) {
+            if (
+              nowSecs - parseInt(game.revealTime, 10) >
+              parseInt(game.stageTimeout, 10)
+            ) {
+              canOverrideGame = true;
+            }
+          } else if (game.lastGameFinished) {
+            if (
+              nowSecs - parseInt(game.finishTime, 10) >
+              parseInt(game.stageTimeout, 10)
+            ) {
+              canOverrideGame = true;
+            }
           }
         }
       }
@@ -1327,10 +1330,11 @@ class App extends Component {
     return (
       <div>
         <div className="AllGames" id="all-games">
-          <div className="bottomMargin">{games}</div>
           <h2>
             <b>All Games</b>
           </h2>
+          <div className="bottomMargin">{games}</div>
+          <br />
           <div className="bottomMargin">{this.state.totalGamesMessage}</div>
           <div>
             <button
@@ -1355,25 +1359,27 @@ class App extends Component {
     ) {
       return (
         <div>
-          <Player
-            metamaskAccount={this.state.metamaskAccount}
-            balance={this.state.playerBalance}
-            netId={this.state.netId}
-          />
-          <RewardMatrix
-            contractBalance={this.state.contractBalance}
-            k={this.state.k}
-            gameFees={this.state.gameFees}
-            minBet={this.state.minBet}
-            maxBet={this.state.maxBet}
-            stageTimeout={this.state.stageTimout}
-          />
+          <div className="StickyLeft">{this.NewGame()}</div>
+          <div className="StickyRight">
+            <Player
+              metamaskAccount={this.state.metamaskAccount}
+              balance={this.state.playerBalance}
+              netId={this.state.netId}
+            />
+            <RewardMatrix
+              contractBalance={this.state.contractBalance}
+              k={this.state.k}
+              gameFees={this.state.gameFees}
+              minBet={this.state.minBet}
+              maxBet={this.state.maxBet}
+              stageTimeout={this.state.stageTimout}
+            />
+          </div>
           <div className="Game-section">
             {this.AdminSection(
               this.state.metamaskAccount,
               this.state.contractOwner
             )}
-            {this.NewGame()}
             {this.AllGames()}
           </div>
         </div>
@@ -1397,7 +1403,7 @@ class App extends Component {
           changeNetwork={changeNetwork}
           netId={this.state.netId}
         />
-        {this.GameSection()}
+        <div className="FitContent">{this.GameSection()}</div>
         <About
           k={this.state.k}
           metamaskInstalled={this.state.metamaskInstalled}

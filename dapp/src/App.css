@@ -32,7 +32,7 @@
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
-  margin-top: auto;
+  /* margin-top: 20px; */
   margin-bottom: 40px;
 }
 
@@ -53,19 +53,16 @@
 .Reward-matrix {
   border-radius: 25px;
   background-color: white;
-  height: fit-content;
   width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
   font-family: fantasy;
   font-style: bold;
   color: black;
-  font-size: 20px;
+  font-size: 13px;
+  clear: right;
 }
 
 .Reward-matrix-list {
   background-color: transparent;
-  height: fit-content;
   width: fit-content;
   margin-left: 20px;
   margin-right: 20px;
@@ -380,22 +377,21 @@
 }
 
 .NewGame {
-  height: fit-content;
   width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
+  /* margin-left: auto;
+  margin-right: auto; */
   border-radius: 25px;
   /* background-color: rgba(42, 221, 18, 0.596); */
   background-color: gold;
   border: 20px;
   color: rgba(13, 109, 153, 0.863);
-  padding: 15px 30px;
-  font-size: 15px;
+  padding: 10px 20px;
+  font-size: 12px;
   cursor: pointer;
   font-family: fantasy;
-  margin-top: 10px;
+  margin-top: 30px;
   margin-bottom: 20px;
-  float: center;
+  float: left;
 }
 
 .Inline {
@@ -431,10 +427,13 @@
   font-size: 15px;
   cursor: pointer;
   font-family: fantasy;
+  position: sticky;
+  top: 30px;
+  float: center;
 }
 
 .AllGames {
-  margin-top: 20px;
+  /* margin-top: 20px; */
   margin-bottom: 10px;
   height: fit-content;
   width: fit-content;
@@ -448,11 +447,9 @@
   font-size: 22px;
   cursor: pointer;
   font-family: fantasy;
-  float: none;
 }
 
 .Player {
-  height: fit-content;
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
@@ -474,15 +471,21 @@
   position: sticky;
   top: 0;
   float: right;
-  margin-top: 10px;
-  margin-right: 5px;
+  height: fit-content;
+  margin-right: 25px;
 }
 
 .StickyLeft {
   position: sticky;
   top: 0;
+  height: fit-content;
   float: left;
-  margin-left: 5px;
+  margin-left: 25px;
+}
+
+.FitContent {
+  height: fit-content;
+  min-height: 400px;
 }
 
 .GameState {

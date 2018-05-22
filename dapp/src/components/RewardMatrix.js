@@ -5,9 +5,9 @@ class RewardMatrix extends Component {
   render() {
     let { k, gameFees, minBet, maxBet, stageTimeout } = this.props;
     return (
-      <div className="Reward-matrix StickyRight">
+      <div className="Reward-matrix">
         <br />
-        Game Rules
+        <h3>Game Rules</h3>
         <div className="Reward-matrix-list">
           <ul>
             <li>

@@ -141,9 +141,9 @@ class MyHeader extends Component {
               <div>
                 <br />
                 <a href="#about">
-                  <h2>
+                  <h3>
                     <b>How to play this game ?</b>
-                  </h2>
+                  </h3>
                 </a>
               </div>
             </div>
