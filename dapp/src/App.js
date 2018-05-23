@@ -11,9 +11,7 @@ import RewardMatrix from "./components/RewardMatrix.js";
 import Player from "./components/Player.js";
 import Donate from "./components/Donate.js";
 import Footer from "./components/Footer.js";
-
-//TODO : CssTransitionGroup Animation
-//TODO : Add Animation for EVEN STEAL and odd SPLIT
+import ReactGA from "react-ga";
 
 class App extends Component {
   constructor(props) {
@@ -64,6 +62,12 @@ class App extends Component {
       allGameLocalOverride: {},
       allGameMessage: {}
     };
+    ReactGA.initialize("UA-119747767-1");
+    ReactGA.event({
+      category: "Global",
+      action: "Visit",
+      nonInteraction: true
+    });
   }
 
   componentWillMount = () => {
@@ -340,7 +344,7 @@ class App extends Component {
     let _allGames = this.state.allGames;
     for (let gameNumber in _allGames) {
       try {
-        this.updateGame(gameNumber, false);
+        this.updateGame(parseInt(gameNumber, 10), false);
       } catch (ignore) {}
     }
   };
@@ -605,7 +609,26 @@ class App extends Component {
       });
   };
 
+  /**
+   * Report to Google Analytics.
+   * @param category
+   * @param action
+   * @param label
+   * @param value
+   * @param nonInteraction
+   */
+  reportGAevent = (category, action, label, value, nonInteraction) => {
+    ReactGA.event({
+      category: category,
+      action: action,
+      label: label,
+      value: value,
+      nonInteraction: nonInteraction
+    });
+  };
+
   userAddToAllGames = () => {
+    this.reportGAevent("Engagement", "MoreGamesClick", null, null, false);
     this.setState({
       userOverrideMoreGame: true
     });
@@ -613,6 +636,7 @@ class App extends Component {
 
   //ADMIN METHODS START
   fundContract = () => {
+    this.reportGAevent("Earnings", "Donation", "Initiated", null, false);
     let fundInWei = this.state.web3.utils.toWei(
       (parseFloat(this.state.fundValue) * 1e18).toString(),
       "wei"
@@ -623,6 +647,9 @@ class App extends Component {
         from: this.state.metamaskAccount,
         value: fundInWei
       })
+      .on("transactionHash", hash => {
+        this.reportGAevent("Earnings", "Donation", "Submitted", null, false);
+      })
       .on("confirmation", (confirmationNumber, receipt) => {
         // console.log(
         //   "You request has got " + confirmationNumber + " confirmations"
@@ -630,6 +657,13 @@ class App extends Component {
       })
       .on("receipt", receipt => {
         // console.log(receipt);
+        this.reportGAevent(
+          "Earnings",
+          "Donation",
+          "Confirmed",
+          parseFloat(this.state.fundValue) * 1000000000,
+          false
+        );
       });
   };
 
@@ -664,11 +698,10 @@ class App extends Component {
     };
   }
 
-  override(gameNumber) {
+  override(_gameNumber) {
     return () => {
-      let transaction = this.state.contract.methods.ownerOverride(
-        parseInt(gameNumber, 10)
-      );
+      let gameNumber = parseInt(_gameNumber, 10);
+      let transaction = this.state.contract.methods.ownerOverride(gameNumber);
       transaction
         .send({
           from: this.state.metamaskAccount
@@ -699,6 +732,13 @@ class App extends Component {
   //User interaction Methods
   startGame() {
     return () => {
+      this.reportGAevent(
+        "Engagement",
+        "NewGameClick",
+        "Initiated",
+        null,
+        false
+      );
       let betInWei = this.state.web3.utils.toWei(
         (parseFloat(this.state.startGameBetAmount) * 1e18).toString(),
         "wei"
@@ -713,13 +753,19 @@ class App extends Component {
         betInWei,
         encryptedChoice
       );
-
       transaction
         .send({
           from: this.state.metamaskAccount,
           value: betInWei
         })
         .on("transactionHash", hash => {
+          this.reportGAevent(
+            "Engagement",
+            "NewGameClick",
+            "Submitted",
+            null,
+            false
+          );
           this.setState({
             startGameLocalOverride: true,
             startGameMessage: "Your new game is being created...."
@@ -734,6 +780,13 @@ class App extends Component {
           // );
         })
         .on("receipt", receipt => {
+          this.reportGAevent(
+            "Engagement",
+            "NewGameClick",
+            "Confirmed",
+            null,
+            false
+          );
           // console.log(receipt);
           this.setState({
             startGameLocalOverride: false,
@@ -743,8 +796,16 @@ class App extends Component {
     };
   }
 
-  joinGame(gameNumber) {
+  joinGame(_gameNumber) {
     return () => {
+      let gameNumber = parseInt(_gameNumber, 10);
+      this.reportGAevent(
+        "Engagement",
+        "JoinGameClick",
+        "Initiated",
+        null,
+        false
+      );
       let betInWei = this.state.web3.utils.toWei(
         (parseFloat(this.state.allGameBetAmount[gameNumber]) * 1e18).toString(),
         "wei"
@@ -767,6 +828,13 @@ class App extends Component {
           value: betInWei
         })
         .on("transactionHash", hash => {
+          this.reportGAevent(
+            "Engagement",
+            "JoinGameClick",
+            "Submitted",
+            null,
+            false
+          );
           let _allGameLocalOverride = this.state.allGameLocalOverride;
           _allGameLocalOverride[gameNumber] = true;
 
@@ -784,6 +852,13 @@ class App extends Component {
           // );
         })
         .on("receipt", receipt => {
+          this.reportGAevent(
+            "Engagement",
+            "JoinGameClick",
+            "Confirmed",
+            null,
+            false
+          );
           // console.log(receipt);
           this.updateGame(gameNumber, true);
         });
@@ -791,8 +866,16 @@ class App extends Component {
   }
 
   //TODO Accept form which node got it.
-  reveal(gameNumber, choice) {
+  reveal(_gameNumber, choice) {
     return () => {
+      let gameNumber = parseInt(_gameNumber, 10);
+      this.reportGAevent(
+        "Engagement",
+        "RevealGameClick",
+        "Initiated",
+        null,
+        false
+      );
       let transaction = this.state.contract.methods.reveal(
         parseInt(gameNumber, 10),
         parseInt(choice, 10)
@@ -803,6 +886,13 @@ class App extends Component {
           from: this.state.metamaskAccount
         })
         .on("transactionHash", hash => {
+          this.reportGAevent(
+            "Engagement",
+            "RevealGameClick",
+            "Submitted",
+            null,
+            false
+          );
           let _allGameLocalOverride = this.state.allGameLocalOverride;
           _allGameLocalOverride[gameNumber] = true;
 
@@ -822,14 +912,26 @@ class App extends Component {
           // );
         })
         .on("receipt", receipt => {
+          this.reportGAevent(
+            "Engagement",
+            "RevealGameClick",
+            "Confirmed",
+            null,
+            false
+          );
           // console.log(receipt);
           this.updateGame(gameNumber, true);
         });
     };
   }
 
-  claimReward(gameNumber) {
+  claimReward(_gameNumber) {
     return () => {
+      let gameNumber = parseInt(_gameNumber, 10);
+      let action = this.state.allGames[gameNumber].registerationOpen
+        ? "AbandonGameClick"
+        : "ClaimRewardClick";
+      this.reportGAevent("Engagement", action, "Initiated", null, false);
       let transaction = this.state.contract.methods.claimRewardK(
         parseInt(gameNumber, 10)
       );
@@ -839,6 +941,7 @@ class App extends Component {
           from: this.state.metamaskAccount
         })
         .on("transactionHash", hash => {
+          this.reportGAevent("Engagement", action, "Submitted", null, false);
           let _allGameLocalOverride = this.state.allGameLocalOverride;
           _allGameLocalOverride[gameNumber] = true;
 
@@ -861,6 +964,7 @@ class App extends Component {
           // );
         })
         .on("receipt", receipt => {
+          this.reportGAevent("Engagement", action, "Confirmed", null, false);
           // console.log(receipt);
           this.updateGame(gameNumber, true);
         });
