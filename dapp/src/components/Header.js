@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import "../App.css";
 import logo from "../images/logo.svg";
-import metamask from "../images/metamask.png";
+import metamaskMain from "../images/metamask_main_net.png";
+import metamaskRinkeby from "../images/metamask_rinkeby_testnet.png";
 
 class MyHeader extends Component {
   render() {
@@ -112,28 +113,42 @@ class MyHeader extends Component {
           {!metamaskInstalled || noAccountsInMetamask ? null : (
             <div>
               {!changeNetwork ? (
-                <div>
-                  You can get test Ether from{" "}
-                  <a
-                    href="http://faucet.rinkeby.io/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {" "}
-                    Rinkeby Faucet.
-                  </a>
-                </div>
+                netId === "4" ? (
+                  <div>
+                    You can get test Ether from{" "}
+                    <a
+                      href="http://faucet.rinkeby.io/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {" "}
+                      Rinkeby Faucet.
+                    </a>
+                  </div>
+                ) : null
               ) : (
                 <div>
                   <div>
                     <h2>Looks like you are on {network}.</h2>
                   </div>
-                  <div>
-                    <h1>
-                      Please change your network to Rinkeby Test Network <br />
+                  <div style={{ color: "gold" }}>
+                    <h2>
+                      Please change your network to Main Ethereum Network or
+                      Rinkeby Test Network<br />
                       as shown below, in order to play the game.
-                    </h1>
-                    <img src={metamask} alt="metamask" />
+                    </h2>
+                    <img
+                      src={metamaskMain}
+                      alt="metamaskMain"
+                      width="215"
+                      height="220"
+                    />
+                    <img
+                      src={metamaskRinkeby}
+                      alt="metamaskRinkeby"
+                      width="215"
+                      height="220"
+                    />
                   </div>
                 </div>
               )}

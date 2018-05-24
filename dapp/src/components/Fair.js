@@ -3,6 +3,7 @@ import "../App.css";
 
 class Fair extends Component {
   render() {
+    let { contractCodeUri, contractTransactionsUri } = this.props;
     return (
       <div id="how-provably-fair" className="App-fair">
         <b>
@@ -24,7 +25,7 @@ class Fair extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://rinkeby.etherscan.io/address/0xbf601702214a7071684d17981ad6d0a65366499b#code"
+                href={contractCodeUri}
               >
                 here
               </a>.
@@ -35,7 +36,7 @@ class Fair extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://rinkeby.etherscan.io/address/0xbf601702214a7071684d17981ad6d0a65366499b"
+                href={contractTransactionsUri}
               >
                 here
               </a>.

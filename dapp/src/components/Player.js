@@ -3,7 +3,7 @@ import "../App.css";
 
 class Player extends Component {
   render() {
-    let { metamaskAccount, balance, netId } = this.props;
+    let { metamaskAccount, blockExplorerUri, balance, netId } = this.props;
     let network = "unknown";
     switch (netId) {
       case "1":
@@ -30,8 +30,7 @@ class Player extends Component {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            // TODO : Make sure to change domain according to Smart Contract address
-            href={"https://rinkeby.etherscan.io/address/" + metamaskAccount}
+            href={blockExplorerUri + "/address/" + metamaskAccount}
           >
             {metamaskAccount}
           </a>

@@ -17,7 +17,7 @@ contract priced {
     }
 }
 
-contract SplitStealContractV2 is owned, priced {
+contract SplitStealContract is owned, priced {
 
     //Global Variables
     uint constant STEAL = 0;
@@ -134,6 +134,8 @@ contract SplitStealContractV2 is owned, priced {
     }
 
     function setRewardPercentageK(uint256 _k) public onlyOwner {
+        //Max earnings is double.
+        require(_k <= 100);
         emit NewRewardPercentage(K, _k);
         K = _k;
     }
@@ -372,12 +374,11 @@ contract SplitStealContractV2 is owned, priced {
         if ( isEven(game.bets[player].actualChoice) && isEven(game.bets[opponent].actualChoice) ) { // Steal Steal
             reward = 0;
             if( game.bets[player].betAmount > game.bets[opponent].betAmount) {
-                gameReward = ((100 + game.k) * (game.bets[player].betAmount - game.bets[opponent].betAmount)) / 100;
-                reward = gameReward < totalBet ? gameReward : totalBet; //Min (X+Y, (100+K)*(X-Y)/100)
+                //((100-K)*(X-Y)/2)/100 will always be less than X+Y so no need for min check on X+Y and reward
+                reward = ((100 - game.k) * (game.bets[player].betAmount - game.bets[opponent].betAmount) / 2) / 100;
             }
             if(reward > 0) {
-                //Min (X+Y, (100+K)*(X-Y)/100) CAN BE LESS THAN COMMISSION.
-                //Hence -ve check is required
+                //((100-K)*(X-Y)/2)/100 CAN BE LESS THAN COMMISSION.
                 game.reward[player] = reward > commission ? reward - commission : 0;
             }
             if ( game.claimedReward[opponent] ) {

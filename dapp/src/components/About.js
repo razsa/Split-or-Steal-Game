@@ -106,23 +106,17 @@ class About extends Component {
                   \ 0
                 </td>
                 <td>
-                  {Math.min(
-                    parseFloat(this.state.X) + parseFloat(this.state.Y),
-                    k *
-                      Math.max(
-                        0,
-                        parseFloat(this.state.X) - parseFloat(this.state.Y)
-                      )
-                  )}{" "}
+                  {(2 - k) *
+                    Math.max(
+                      0,
+                      (parseFloat(this.state.X) - parseFloat(this.state.Y)) / 2
+                    )}{" "}
                   \
-                  {Math.min(
-                    parseFloat(this.state.X) + parseFloat(this.state.Y),
-                    k *
-                      Math.max(
-                        0,
-                        parseFloat(this.state.Y) - parseFloat(this.state.X)
-                      )
-                  )}
+                  {(2 - k) *
+                    Math.max(
+                      0,
+                      (parseFloat(this.state.Y) - parseFloat(this.state.X)) / 2
+                    )}
                 </td>
                 <td>
                   {Math.min(
@@ -195,7 +189,7 @@ class About extends Component {
                   <b>Steal</b>
                 </td>
                 <td>Min(X+Y, K*X) \ 0</td>
-                <td>Min(X+Y, K*Max(0,X-Y))</td>
+                <td>Min(X+Y, (2-K)*((X-Y)/2)</td>
                 <td>Min(X+Y, K*X) \ 0</td>
               </tr>
               <tr>
@@ -217,7 +211,7 @@ class About extends Component {
                 X & Y are bet amounts by PlayerX and PlayerY respectively
               </li>
               <li>
-                K > 1, K is <b>Reward Factor</b>
+                2 >= K > 1, K is <b>Reward Factor</b>
               </li>
             </ul>
           </div>
@@ -248,8 +242,19 @@ class About extends Component {
               </li>
               <li>
                 If X chooses to STEAL and Y also chooses to STEAL, then they win
-                K times of Max(0, X-Y) (Capped by X+Y), thus player betting
-                higher gets some part back.
+                (2-K) times of (X-Y)/2, thus player betting higher gets some
+                part back.
+                <ul>
+                  <li>
+                    Also note that reward in this case inversely proportional to
+                    Win if only one of thems steals
+                  </li>
+
+                  <li>
+                    Higher the reward in Single STEAL case Lower the reward in
+                    Both STEAL case
+                  </li>
+                </ul>
               </li>
 
               <li>

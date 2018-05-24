@@ -1,3 +1,19 @@
+V 1.0.0
+Contract Deployed at : https://etherscan.io/tx/0xab8ca4816ea2a76b18e1a59312476291bc767bb943b77bab79624b1d7602baf4
+Contract Deployed at : https://rinkeby.etherscan.io/tx/0x418cb729fbaaff093c92582433f004ffe9aeb05e66a289267afaa6f77ce6cd01
+Release Date : 24th May 2018
+
+CHANGELOG
+
+Contract
+Depoyed to main net as well
+Changed Reward matrix for STEAL STEAL case. Made it (100-K)((X-Y)/2)/100.
+
+Dapp
+Added Google Analytics
+Added switch b/w main net and rinkeby net.
+Fixed gas problem in view calls.
+
 V 0.3.5
 Contract Deployed at : https://rinkeby.etherscan.io/tx/0xbb3c142df8860beeff9a13a18c14c4bf2a62268fbec3d983469b62723d990b1c
 Release Date : 17th May 2018

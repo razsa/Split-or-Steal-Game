@@ -23,6 +23,8 @@ class App extends Component {
       lastStateOk: false,
       netId: null,
       web3: null,
+      contractAddress: "0xa69610b60fec5ec350a7267ed5d47bf87aa25364",
+      blockExplorerUri: "https://etherscan.io",
       contractBalance: "being calculated",
       contractEarnings: "being calculated",
       k: "being calulated",
@@ -60,14 +62,18 @@ class App extends Component {
       allGameChoice: {},
       allGameRevealChoice: {},
       allGameLocalOverride: {},
-      allGameMessage: {}
+      allGameMessage: {},
+      //GA
+      enableGa: true //TODO : Enable before Deployment. Disbale before testing local
     };
-    ReactGA.initialize("UA-119747767-1");
-    ReactGA.event({
-      category: "Global",
-      action: "Visit",
-      nonInteraction: true
-    });
+    if (this.state.enableGa) {
+      ReactGA.initialize("UA-119747767-1");
+      ReactGA.event({
+        category: "Global",
+        action: "Visit",
+        nonInteraction: true
+      });
+    }
   }
 
   componentWillMount = () => {
@@ -75,13 +81,6 @@ class App extends Component {
       let web3 = new Web3(window.web3.currentProvider);
       this.setState({
         web3: web3
-      });
-      this.setState({
-        contract: new web3.eth.Contract(
-          abi,
-          "0xbf601702214a7071684d17981ad6d0a65366499b"
-        ),
-        contractAddress: "0xbf601702214a7071684d17981ad6d0a65366499b"
       });
       //Check if metamask is installed/enabled
       this.checkMetamask();
@@ -104,35 +103,58 @@ class App extends Component {
       });
       window.web3.version.getNetwork((err, netId) => {
         this.setState({ netId: netId });
-      });
-      web3.eth.getAccounts((error, accounts) => {
-        if (accounts.length === 0) {
-          this.state.intervals.forEach(clearInterval);
-          this.setState({
-            noAccountsInMetamask: true,
-            lastStateOk: false,
-            intervals: [],
-            addListeners: false
-          });
-          console.error("No Accounts in Metamask");
-        } else {
-          this.setState({
-            noAccountsInMetamask: false,
-            metamaskAccount: accounts[0]
-          });
-          if (!this.state.lastStateOk) {
+        let contractAddress = null;
+        let blockExplorerUri = null;
+        switch (netId) {
+          case "1":
+            //Main Ethereum Network
+            //TODO ADD MAIN NET ADDRESS
+            contractAddress = "0xa69610b60fec5ec350a7267ed5d47bf87aa25364";
+            blockExplorerUri = "https://etherscan.io";
+            break;
+          case "4":
+            //Rinkeby Test Network
+            contractAddress = "0x6cf35ea8150ada482b1f0615d850f11e4127adb5";
+            blockExplorerUri = "https://rinkeby.etherscan.io";
+            break;
+          default:
+            contractAddress = "0xa69610b60fec5ec350a7267ed5d47bf87aa25364";
+            blockExplorerUri = "https://etherscan.io";
+        }
+        this.setState({
+          contract: new web3.eth.Contract(abi, contractAddress),
+          contractAddress: contractAddress,
+          blockExplorerUri: blockExplorerUri
+        });
+        web3.eth.getAccounts((error, accounts) => {
+          if (accounts.length === 0) {
+            this.state.intervals.forEach(clearInterval);
             this.setState({
-              addListeners: true
-            });
-          } else {
-            this.setState({
+              noAccountsInMetamask: true,
+              lastStateOk: false,
+              intervals: [],
               addListeners: false
             });
+            console.error("No Accounts in Metamask");
+          } else {
+            this.setState({
+              noAccountsInMetamask: false,
+              metamaskAccount: accounts[0]
+            });
+            if (!this.state.lastStateOk) {
+              this.setState({
+                addListeners: true
+              });
+            } else {
+              this.setState({
+                addListeners: false
+              });
+            }
+            this.setState({
+              lastStateOk: true
+            });
           }
-          this.setState({
-            lastStateOk: true
-          });
-        }
+        });
       });
     } else {
       this.state.intervals.forEach(clearInterval);
@@ -161,7 +183,7 @@ class App extends Component {
       .getOwner()
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+        gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(result => {
         this.setState({
@@ -214,21 +236,21 @@ class App extends Component {
         .getContractEarnings()
         .call({
           from: this.state.metamaskAccount,
-          gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+          gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
         })
         .then(earnings => {
           this.state.contract.methods
             .getContractBalance()
             .call({
               from: this.state.metamaskAccount,
-              gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+              gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
             })
             .then(balance => {
               this.state.contract.methods
                 .getRewardMatrix()
                 .call({
                   from: this.state.metamaskAccount,
-                  gas: Math.min(
+                  gas: Math.max(
                     Math.floor(Math.random() * 10000000) + 1,
                     210000
                   )
@@ -238,7 +260,7 @@ class App extends Component {
                     .getGameRules()
                     .call({
                       from: this.state.metamaskAccount,
-                      gas: Math.min(
+                      gas: Math.max(
                         Math.floor(Math.random() * 10000000) + 1,
                         210000
                       )
@@ -317,7 +339,7 @@ class App extends Component {
       .getTotalGamesStarted()
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+        gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(result => {
         this.setState({
@@ -331,7 +353,7 @@ class App extends Component {
       .getTotalGamesParticipated()
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+        gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(result => {
         this.setState({
@@ -376,7 +398,7 @@ class App extends Component {
       .getGameState(gameNumber)
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+        gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(resultGameState => {
         // console.log("Updating game " + gameNumber);
@@ -392,7 +414,7 @@ class App extends Component {
           .getPlayerState(gameNumber)
           .call({
             from: this.state.metamaskAccount,
-            gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+            gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
           })
           .then(resultPlayerState => {
             suspended = resultPlayerState._suspended;
@@ -439,7 +461,7 @@ class App extends Component {
       .getTotalGames()
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+        gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(_result => {
         let result = parseInt(_result, 10);
@@ -511,7 +533,7 @@ class App extends Component {
       .getGameState(gameNumber)
       .call({
         from: this.state.metamaskAccount,
-        gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+        gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
       })
       .then(resultGameState => {
         registerationOpen = resultGameState._registerationOpen;
@@ -525,7 +547,7 @@ class App extends Component {
           .getPlayerState(gameNumber)
           .call({
             from: this.state.metamaskAccount,
-            gas: Math.min(Math.floor(Math.random() * 10000000) + 1, 210000)
+            gas: Math.max(Math.floor(Math.random() * 10000000) + 1, 210000)
           })
           .then(resultPlayerState => {
             let _userOverrideMoreGame = this.state.userOverrideMoreGame;
@@ -618,13 +640,15 @@ class App extends Component {
    * @param nonInteraction
    */
   reportGAevent = (category, action, label, value, nonInteraction) => {
-    ReactGA.event({
-      category: category,
-      action: action,
-      label: label,
-      value: value,
-      nonInteraction: nonInteraction
-    });
+    if (this.state.enableGa) {
+      ReactGA.event({
+        category: category,
+        action: action,
+        label: label,
+        value: value,
+        nonInteraction: nonInteraction
+      });
+    }
   };
 
   userAddToAllGames = () => {
@@ -1470,7 +1494,7 @@ class App extends Component {
     if (
       this.state.metamaskInstalled &&
       !this.state.noAccountsInMetamask &&
-      this.state.netId === "4"
+      (this.state.netId === "4" || this.state.netId === "1")
     ) {
       return (
         <div className="FitContent">
@@ -1478,6 +1502,7 @@ class App extends Component {
           <div className="StickyRight">
             <Player
               metamaskAccount={this.state.metamaskAccount}
+              blockExplorerUri={this.state.blockExplorerUri}
               balance={this.state.playerBalance}
               netId={this.state.netId}
             />
@@ -1507,7 +1532,7 @@ class App extends Component {
   //DOM
   render = () => {
     let changeNetwork = true;
-    if (this.state.netId === "4") {
+    if (this.state.netId === "4" || this.state.netId === "1") {
       changeNetwork = false;
     }
     return (
@@ -1525,7 +1550,19 @@ class App extends Component {
           noAccountsInMetamask={this.state.noAccountsInMetamask}
           changeNetwork={changeNetwork}
         />
-        <Fair />
+        <Fair
+          contractCodeUri={
+            this.state.blockExplorerUri +
+            "/address/" +
+            this.state.contractAddress +
+            "#code"
+          }
+          contractTransactionsUri={
+            this.state.blockExplorerUri +
+            "/address/" +
+            this.state.contractAddress
+          }
+        />
         <Donate
           metamaskInstalled={this.state.metamaskInstalled}
           noAccountsInMetamask={this.state.noAccountsInMetamask}
