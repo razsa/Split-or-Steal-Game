@@ -62,18 +62,8 @@ class App extends Component {
       allGameChoice: {},
       allGameRevealChoice: {},
       allGameLocalOverride: {},
-      allGameMessage: {},
-      //GA
-      enableGa: true //TODO : Enable before Deployment. Disbale before testing local
+      allGameMessage: {}
     };
-    if (this.state.enableGa) {
-      ReactGA.initialize("UA-119747767-1");
-      ReactGA.event({
-        category: "Global",
-        action: "Visit",
-        nonInteraction: true
-      });
-    }
   }
 
   componentWillMount = () => {
@@ -102,7 +92,6 @@ class App extends Component {
         metamaskInstalled: true
       });
       window.web3.version.getNetwork((err, netId) => {
-        this.setState({ netId: netId });
         let contractAddress = null;
         let blockExplorerUri = null;
         switch (netId) {
@@ -111,17 +100,34 @@ class App extends Component {
             //TODO ADD MAIN NET ADDRESS
             contractAddress = "0xa69610b60fec5ec350a7267ed5d47bf87aa25364";
             blockExplorerUri = "https://etherscan.io";
+            if (this.state.netId !== netId) {
+              ReactGA.initialize("UA-119747767-1");
+              ReactGA.event({
+                category: "Global",
+                action: "Visit",
+                nonInteraction: true
+              });
+            }
             break;
           case "4":
             //Rinkeby Test Network
             contractAddress = "0x6cf35ea8150ada482b1f0615d850f11e4127adb5";
             blockExplorerUri = "https://rinkeby.etherscan.io";
+            if (this.state.netId !== netId) {
+              ReactGA.initialize("UA-119747767-2");
+              ReactGA.event({
+                category: "Global",
+                action: "Visit",
+                nonInteraction: true
+              });
+            }
             break;
           default:
             contractAddress = "0xa69610b60fec5ec350a7267ed5d47bf87aa25364";
             blockExplorerUri = "https://etherscan.io";
         }
         this.setState({
+          netId: netId,
           contract: new web3.eth.Contract(abi, contractAddress),
           contractAddress: contractAddress,
           blockExplorerUri: blockExplorerUri
