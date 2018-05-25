@@ -70,7 +70,7 @@ class About extends Component {
                 <th>(Me \ Opponent)</th>
                 <th>Split</th>
                 <th>Steal</th>
-                <th>Disqualified</th>
+                {/* <th>Disqualified</th> */}
               </tr>
               <tr>
                 <td>
@@ -86,13 +86,13 @@ class About extends Component {
                     k * parseFloat(this.state.Y)
                   )}
                 </td>
-                <td>
+                {/* <td>
                   {Math.min(
                     parseFloat(this.state.X) + parseFloat(this.state.Y),
                     k * parseFloat(this.state.X)
                   )}{" "}
                   \ 0
-                </td>
+                </td> */}
               </tr>
               <tr>
                 <td>
@@ -118,15 +118,15 @@ class About extends Component {
                       (parseFloat(this.state.Y) - parseFloat(this.state.X)) / 2
                     )}
                 </td>
-                <td>
+                {/* <td>
                   {Math.min(
                     parseFloat(this.state.X) + parseFloat(this.state.Y),
                     k * parseFloat(this.state.X)
                   )}{" "}
                   \ 0
-                </td>
+                </td> */}
               </tr>
-              <tr>
+              {/* <tr>
                 <td>
                   <b>Disqualified</b>
                 </td>
@@ -145,7 +145,7 @@ class About extends Component {
                   )}{" "}
                 </td>
                 <td>0 \ 0</td>
-              </tr>
+              </tr> */}
             </tbody>
           </table>
         </div>
@@ -174,7 +174,7 @@ class About extends Component {
                 <th>(X\Y)</th>
                 <th>Split</th>
                 <th>Steal</th>
-                <th>Disqualified</th>
+                {/* <th>Disqualified</th> */}
               </tr>
               <tr>
                 <td>
@@ -182,7 +182,7 @@ class About extends Component {
                 </td>
                 <td>(X+Y)/2</td>
                 <td>0 \ Min(X+Y, K*Y) </td>
-                <td>Min(X+Y, K*X) \ 0</td>
+                {/* <td>Min(X+Y, K*X) \ 0</td> */}
               </tr>
               <tr>
                 <td>
@@ -190,7 +190,7 @@ class About extends Component {
                 </td>
                 <td>Min(X+Y, K*X) \ 0</td>
                 <td>Min(X+Y, (2-K)*((X-Y)/2)</td>
-                <td>Min(X+Y, K*X) \ 0</td>
+                {/* <td>Min(X+Y, K*X) \ 0</td> */}
               </tr>
               <tr>
                 <td>
@@ -198,7 +198,7 @@ class About extends Component {
                 </td>
                 <td>0 \ Min(X+Y, K*Y) </td>
                 <td>0 \ Min(X+Y, K*Y) </td>
-                <td>0 \ 0</td>
+                {/* <td>0 \ 0</td> */}
               </tr>
             </tbody>
           </table>
@@ -259,7 +259,8 @@ class About extends Component {
 
               <li>
                 If a player's opponent gets disqualified and the player not,
-                then player gains K times of player's bet (Capped by X+Y).
+                then player gains K times of player's bet (Capped by X+Y)
+                irrespective of player's choice.
               </li>
 
               <li>
