@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "../App.css";
 import logo from "../images/logo.svg";
+import Social from "./Social.js";
 import metamaskMain from "../images/metamask_main_net.png";
 import metamaskRinkeby from "../images/metamask_rinkeby_testnet.png";
 
@@ -160,6 +161,7 @@ class MyHeader extends Component {
                   </h3>
                 </a>
               </div>
+              <Social className="social-links-top" />
             </div>
           )}
         </header>

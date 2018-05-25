@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "../App.css";
+import Social from "./Social.js";
 
 class Footer extends Component {
   render() {
@@ -15,6 +16,7 @@ class Footer extends Component {
         </a>
         <div>Solidified Audit in progress</div>
         <br />
+        <Social className="social-links" />
         {"Powered by Ethereum"}
         <br />
         {"©2018 Rajat Mathur. All Rights Reserved."}

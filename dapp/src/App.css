@@ -546,6 +546,29 @@
   font-size: 22px;
   color: gold;
 }
+
+.social-links-top {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+
+  border-radius: 25px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.social-links {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 25px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
 ::placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: gold;
@@ -560,6 +583,10 @@ table {
   border: solid black;
   border-radius: 25px;
   padding: 15px 15px;
+}
+
+.fab {
+  color: goldenrod !important;
 }
 
 td,
