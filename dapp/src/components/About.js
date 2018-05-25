@@ -158,7 +158,7 @@ class About extends Component {
           <b>
             <h2>What is the game?</h2>
           </b>
-          It is a two player game(X, Y) where each player is asked to bet some
+          It is a two player game where each player is asked to bet some
           amount(X, Y) to play the game. <br /> Based on X and Y, Smart contract
           would generate a <a href="#reward-matrix">Reward Matrix</a>, on which
           game will be played.
@@ -189,7 +189,7 @@ class About extends Component {
                   <b>Steal</b>
                 </td>
                 <td>Min(X+Y, K*X) \ 0</td>
-                <td>Min(X+Y, (2-K)*((X-Y)/2)</td>
+                <td>Max(0, (2-K)*((X-Y)/2)</td>
                 {/* <td>Min(X+Y, K*X) \ 0</td> */}
               </tr>
               <tr>
