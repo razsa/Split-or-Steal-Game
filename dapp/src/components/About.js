@@ -192,14 +192,14 @@ class About extends Component {
                 <td>Max(0, (2-K)*((X-Y)/2)</td>
                 {/* <td>Min(X+Y, K*X) \ 0</td> */}
               </tr>
-              <tr>
+              {/* <tr>
                 <td>
                   <b>Disqualified</b>
                 </td>
                 <td>0 \ Min(X+Y, K*Y) </td>
                 <td>0 \ Min(X+Y, K*Y) </td>
-                {/* <td>0 \ 0</td> */}
-              </tr>
+                <td>0 \ 0</td>
+              </tr> */}
             </tbody>
           </table>
           <br />
