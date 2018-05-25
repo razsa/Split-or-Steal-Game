@@ -161,9 +161,9 @@ class MyHeader extends Component {
                   </h3>
                 </a>
               </div>
-              <Social className="social-links-top" />
             </div>
           )}
+          <Social className="social-links-top" />
         </header>
       </div>
     );
