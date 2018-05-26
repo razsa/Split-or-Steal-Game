@@ -1428,7 +1428,7 @@ class App extends Component {
       }
       let gameId = "game-" + gameNumber;
       let gameUrl =
-        "https://showmeyourcode.github.io/Split-or-Steal-Game#" + gameId;
+        "https://showmeyourcode.github.io/Split-or-Steal-Game/#" + gameId;
       games.push(
         <div id={gameId}>
           <div key={gameNumber} className="AllGamesCard">
