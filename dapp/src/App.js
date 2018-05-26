@@ -12,6 +12,7 @@ import Player from "./components/Player.js";
 import Donate from "./components/Donate.js";
 import Footer from "./components/Footer.js";
 import ReactGA from "react-ga";
+import FacebookProvider, { Comments, Like, Share } from "react-facebook";
 
 class App extends Component {
   constructor(props) {
@@ -1425,46 +1426,45 @@ class App extends Component {
           );
         }
       }
-
+      let gameId = "game-" + gameNumber;
+      let gameUrl =
+        "https://showmeyourcode.github.io/Split-or-Steal-Game#" + gameId;
       games.push(
-        // <div
-        //   key={gameNumber}
-        //   style={{
-        //     position: "sticky",
-        //     top: stcikyTop,
-        //     borderStyle: "solid",
-        //     borderColor: "gold",
-        //     borderRadius: 25
-        //   }}
-        // >
-        <div key={gameNumber} className="AllGamesCard">
-          <div>
-            <h3>
-              <b>GAME NUMBER {game.gameNumber}</b>
-            </h3>
-            <div>{sinceStart}</div>
-            <div>{sinceReveal}</div>
-            <div>{sinceFinished}</div>
-            <br />
+        <div id={gameId}>
+          <div key={gameNumber} className="AllGamesCard">
             <div>
-              <a href="#stage-timeout">{timeout}</a>{" "}
+              <h4>
+                <b>GAME NUMBER {game.gameNumber} </b>
+              </h4>
+              <FacebookProvider appId="228825537710623">
+                <Share href={gameUrl}>
+                  <button class="button-fb-share-enabled" type="button">
+                    Share Game {gameNumber}
+                  </button>
+                </Share>
+              </FacebookProvider>
+              <div style={{ marginTop: "10px" }}>{sinceStart}</div>
+              <div>{sinceReveal}</div>
+              <div>{sinceFinished}</div>
+              <br />
+              <div>
+                <a href="#stage-timeout">{timeout}</a>{" "}
+              </div>
             </div>
+            <br />
+            <div>{gameState}</div>
+            <br />
+            <div>{gameSubstate}</div>
+            <div>{input}</div>
+            <div>{cta}</div>
+            <div>
+              <Loading loading={this.state.allGameLocalOverride[gameNumber]} />
+            </div>
+            <div>{this.state.allGameMessage[gameNumber]}</div>
           </div>
           <br />
-          <div>{gameState}</div>
-          <br />
-          <div>{gameSubstate}</div>
-          <div>{input}</div>
-          <div>{cta}</div>
-          <div>
-            <Loading loading={this.state.allGameLocalOverride[gameNumber]} />
-          </div>
-          <div>{this.state.allGameMessage[gameNumber]}</div>
         </div>
-        // </div>
       );
-      // games.push(<br />);
-      // stcikyTop = stcikyTop + 70;
     }
     let disbaledMoreGames =
       this.state.totalGames === 0 ||
@@ -1478,9 +1478,16 @@ class App extends Component {
           <h2>
             <b>All Games</b>
           </h2>
+
           <div className="bottomMargin">{games}</div>
           <br />
           <div className="bottomMargin">{this.state.totalGamesMessage}</div>
+          <FacebookProvider appId="228825537710623">
+            <Comments
+              href="https://showmeyourcode.github.io/Split-or-Steal-Game"
+              numPosts="5"
+            />
+          </FacebookProvider>
           <div>
             <button
               className={className}
@@ -1549,6 +1556,18 @@ class App extends Component {
           changeNetwork={changeNetwork}
           netId={this.state.netId}
         />
+        <br />
+        <div class="fb-like-share">
+          <FacebookProvider appId="228825537710623">
+            <Like
+              href="https://showmeyourcode.github.io/Split-or-Steal-Game"
+              colorScheme="dark"
+              showFaces
+              share
+              width="80px"
+            />
+          </FacebookProvider>
+        </div>
         {this.GameSection()}
         <About
           k={this.state.k}
