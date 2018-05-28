@@ -15,9 +15,9 @@ class MyHeader extends Component {
     } = this.props;
     let numberOfCoins = 5;
     let warningMessage = !metamaskInstalled
-      ? "Please install"
+      ? "Please install browser plugin "
       : noAccountsInMetamask
-        ? "Please Log in to"
+        ? "Please Log in to browser plugin "
         : null;
     let subWarning = !metamaskInstalled ? " and refresh the page " : null;
     if (!metamaskInstalled) {
