@@ -74,14 +74,6 @@ class App extends Component {
       });
       //Check if metamask is installed/enabled
       this.checkMetamask();
-    } else {
-      ReactGA.initialize("UA-119747767-1");
-      ReactGA.event({
-        category: "Global",
-        action: "Visit",
-        label: "NoMetamask",
-        nonInteraction: true
-      });
     }
     this.init();
   };
