@@ -4,7 +4,6 @@ import Web3 from "web3";
 import abi from "./ContractABI.json";
 import AutosizeInput from "react-input-autosize";
 import About from "./components/About.js";
-import Fair from "./components/Fair.js";
 import MyHeader from "./components/Header.js";
 import Loading from "./components/Loading.js";
 import RewardMatrix from "./components/RewardMatrix.js";
@@ -1557,8 +1556,8 @@ class App extends Component {
           changeNetwork={changeNetwork}
           netId={this.state.netId}
         />
-        <br />
         <div class="fb-like-share">
+          <br />
           <FacebookProvider appId="228825537710623">
             <Like
               href="https://showmeyourcode.github.io/Split-or-Steal-Game"
@@ -1575,8 +1574,6 @@ class App extends Component {
           metamaskInstalled={this.state.metamaskInstalled}
           noAccountsInMetamask={this.state.noAccountsInMetamask}
           changeNetwork={changeNetwork}
-        />
-        <Fair
           contractCodeUri={
             this.state.blockExplorerUri +
             "/address/" +

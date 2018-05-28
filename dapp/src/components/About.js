@@ -30,7 +30,9 @@ class About extends Component {
       k,
       metamaskInstalled,
       noAccountsInMetamask,
-      changeNetwork
+      changeNetwork,
+      contractCodeUri,
+      contractTransactionsUri
     } = this.props;
 
     let interactiveRewardMatrix =
@@ -217,7 +219,6 @@ class About extends Component {
           </div>
           {interactiveRewardMatrix}
         </div>
-
         <div className="App-about">
           <b>
             <h2>How to read Reward Matrix case by case?</h2>
@@ -402,6 +403,46 @@ class About extends Component {
               </li>
             </ol>
           </div>
+        </div>
+        <div className="App-about">
+          <b>
+            <h2>
+              How is this game{" "}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Provably_fair"
+              >
+                Provably Fair
+              </a>?
+            </h2>
+          </b>
+          <div className="Center">
+            <ol className="App-list">
+              <li>
+                Contract code can be found{" "}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={contractCodeUri}
+                >
+                  here
+                </a>.
+              </li>
+              <li>
+                {" "}
+                All transactions on contract can be found{" "}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={contractTransactionsUri}
+                >
+                  here
+                </a>.
+              </li>
+            </ol>
+          </div>
+          <br />
         </div>
         <br />
       </div>

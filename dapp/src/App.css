@@ -459,9 +459,9 @@
 }
 .fb-like-share {
   height: fit-content;
-  width: fit-content;
   margin-left: auto;
   margin-right: auto;
+  background-color: black;
 }
 
 .AllGames {
