@@ -1482,12 +1482,6 @@ class App extends Component {
           <div className="bottomMargin">{games}</div>
           <br />
           <div className="bottomMargin">{this.state.totalGamesMessage}</div>
-          <FacebookProvider appId="228825537710623">
-            <Comments
-              href="https://showmeyourcode.github.io/Split-or-Steal-Game"
-              numPosts="5"
-            />
-          </FacebookProvider>
           <div>
             <button
               className={className}
@@ -1498,6 +1492,13 @@ class App extends Component {
               Get More Games
             </button>
           </div>
+          <br />
+          <FacebookProvider appId="228825537710623">
+            <Comments
+              href="https://showmeyourcode.github.io/Split-or-Steal-Game"
+              numPosts="5"
+            />
+          </FacebookProvider>
         </div>
       </div>
     );
