@@ -125,13 +125,15 @@ class App extends Component {
             }
             break;
           default:
-            ReactGA.initialize("UA-119747767-2");
-            ReactGA.event({
-              category: "Global",
-              action: "Visit",
-              label: "MetamaskOtherNetwork",
-              nonInteraction: true
-            });
+            if (this.state.netId !== netId) {
+              ReactGA.initialize("UA-119747767-2");
+              ReactGA.event({
+                category: "Global",
+                action: "Visit",
+                label: "MetamaskOtherNetwork" + netId,
+                nonInteraction: true
+              });
+            }
             contractAddress = "0xa69610b60fec5ec350a7267ed5d47bf87aa25364";
             blockExplorerUri = "https://etherscan.io";
         }
