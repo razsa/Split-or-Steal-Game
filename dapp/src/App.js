@@ -11,7 +11,7 @@ import Player from "./components/Player.js";
 import Donate from "./components/Donate.js";
 import Footer from "./components/Footer.js";
 import ReactGA from "react-ga";
-import FacebookProvider, { Comments, Like, Share } from "react-facebook";
+import FacebookProvider, { Comments, Share, Page } from "react-facebook";
 
 class App extends Component {
   constructor(props) {
@@ -1578,14 +1578,16 @@ class App extends Component {
         <div class="fb-like-share">
           <br />
           <FacebookProvider appId="228825537710623">
-            <Like
-              href="https://showmeyourcode.github.io/Split-or-Steal-Game"
-              colorScheme="dark"
-              showFaces
+            <Page
+              href="https://www.facebook.com/stealorsplit/"
+              showFacepile
               share
-              width="80px"
+              hideCTA
+              hideCover
+              smallHeader
             />
           </FacebookProvider>
+          <br />
         </div>
         {this.GameSection()}
         <About

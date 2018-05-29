@@ -463,6 +463,9 @@
   margin-right: auto;
   background-color: black;
 }
+.fb_iframe_widget iframe {
+  border-radius: 15px;
+}
 
 .AllGames {
   /* margin-top: 20px; */
