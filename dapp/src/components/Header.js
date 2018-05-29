@@ -6,6 +6,7 @@ import metamaskMain from "../images/metamask_main_net.png";
 import metamaskRinkeby from "../images/metamask_rinkeby_testnet.png";
 import metamaskDownload from "../images/metamask_download.png";
 import { UserAgentProvider, UserAgent } from "@quentin-sommer/react-useragent";
+import ReactGA from "react-ga";
 
 class MyHeader extends Component {
   render() {
@@ -122,6 +123,12 @@ class MyHeader extends Component {
           <UserAgentProvider ua={window.navigator.userAgent}>
             <div>
               <UserAgent mobile>
+                {ReactGA.event({
+                  category: "Global",
+                  action: "Visit",
+                  label: "MobileUnsupportedDevice",
+                  nonInteraction: true
+                })}
                 <p />
                 <div style={{ color: "rgba(255, 8, 68, 0.842)" }}>
                   <b>
@@ -228,6 +235,12 @@ class MyHeader extends Component {
                                   supported for your browser.<br /> Please use
                                   Chrome/Firefox/Opera.
                                 </b>
+                                {ReactGA.event({
+                                  category: "Global",
+                                  action: "Visit",
+                                  label: "DesktopUnsupportedBrowser",
+                                  nonInteraction: true
+                                })}s
                               </div>
                             ) : null
                           }
