@@ -267,6 +267,30 @@
   cursor: pointer;
 }
 
+.button-subscribe-enabled {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: gold;
+  border: none;
+  color: chocolate;
+  padding: 12px 12px;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.button-subscribe-enabled:active {
+  outline-width: 0;
+  border-radius: 25px;
+  background-color: rgb(180, 155, 10);
+  border: none;
+  color: white;
+  padding: 12px 12px;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
 .button-player {
   outline-width: 0;
   border-radius: 25px;
@@ -465,6 +489,9 @@
 }
 .fb_iframe_widget iframe {
   border-radius: 15px;
+  height: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .AllGames {
@@ -571,6 +598,20 @@
   box-shadow: inset 0px 1px 0 0 rgba(0, 0, 0, 0.1);
 }
 
+.game-input-subscribe {
+  outline-width: 0;
+  /* margin-top: 15px;
+  margin-bottom: 15px; */
+  width: 30px;
+  padding: 10px;
+  font-size: 14px;
+  background-color: #ffffff;
+  border: solid 1px #b3b3b3;
+  border-radius: 25px;
+  box-shadow: inset 0px 1px 0 0 rgba(0, 0, 0, 0.1);
+  color: grey;
+}
+
 .input {
   border-radius: 18px;
   background: rgb(0, 153, 107);
@@ -622,7 +663,14 @@ table {
 
 .fab {
   color: goldenrod !important;
-  margin-right: 10px;
+  margin-right: 7px;
+  margin-left: 5px;
+}
+
+.fas {
+  color: goldenrod !important;
+  margin-right: 7px;
+  margin-left: 10px;
 }
 
 td,

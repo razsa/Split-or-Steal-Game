@@ -6,8 +6,50 @@ import metamaskMain from "../images/metamask_main_net.png";
 import metamaskRinkeby from "../images/metamask_rinkeby_testnet.png";
 import metamaskDownload from "../images/metamask_download.png";
 import { UserAgentProvider, UserAgent } from "@quentin-sommer/react-useragent";
+import AutosizeInput from "react-input-autosize";
+import ReactGA from "react-ga";
+import firebase from "firebase";
+import { DB_CONFIG } from "../config/DBConfig";
 
 class MyHeader extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      thanksVisible: "hidden"
+    };
+    this.app = firebase.initializeApp(DB_CONFIG);
+    this.subscribers = this.app
+      .database()
+      .ref()
+      .child("v0")
+      .child("subscribers");
+  }
+
+  updateEmail = evt => {
+    let email = evt.target.value;
+    this.setState({
+      email: email
+    });
+  };
+
+  subscribe = () => {
+    if (this.state.email.length > 4) {
+      this.subscribers.push({
+        email: this.state.email,
+        ua: window.navigator.userAgent
+      });
+      this.setState({
+        thanksVisible: "visible"
+      });
+      ReactGA.event({
+        category: "Engagement",
+        action: "Subscribe",
+        nonInteraction: true
+      });
+    }
+  };
+
   render() {
     let {
       metamaskInstalled,
@@ -76,6 +118,57 @@ class MyHeader extends Component {
         to play the game.
       </h2>
     );
+
+    let subscribe = (
+      <div>
+        <b>
+          <br /> Why don't you join us on{" "}
+          <a
+            href="https://t.me/splitorsteal"
+            title="Telegram"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-slimstat="5"
+          >
+            telegram
+          </a>
+          {" and "}
+          <a
+            href="https://www.facebook.com/Split-or-Steal-756882654699219/"
+            title="Facebook"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-slimstat="5"
+          >
+            facebook
+          </a>{" "}
+          for updates on support and more?
+        </b>
+        <h4>Or</h4>
+        <h3>Enter your email id below to get updates.</h3>
+
+        <div style={{ marginBottom: "15px" }}>
+          <AutosizeInput
+            placeholder="Enter your email here."
+            inputClassName="game-input-subscribe"
+            onChange={this.updateEmail}
+            value={this.state.email}
+          />
+          {"  :  "}
+          <button className="button-subscribe-enabled" onClick={this.subscribe}>
+            <b>Subscribe</b>
+          </button>
+        </div>
+        <div
+          style={{
+            visibility: this.state.thanksVisible,
+            color: "white"
+          }}
+        >
+          Thanks! We will send you an update soon.
+        </div>
+      </div>
+    );
     return (
       <div>
         <a
@@ -124,30 +217,8 @@ class MyHeader extends Component {
               <UserAgent mobile>
                 <p />
                 <div style={{ color: "rgba(255, 8, 68, 0.842)" }}>
-                  <b>
-                    This is game is currently available only on Desktop.<br />Join
-                    us on{" "}
-                    <a
-                      href="https://t.me/splitorsteal"
-                      title="Telegram"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-slimstat="5"
-                    >
-                      telegram
-                    </a>
-                    {" and "}
-                    <a
-                      href="https://www.facebook.com/Split-or-Steal-756882654699219/"
-                      title="Facebook"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-slimstat="5"
-                    >
-                      facebook
-                    </a>{" "}
-                    for updates on mobile version or open this on dektop.
-                  </b>
+                  <b>Game is available only on Desktop.</b>
+                  {subscribe}
                 </div>
               </UserAgent>
               <UserAgent computer mac tablet>
@@ -216,7 +287,7 @@ class MyHeader extends Component {
                               .includes("firefox") ? (
                               <div style={{ color: "rgba(255, 8, 68, 0.842)" }}>
                                 <b>
-                                  You'll need{" "}
+                                  You need{" "}
                                   <a
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -224,10 +295,11 @@ class MyHeader extends Component {
                                   >
                                     Metamask
                                   </a>{" "}
-                                  to play this game.<br /> Metamask is not
+                                  to play this game, but<br /> Metamask is not
                                   supported for your browser.<br /> Please use
                                   Chrome/Firefox/Opera.
                                 </b>
+                                {subscribe}
                               </div>
                             ) : null
                           }
