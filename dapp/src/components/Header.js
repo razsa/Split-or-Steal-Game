@@ -4,6 +4,8 @@ import logo from "../images/logo.svg";
 import Social from "./Social.js";
 import metamaskMain from "../images/metamask_main_net.png";
 import metamaskRinkeby from "../images/metamask_rinkeby_testnet.png";
+import metamaskDownload from "../images/metamask_download.png";
+import { UserAgentProvider, UserAgent } from "@quentin-sommer/react-useragent";
 
 class MyHeader extends Component {
   render() {
@@ -13,6 +15,7 @@ class MyHeader extends Component {
       changeNetwork,
       netId
     } = this.props;
+
     let numberOfCoins = 5;
     let warningMessage = !metamaskInstalled
       ? "Please install browser plugin "
@@ -51,7 +54,28 @@ class MyHeader extends Component {
         break;
       default:
     }
-
+    let metamaskDownloadImage = (
+      <img
+        src={metamaskDownload}
+        alt="metamaskDownload"
+        width="150"
+        height="43"
+      />
+    );
+    let installMetamask = (
+      <h2 className="App-title-metamask">
+        {warningMessage}{" "}
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://metamask.io/"
+        >
+          Metamask
+        </a>{" "}
+        {subWarning}
+        to play the game.
+      </h2>
+    );
     return (
       <div>
         <a
@@ -95,20 +119,126 @@ class MyHeader extends Component {
             <a href="#how-provably-fair">(How?)</a>
           </div>
           <br />
-          {warningMessage === null ? null : (
-            <h2 className="App-title-metamask">
-              {warningMessage}{" "}
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en)"
-              >
-                Metamask
-              </a>{" "}
-              {subWarning}
-              to play the game.
-            </h2>
-          )}
+          <UserAgentProvider ua={window.navigator.userAgent}>
+            <div>
+              <UserAgent mobile>
+                <p />
+                <div style={{ color: "rgba(255, 8, 68, 0.842)" }}>
+                  <b>
+                    This is game is currently available only on Desktop.<br />Join
+                    us on{" "}
+                    <a
+                      href="https://t.me/splitorsteal"
+                      title="Telegram"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-slimstat="5"
+                    >
+                      telegram
+                    </a>
+                    {" and "}
+                    <a
+                      href="https://www.facebook.com/Split-or-Steal-756882654699219/"
+                      title="Facebook"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-slimstat="5"
+                    >
+                      facebook
+                    </a>{" "}
+                    for updates on mobile version or open this on dektop.
+                  </b>
+                </div>
+              </UserAgent>
+              <UserAgent computer mac tablet>
+                {warningMessage === null ? null : (
+                  <div>
+                    {metamaskInstalled && warningMessage !== null
+                      ? installMetamask
+                      : null}
+                    {metamaskInstalled ? null : (
+                      <div>
+                        <UserAgent chrome>
+                          {installMetamask}
+                          <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en)"
+                          >
+                            {" "}
+                            {metamaskDownloadImage}
+                          </a>
+                        </UserAgent>
+                        <UserAgent firefox>
+                          {installMetamask}
+                          <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/"
+                          >
+                            {" "}
+                            {metamaskDownloadImage}
+                          </a>
+                        </UserAgent>
+                        <UserAgent returnfullParser>
+                          {parser =>
+                            !parser
+                              .getBrowser()
+                              .name.toLowerCase()
+                              .includes("opera") ? null : (
+                              <div>
+                                {installMetamask}
+                                <a
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  href="https://addons.opera.com/en/extensions/details/metamask/"
+                                >
+                                  {" "}
+                                  {metamaskDownloadImage}
+                                </a>
+                              </div>
+                            )
+                          }
+                        </UserAgent>
+                        <UserAgent returnfullParser>
+                          {parser =>
+                            !parser
+                              .getBrowser()
+                              .name.toLowerCase()
+                              .includes("opera") &&
+                            !parser
+                              .getBrowser()
+                              .name.toLowerCase()
+                              .includes("chrome") &&
+                            !parser
+                              .getBrowser()
+                              .name.toLowerCase()
+                              .includes("firefox") ? (
+                              <div style={{ color: "rgba(255, 8, 68, 0.842)" }}>
+                                <b>
+                                  You'll need{" "}
+                                  <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://metamask.io/"
+                                  >
+                                    Metamask
+                                  </a>{" "}
+                                  to play this game.<br /> Metamask is not
+                                  supported for your browser.<br /> Please use
+                                  Chrome/Firefox/Opera.
+                                </b>
+                              </div>
+                            ) : null
+                          }
+                        </UserAgent>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </UserAgent>
+            </div>
+          </UserAgentProvider>
 
           {coins}
           {!metamaskInstalled || noAccountsInMetamask ? null : (
@@ -128,11 +258,11 @@ class MyHeader extends Component {
                   </div>
                 ) : null
               ) : (
-                <div>
+                <div style={{ color: "rgba(255, 8, 68, 0.842)" }}>
                   <div>
                     <h2>Looks like you are on {network}.</h2>
                   </div>
-                  <div style={{ color: "gold" }}>
+                  <div>
                     <h2>
                       Please change your network to Main Ethereum Network or
                       Rinkeby Test Network<br />

@@ -14,7 +14,6 @@ class Footer extends Component {
         >
           State of the ÐApps
         </a>
-        <div>Solidified Audit in progress</div>
         <br />
         <Social className="social-links" />
         {"Powered by Ethereum"}
