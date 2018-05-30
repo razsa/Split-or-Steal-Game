@@ -12,6 +12,20 @@ DAPP [Game](http://showmeyourcode.github.io/Split-or-Steal-Game/) on ethereum bl
 * ```npm install```
 * ```npm start```
 
+**What all helped build this**
+* Gitter community for [web3.js](https://gitter.im/ethereum/web3.js) & [Solidity](https://gitter.im/ethereum/solidity)
+* [Solidity Documentation](https://solidity.readthedocs.io/en/v0.4.24/)
+* [This](https://karl.tech/learning-solidity-part-2-voting/) blog post explaining commit reveal
+* [Firebase](https://firebase.google.com/docs/database/?gclid=EAIaIQobChMI9YTWsuus2wIVEiUrCh3ATwYBEAAYASABEgIeiPD_BwE)
+* [Google Analytics](https://analytics.google.com/analytics/web/)
+* [gh-pages](https://www.npmjs.com/package/gh-pages)
+* [React](https://www.npmjs.com/package/react)
+* [react-facebook](https://www.npmjs.com/package/react-facebook)
+* [react-ga](https://www.npmjs.com/package/react-ga)
+* [react-input-autosize](https://www.npmjs.com/package/@elsdoerfer/react-input-autosize)
+
+
+
 **How to test smart contract**
 
 _Prerequisite_
