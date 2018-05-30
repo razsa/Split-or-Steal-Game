@@ -6,7 +6,7 @@ DAPP [Game](http://showmeyourcode.github.io/Split-or-Steal-Game/) on ethereum bl
 
 
 **Play game on your local**
-* ```git clone https://github.fkinternal.com/Flipkart/Split-or-Steal-Game.git```
+* ```git clone https://github.com/showmeyourcode/Split-or-Steal-Game.git```
 * ```cd Split-or-Steal-Game```
 * ```cd dapp```
 * ```npm install```
