@@ -4,13 +4,19 @@ DAPP [Game](http://showmeyourcode.github.io/Split-or-Steal-Game/) on ethereum bl
 
 [How to Play](http://showmeyourcode.github.io/Split-or-Steal-Game/#about)
 
-![DAPP Game on ethereum blockchain](https://imgur.com/vtJqBTM.jpg)
 
-**How to run tests**
+**Play game on your local**
+* ```git clone https://github.fkinternal.com/Flipkart/Split-or-Steal-Game.git```
+* ```cd Split-or-Steal-Game```
+* ```cd dapp```
+* ```npm install```
+* ```npm start```
+
+**How to test smart contract**
 
 _Prerequisite_
 
-Download and run [Ganache](http://truffleframework.com/ganache/)
+DOWNLOAD and RUN [Ganache](http://truffleframework.com/ganache/)
 
 **USING REMIX**
 
@@ -24,34 +30,4 @@ Download and run [Ganache](http://truffleframework.com/ganache/)
 * Just go ahead and play the game by hitting appropriate method in game play.
 * Do not forget to mention _Value_ in wei/ether while hitting a payble contract method.
 
-**USING Truffle**
-
-* Go to truffle folder
-
-```shell
-cd truffle
-```
-
-* Compile
-
-```shell
-truffle compile
-```
-
-* Migrate
-
-```shell
-truffle migrate --reset
-```
-
-* Open truffle console
-
-```shell
-truffle console
-```
-
-* Run Tests
-
-```shell
->exec <PATH TO TEST>/TestStartRegistration.js
-```
+![DAPP Game on ethereum blockchain](https://imgur.com/vtJqBTM.jpg)
