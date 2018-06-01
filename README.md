@@ -2,7 +2,7 @@
 
 DAPP [Game](http://showmeyourcode.github.io/Split-or-Steal-Game/) on ethereum blockchain deployed at [Main Ethereum Network](https://etherscan.io/address/0xa69610b60fec5ec350a7267ed5d47bf87aa25364) and [Rinkeby Test Network](https://rinkeby.etherscan.io/address/0x6cf35ea8150ada482b1f0615d850f11e4127adb5).
 
-[About Game](http://showmeyourcode.github.io/Split-or-Steal-Game/#about)
+**Game Tutorial**
 
 <a href="https://www.youtube.com/watch?v=RtQcZsu6Ls0&feature=youtu.be" target="_blank"><img src="https://user-images.githubusercontent.com/6779070/40848393-bfbd6a96-65dc-11e8-8f86-4bd4f8ecbfe0.png" 
 alt="How to Play" width="640" height="352" border="10" /></a>
