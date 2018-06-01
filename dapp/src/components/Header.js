@@ -365,6 +365,19 @@ class MyHeader extends Component {
               </div>
             </div>
           )}
+          <div className="youtubevideowrap">
+            <div className="video-container">
+              <iframe
+                width="640"
+                height="352"
+                title="SPLIT OR STEAL"
+                src="https://www.youtube.com/embed/RtQcZsu6Ls0?rel=0"
+                frameborder="0"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+              />
+            </div>
+          </div>
           <Social className="social-links-top" />
         </header>
       </div>
